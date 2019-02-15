@@ -1,6 +1,5 @@
-######################################################################
+
 ## CNPSA_Scripts - Quality Control (Trimmomatic) and mapping (STAR)
-######################################################################
 <br>
 <br>
 
@@ -10,8 +9,6 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 <br>
 #STEP.1 - Download this repository to a preference path:
 	 $ git clone https://github.com/hanielcedraz/CNPSA_Scripts.git
-
-<br>
 <br>
 <br>
 #STEP.2 - Install R and required libraries
