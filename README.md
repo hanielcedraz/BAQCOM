@@ -7,9 +7,9 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 <br>
 <br>
 <br>
-#STEP.1 - Download this repository to a preference path:
+#STEP.1 - Download this repository to a preference path:<br>
 	 $ git clone https://github.com/hanielcedraz/CNPSA_Scripts.git
 <br>
 <br>
-#STEP.2 - Install R and required libraries
+#STEP.2 - Install R and required libraries<br>
 	#Install 'optparse' and 'parallel' packages
