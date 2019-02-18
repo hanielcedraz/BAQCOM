@@ -10,9 +10,14 @@ cat "qc_trimmomatic-V.0.0.1" | sed "s|XXX|$PWD|" > qc_trimmomatic-V.0.0.1.R
 
 chmod +x qc_trimmomatic-V.0.0.1.R
 
-echo -e "\n"PATH=$PATH:$PWD >> ~/.bashrc
-bash
+grep "$PWD" > /dev/null
+if [ $? -eq 1 ] then
+  echo -e "\n"PATH=$PATH:$PWD >> ~/.bashrc
+  bash
+  
+  ln -s qc_trimmomatic-V.0.0.1.R qc_trimmomatic
 
-ln -s qc_trimmomatic-V.0.0.1.R qc_trimmomatic
+  mv qc_trimmomatic-V.0.0.1 .qc_trimmomatic-V.0.0.1
+fi
 
-mv qc_trimmomatic-V.0.0.1 .qc_trimmomatic-V.0.0.1
+
