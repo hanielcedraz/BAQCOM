@@ -22,6 +22,7 @@ if [ $? -ne 0 ]; then
   source ~/.bash_profile;
   
   mv qc_trimmomatic .qc_trimmomatic
-  
+else 
+  echo "It already installed"
 fi
 
