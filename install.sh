@@ -2,7 +2,7 @@ while getopts 'h' c;
 do
   echo "help"
   case $c in
-        h) ACTION= echo "#Use this script to change the trimmomatic path in "qc_trimmomatic-V.0.0.1" and put theses file into the bash"
+        h) ACTION= echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
 
            exit
            ;;
@@ -12,19 +12,16 @@ shift $((OPTIND - 1))
 
 #Use this script to change the trimmomatic path in R and put theses file into the bash
 
-cat "qc_trimmomatic-V.0.0.1" | sed "s|XXX|$PWD|" > qc_trimmomatic-V.0.0.1.R
-
-chmod +x qc_trimmomatic-V.0.0.1.R
 
 
-grep "$PWD" ~/.bashrc > /dev/null
+grep "$PWD" ~/.bash_profile > /dev/null
 if [ $? -ne 0 ]; then
-  echo -e "\n"PATH=$PATH:$PWD >> ~/.bashrc;
-  bash;
+  cat ".qc_trimmomatic" | sed "s|XXX|$PWD|" > qc_trimmomatic.R
+  chmod +x qc_trimmomatic.R
+  echo -e "\n"PATH=$PATH:$PWD >> ~/.bash_profile;
+  source ~/.bash_profile;
   
-  ln -s qc_trimmomatic-V.0.0.1.R qc_trimmomatic
-  ln -s mapping_STAR-V-0.0.1.R mapping_STAR
-  mv qc_trimmomatic-V.0.0.1 .qc_trimmomatic-V.0.0.1
+  mv qc_trimmomatic .qc_trimmomatic
   
 fi
 
