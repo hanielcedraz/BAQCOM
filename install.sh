@@ -18,11 +18,8 @@ grep "$PWD" ~/.bash_profile > /dev/null
 if [ $? -ne 0 ]; then
   cat ".qc_trimmomatic" | sed "s|XXX|$PWD|" > qc_trimmomatic.R
   chmod +x qc_trimmomatic.R
-  echo -e "\n"PATH=$PATH:$PWD >> ~/.bash_profile;
+  echo -e "\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
   source ~/.bash_profile;
-  
-  mv qc_trimmomatic .qc_trimmomatic
-else 
-  echo "It already installed"
+else
+  echo "It is already installed"
 fi
-
