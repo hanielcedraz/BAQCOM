@@ -16,4 +16,4 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 
 
 
-##RELEASEnotes</link>https://github.com/hanielcedraz/CNPSA_Script/blob/master/RELEASE_notes</link>
+## <a href="https://github.com/hanielcedraz/CNPSA_Script/blob/master/RELEASE_notes">RELEASEnotes</a>
