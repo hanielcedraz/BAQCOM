@@ -8,8 +8,11 @@ The BAQCOM_Scripts is a friendly-user pipeline which implements two automated pi
 <br>
 <br>
 #STEP.1 - Download this repository to a preference path:<br>
-	# Git is required
-	 $ git clone https://github.com/hanielcedraz/CNPSA_Scripts.git
+	# Git is required<br>
+	 $ git clone https://github.com/hanielcedraz/BAQCOM_Scripts.git<br>
+	 $ cd BAQCOM_Scripts<br>
+	 $ chmod +x install.sh<br>
+	 $ ./install.sh<br>
 <br>
 <br>
 #STEP.2 - Install R and required libraries<br>
