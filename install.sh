@@ -1,4 +1,4 @@
-if [ getopts -eq 'h' ] c;
+while getopts 'h' c;
 then
   echo "help"
   case $c in
@@ -8,7 +8,7 @@ then
   stop         
            ;;
   esac
-fi
+done
 shift $((OPTIND - 1))
 
 
