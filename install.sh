@@ -20,11 +20,10 @@ if [ $? -ne 0 ]; then
   cat ".qc_trimmomatic" | sed "s|XXX|$PWD|" > qc_trimmomatic.R
   echo -e "\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
   source ~/.bash_profile;
-  
+  chmod +x qc_trimmomatic.R mapping_STAR.R .install_packages.R;
+  .install_packages.R;
 else
   echo "It is already installed"
 fi
 
-chmod +x qc_trimmomatic.R mapping_STAR.R .install_packages.R
 
-.install_packages.R
