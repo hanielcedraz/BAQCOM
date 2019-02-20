@@ -2,6 +2,8 @@ if [[ ( $@ == "--help") ||  $@ == "-h" ]];
     then
        echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
        exit 0
+    else
+    exit
 fi
 
 grep "$PWD" ~/.bash_profile > /dev/null
