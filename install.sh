@@ -1,10 +1,11 @@
-if [[ ( $@ == "--help") ||  $@ == "-h" ]];
+if [[ $1 == "-h" ]];
     then
         echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
         exit 0
-    else
-        echo "It is not a valid argment. Try ./install.sh -h or ./install.sh --help"
-        exit
+elif [ $# > 0 ];
+    then
+        echo "It is not a valid argment. Try ./install.sh -h"
+        exit 1  
 fi
 
 grep "$PWD" ~/.bash_profile > /dev/null
