@@ -25,6 +25,6 @@ else
   echo "It is already installed"
 fi
 
-chmod +x qc_trimmomatic.R mapping_STAR.R install_packages.R
+chmod +x qc_trimmomatic.R mapping_STAR.R .install_packages.R
 
-./install_packages.R
+.install_packages.R
