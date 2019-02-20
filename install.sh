@@ -1,17 +1,8 @@
-while getopts 'h' c;
-then
-  echo "help"
-  case $c in
-        h) ACTION= echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
-
-           exit
-  stop         
-           ;;
-  esac
-done
-shift $((OPTIND - 1))
-
-
+if [[ ( $@ == "--help") ||  $@ == "-h" ]];
+    then
+       echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
+       exit 0
+fi
 
 grep "$PWD" ~/.bash_profile > /dev/null
 if [ $? -ne 0 ]; then
