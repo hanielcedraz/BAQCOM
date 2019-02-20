@@ -1,12 +1,10 @@
 
-
-
-######################################################################
-### BAQCOM_Scripts - Quality Control (Trimmomatic) and Mapping (STAR)
-######################################################################
-
-
-The BAQCOM_Scripts is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
+##############################################################################
+### BAQCOM - BAQCOM - Bioinformatics Analysis for Quality Control and Mapping
+### Quality Control (Trimmomatic) and Mapping (STAR)
+##############################################################################
+ 
+The BAQCOM is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
 
 
 ################
@@ -24,7 +22,7 @@ The BAQCOM_Scripts is a friendly-user pipeline which implements two automated pi
 
 
 #STEP.2 - Download this repository to a preference path:
-	 $ git clone https://github.com/hanielcedraz/BAQCOM_Scripts.git
+	 $ git clone https://github.com/hanielcedraz/BAQCOM.git
 
 #STEP.3 - Run install.sh. This file will replace the trimmomatic path into the .baqcom_qc and update ~/bash_profile directory path, so you can call the files from any directory.
 
