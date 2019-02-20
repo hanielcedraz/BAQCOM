@@ -1,5 +1,5 @@
-while getopts 'h' c;
-do
+if [ getopts -eq 'h' ] c;
+then
   echo "help"
   case $c in
         h) ACTION= echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
@@ -8,10 +8,8 @@ do
   stop         
            ;;
   esac
-done
+fi
 shift $((OPTIND - 1))
-
-#Use this script to change the trimmomatic path in R and put theses file into the bash
 
 
 
