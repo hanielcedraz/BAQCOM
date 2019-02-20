@@ -2,11 +2,11 @@
 
 
 ######################################################################
-### CNPSA_Scripts - Quality Control (Trimmomatic) and mapping (STAR)
+### BAQCOM_Scripts - Quality Control (Trimmomatic) and Mapping (STAR)
 ######################################################################
 
 
-The CNPSA_Scripts is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
+The BAQCOM_Scripts is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
 
 
 ################
@@ -24,9 +24,9 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 
 
 #STEP.2 - Download this repository to a preference path:
-	 $ git clone https://github.com/hanielcedraz/CNPSA_Scripts.git
+	 $ git clone https://github.com/hanielcedraz/BAQCOM_Scripts.git
 
-#STEP.3 - Run install.sh. This file will replace the trimmomatic path into the script.R and update ~/bashrc directory path, so you can call the files from any directory.
+#STEP.3 - Run install.sh. This file will replace the trimmomatic path into the .baqcom_qc and update ~/bash_profile directory path, so you can call the files from any directory.
 
 	$ ./install.sh
 
@@ -39,7 +39,7 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 
 #STEP.5 - Create samples.txt:
 
-	$ create_samples.sh
+	$ ./create_samples.sh
 
 #This script will work perfectly if the file names in the 00-Fastq directory follow the structure:
 
@@ -50,7 +50,7 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 	#you may follow this command: gunzip -c raw_fastq/*R1_001.fastq.gz > SAMPLEID_any_information_R1_001.fastq; gzip 00-Fastq/SAMPLEID_any_information_R1_001.fastq 00-Fastq/SAMPLEID_any_information_R1_001.fastq.gz; gunzip -c raw_fastq/*R2_001.fastq.gz > SAMPLEID_any_information_R2_001.fastq; gzip 00-Fastq/SAMPLEID_any_information_R2_001.fastq 00-Fastq/SAMPLEID_any_information_R2_001.fastq.gz
 	
 
-#STEP.6 - Run the quality control with Trimmomatic (qc_trimmomatic pipeline):
+#STEP.6 - Run the quality control with Trimmomatic (baqcom_qc pipeline):
 
 # -p is the number of processors
 # -a is the name of adapter. Default=TruSeq2-PE.fa
@@ -62,19 +62,19 @@ The CNPSA_Scripts is a friendly-user pipeline which implements two automated pip
 		#TruSeq3-PE.fa
 		#TruSeq3-SE.fa
 
-	$ qc_trimmomatic-V.0.0.1.R -p 36 
+	$ baqcom_qc.R -p 36 
 
-STEP.7 - Mapping with STAR (mapping_STAR pipeline):
+STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
 #Generate the genome indexes files needs to be performed only one for each genome/annotation version.  After the index generation step, the mapping will be started automatically.
 
 #This code will generate index and mapping.
 
-> mapping_STAR-V-0.0.1.R -p 20 -m /genome_annotation_directory/annotation_version/ -t /genome_annotation_directory/genome.fa -g /enome_annotation_directory/annotation_version/annotation_version.gtf
+> baqcom_mapping.R -p 20 -m /genome_annotation_directory/annotation_version/ -t /genome_annotation_directory/genome.fa -g /enome_annotation_directory/annotation_version/annotation_version.gtf
 
 #Run at second time
 
-> mapping_STAR-V-0.0.1.R -o 20 -m /dir/release_version/
+> baqcom_mapping.R -o 20 -m /dir/release_version/
 
 #obs. If needs to run the script with more than 20 thread, it must change ulimit in the system used (see "increasing_Limit_CentOS_7" file ==> https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/).
 
