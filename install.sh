@@ -4,7 +4,7 @@ if [[ ( $@ == "--help") ||  $@ == "-h" ]];
         exit 0
     else
         echo "It is not a valid argment. Try ./install.sh -h or ./install.sh --help"
-        stop
+        exit
 fi
 
 grep "$PWD" ~/.bash_profile > /dev/null
