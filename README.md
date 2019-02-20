@@ -1,5 +1,6 @@
 
-## BAQCOM_Scripts - Quality Control (Trimmomatic) and mapping (STAR)
+## BAQCOM_Scripts - Quality Control (Trimmomatic) and mapping (STAR) <br>
+#### Bioinformatics Analysis for Quality Control and Mapping
 <br>
 <br>
 
