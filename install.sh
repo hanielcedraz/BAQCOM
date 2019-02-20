@@ -2,7 +2,8 @@
 
 if [[ $1 == "-h" ]];
     then
-        echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
+        echo "#Use this script to change the trimmomatic path in ".baqcom_qc", configure files, 
+            and put theses file into the bash. More information read LEIAME.txt"
         exit 0
 elif [[ $# > 0 ]];
     then
@@ -13,10 +14,10 @@ fi
 grep "$PWD" ~/.bash_profile > /dev/null
 if [ $? -ne 0 ]; 
     then
-        cat ".qc_trimmomatic" | sed "s|XXX|$PWD|" > qc_trimmomatic.R
+        cat ".baqcom_qc" | sed "s|XXX|$PWD|" > baqcom_qc.R
         echo -e "\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
         source ~/.bash_profile;
-        chmod +x qc_trimmomatic.R mapping_STAR.R .install_packages.R create_samples.sh;
+        chmod +x baqcom_qc.R baqcom_mapping.R .install_packages.R create_samples.sh;
         .install_packages.R;
     else
         echo "It is already installed"
