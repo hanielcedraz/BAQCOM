@@ -1,13 +1,14 @@
 
-## CNPSA_Scripts - Quality Control (Trimmomatic) and mapping (STAR)
+## BAQCOM_Scripts - Quality Control (Trimmomatic) and mapping (STAR)
 <br>
 <br>
 
-The CNPSA_Scripts is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
+The BAQCOM_Scripts is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
 <br>
 <br>
 <br>
 #STEP.1 - Download this repository to a preference path:<br>
+	# Git is required
 	 $ git clone https://github.com/hanielcedraz/CNPSA_Scripts.git
 <br>
 <br>
