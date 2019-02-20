@@ -3,6 +3,7 @@ if [[ ( $@ == "--help") ||  $@ == "-h" ]];
        echo "#Use this script to change the trimmomatic path in ".qc_trimmomatic" and put theses file into the bash"
        exit 0
     else
+       echo "It is not a valid argment. Try ./install.sh -h or ./install.sh --help"
     exit
 fi
 
