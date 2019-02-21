@@ -52,25 +52,27 @@ paste('##------', 'Analysis started on', date(), '------##')
 paste('version: 0.0.1')
 
 ########################################
-### PERFORMING QC ANALISYS
+### PERFORMING QC ANALYSIS
 ########################################
 
-## final preprocess file are linked (from Clean_Folder) to this folder
+
 if (detectCores() < opt$procs){
   write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep=" "),stdout()) 
   paste('Using ', detectCores(), 'threads')
 }
 
+# verify if sample_file exist
 if ( !file.exists(opt$samplesFile) ) {
   write(paste("Sample file",opt$samplesFile,"does not exist\n"), stderr())
   stop()
 }
 
+# create report_QC_temp folder
 report_folder <- 'report_QC_temp'
 if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
 
 
-
+# Trimmomatic analysis function
 trimmomatic.function <- function(){
   targets <- read.table(opt$samplesFile, header = F, as.is = T)
   for (i in 1:nrow(targets)){
@@ -99,6 +101,7 @@ system2('java', args = argments)
 res_final <- trimmomatic.function()
 
 
+# Creating samples report
 samples <- read.table(opt$samplesFile, header = F, as.is = T)
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
