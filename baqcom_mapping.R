@@ -62,18 +62,12 @@ if ( !file.exists(opt$samplesFile) ) {
 ######################################################################
 ## prepareCore
 ##      Set up the numer of processors to use
-##
-## Parameters
-##      opt_procs: processors given on the option line
-##      samples: number of samples
-##      targets: number of targets
-
-# if opt_procs set to 0 then expand to samples by targets
 if (detectCores() < opt$procs){
     write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep=" "),stdout())
     paste('Using ', detectCores(), 'threads')
 }
 
+# creating extracted_Folder
 extracted_Folder <- opt$extractedFolder
 if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
 
@@ -85,10 +79,8 @@ if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Fol
 # if(!file.exists(file.path(index_Folder))) dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE);
 
 star.index.function <- function(){
-    # if(!file.exists(file.path(index_Folder)))
     index_Folder <- paste(opt$genomeDir, '/', 'index_STAR', '/', sep = '')
     if(!file.exists(file.path(paste(index_Folder, '/', 'Genome', sep = '')))){ dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE)
-        #if(!file.exists(file.path(index_Folder))){
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs));
         PE <-paste()
         argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1)
@@ -98,7 +90,7 @@ star.index.function <- function(){
 }
 index_genom <- star.index.function()
 
-
+# Mapping analysis function
 mapping.STAR.function <- function(){
     targets <- read.table(opt$samplesFile, header = F, as.is = T)
     for (i in 1:nrow(targets)){
@@ -121,6 +113,7 @@ mapping.STAR.function <- function(){
 
 mapping_genom <- mapping.STAR.function()
 
+# Moving all unmapped files from 02-mappingSTAR folder to 03-Ummapped folder
 system('mv 02-mappingSTAR/*Unmapped.out.mate* 03-Ummapped/')
 
 #Creating mapping report
@@ -138,7 +131,7 @@ trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),]); report_fi
 write.table(report_final, file = 'mapping_report_STAR.txt', sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 
 
-
+# Creating EdgeR folder and preparing files
 edgeR_Folder <- '04-EdgeR'
 if(!file.exists(file.path(edgeR_Folder))) dir.create(file.path(edgeR_Folder), recursive = TRUE, showWarnings = FALSE)
 
