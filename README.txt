@@ -64,7 +64,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 
 STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
-#Generate the genome indexes files needs to be performed only one for each genome/annotation version.  After the index generation step, the mapping will be started automatically.
+#Generate the genome indexes files. This step needs to be performed just once for each genome/annotation version.  After the index generation step, the mapping will be started automatically.
 
 #This code will generate index and mapping.
 
