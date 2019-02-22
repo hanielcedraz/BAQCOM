@@ -14,6 +14,7 @@ echo -e "\n"
 #Run baqcom_qc.R
 echo -e "\n"
 echo "Running Quality Control Analysis"
+echo -e "\n"
 ./baqcom_qc.R -p 36
 echo -e "\n"
 
