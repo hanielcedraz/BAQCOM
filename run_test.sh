@@ -8,7 +8,7 @@ cp exemples/SAMPLE* 00-Fastq/
 
 #Creating samples.txt
 ./create_samples.sh
-
+echo -e "\n"
 
 
 #Run baqcom_qc.R
