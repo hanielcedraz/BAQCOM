@@ -64,6 +64,8 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 
 STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
+#Download the last release of the genome(.fa) and annotation(.gtf) of specie that you will work with
+#https://www.ensembl.org/info/data/ftp/index.html
 #Generate the genome indexes files. This step needs to be performed just once for each genome/annotation version.  After the index generation step, the mapping will be started automatically.
 
 #This code will generate index and mapping.
