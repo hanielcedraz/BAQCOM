@@ -25,7 +25,9 @@ fi
 
  
 if [ "$(uname)" == "Darwin" ]; then
+     chmod +x STAR_mac
      ln -s STAR_mac STAR
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+     chmod +x STAR_linux
      ln -s STAR_linux STAR
 fi
