@@ -12,9 +12,13 @@ cp exemples/SAMPLE* 00-Fastq/
 
 
 #Run baqcom_qc.R
+echo -e "\n"
 echo "Running Quality Control Analysis"
 ./baqcom_qc.R -p 36
+echo -e "\n"
 
 #Run baqcom_mapping.R
+echo -e "\n"
 echo "Running Mapping Analysis"
+echo -e "\n"
 ./baqcom_mapping.R -p 20 -m exemples/genome -t exemples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g exemples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
