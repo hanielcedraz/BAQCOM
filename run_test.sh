@@ -10,8 +10,7 @@ cp exemples/SAMPLE* 00-Fastq/
 ./create_samples.sh
 
 #Run baqcom_qc.R
-./baqcom_qc.R -p 36 
+./baqcom_qc.R -p 36
 
 #Run baqcom_mapping.R
-./baqcom_mapping.R -p 20 -m exemples/genome -t exemples/genome/Escherichia_coli.HUSEC2011CHR1.cdna.all.fa -g exemples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
-
+./baqcom_mapping.R -p 20 -m exemples/genome -t exemples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g exemples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
