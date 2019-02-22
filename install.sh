@@ -17,7 +17,7 @@ if [ $? -ne 0 ];
         cat ".baqcom_qc" | sed "s|XXX|$PWD|" > baqcom_qc.R
         echo -e "\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
         source ~/.bash_profile;
-        chmod +x baqcom_qc.R baqcom_mapping.R .install_packages.R create_samples.sh run_test.sh;
+        chmod +x baqcom_qc.R baqcom_mapping.R .install_packages.R create_samples.sh run_test.sh ;
         .install_packages.R;
     else
         echo "It is already installed"
