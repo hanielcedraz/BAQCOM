@@ -72,7 +72,7 @@ STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
 #Run at second time
 
-> baqcom_mapping.R -o 20 -m /dir/release_version/
+> baqcom_mapping.R -p 20 -m /dir/release_version/
 
 #obs. If needs to run the script with more than 20 thread, it must change ulimit in the system used (see "increasing_Limit_CentOS_7" file ==> https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/).
 
