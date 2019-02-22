@@ -68,7 +68,7 @@ STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
 #This code will generate index and mapping.
 
-> baqcom_mapping.R -p 20 -m /genome_annotation_directory/annotation_version/ -t /genome_annotation_directory/genome.fa -g /enome_annotation_directory/annotation_version/annotation_version.gtf
+> baqcom_mapping.R -p 20 -m /genome_annotation_directory/annotation_version/ -t /genome_annotation_directory/genome.fa -g /genome_annotation_directory/annotation_version/annotation_version.gtf
 
 #Run at second time
 
