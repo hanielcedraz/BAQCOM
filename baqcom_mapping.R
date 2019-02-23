@@ -37,7 +37,7 @@ option_list <- list(
     make_option(c("-e", "--extractFolder"), type="character", default="03-Ummapped",
                 help="if extractUnmapped, and/or extractMapped is TRUE, save resulting fastq to this folder [default %default]",
                 dest="extractedFolder"),
-    make_option(c("-z", "--readfilesCommand"), type = "character", default = "zcat",
+    make_option(c("-z", "--readfilesCommand"), type = "character", default = "gunzip",
                 help = "UncompressionCommandoption, whereUncompressionCommandis theun-compression command that takes the file name as input parameter, and sends the uncom-pressed output to stdout.",
                 dest = "Uncompress")
 )
@@ -102,7 +102,7 @@ mapping.STAR.function <- function(){
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))
         samtype <- paste('--outSAMtype', 'BAM Unsorted', 'SortedByCoordinate', sep = ' ')
         quantMode <- paste('--quantMode', 'TranscriptomeSAM', 'GeneCounts', sep = ' ')
-        gzip <- paste('--readFilesCommand', opt$Uncompress, sep = ' ' )
+        gzip <- paste('--readFilesCommand', '-c', opt$Uncompress, sep = ' ' )
         argments_mapping <- c('--genomeDir', paste(opt$genomeDir, '/', 'index_STAR', '/', sep = ''), '--runThreadN', procs, gzip, '--readFilesIn', input_read1, input_read2, samtype, quantMode, '--outReadsUnmapped', 'Fastx', '--outFileNamePrefix', output_sample)
         
         system2('STAR', args = argments_mapping)
