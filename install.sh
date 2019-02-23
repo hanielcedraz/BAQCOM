@@ -14,11 +14,12 @@ fi
 grep "$PWD" ~/.bash_profile > /dev/null
 if [ $? -ne 0 ]; 
     then
-        cat ".baqcom_qc" | sed "s|XXX|$PWD|" > baqcom_qc.R
+        cat "baqcom_qc" | sed "s|XXX|$PWD|" > baqcom_qc.R
         echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
         source ~/.bash_profile;
-        chmod +x baqcom_qc.R baqcom_mapping.R .install_packages.R create_samples.sh run_test.sh ;
-        ./.install_packages.R;
+        chmod +x baqcom_qc.R baqcom_mapping.R install_packages.R create_samples.sh run_test.sh ;
+        ./install_packages.R;
+        
     else
         echo "It is already installed"
 fi
@@ -34,5 +35,7 @@ else
     echo "Using MacOS"
 fi
 
+mv baqcom_qc .baqcom_qc
+mv install_packages.R .install_packages.R
 
 echo "successfully installed"
