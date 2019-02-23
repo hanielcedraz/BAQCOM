@@ -97,7 +97,7 @@ mapping.STAR.function <- function(){
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))
         samtype <- paste('--outSAMtype', 'BAM Unsorted', 'SortedByCoordinate', sep = ' ')
         quantMode <- paste('--quantMode', 'TranscriptomeSAM', 'GeneCounts', sep = ' ')
-        gzip <- paste('--readFilesCommand', '-c', opt$Uncompress, sep = ' ' )
+        gzip <- paste('--readFilesCommand', opt$Uncompress, '-c', sep = ' ' )
         argments_mapping <- c('--genomeDir', paste(opt$genomeDir, '/', 'index_STAR', '/', sep = ''), '--runThreadN', procs, gzip, '--readFilesIn', input_read1, input_read2, samtype, quantMode, '--outReadsUnmapped', 'Fastx', '--outFileNamePrefix', output_sample)
         
         system2('STAR', args = argments_mapping)
