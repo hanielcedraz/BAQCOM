@@ -27,9 +27,11 @@ fi
 if [ "$(uname)" == "Linux" ]; then
      chmod +x STAR_linux
      ln -s STAR_linux STAR
+     echo "Using Linux"
 else
     chmod +x STAR_mac
     ln -s STAR_mac STAR
+    echo "Using MacOS"
 fi
 
 
