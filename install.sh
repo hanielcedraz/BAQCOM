@@ -32,7 +32,7 @@ fi
 #     ln -s STAR_linux STAR
 #fi
 
-if [ "$(uname)" == "Darwin" ]; then
+if [ "$(uname)" == "Linux" ]; then
      chmod +x STAR_linux
      ln -s STAR_linux STAR
 else
