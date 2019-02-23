@@ -54,11 +54,6 @@ if ( !file.exists(opt$samplesFile) ) {
 }
 
 
-
-
-
-
-
 ######################################################################
 ## prepareCore
 ##      Set up the numer of processors to use
