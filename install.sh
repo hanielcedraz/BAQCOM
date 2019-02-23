@@ -18,7 +18,7 @@ if [ $? -ne 0 ];
         echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
         source ~/.bash_profile;
         chmod +x baqcom_qc.R baqcom_mapping.R .install_packages.R create_samples.sh run_test.sh ;
-        ./install_packages.R;
+        ./.install_packages.R;
     else
         echo "It is already installed"
 fi
