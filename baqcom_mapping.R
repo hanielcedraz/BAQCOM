@@ -87,7 +87,7 @@ index_genom <- star.index.function()
 
 # Mapping analysis function
 mapping.STAR.function <- function(){
-    targets <- read.table(opt$samplesFile, header = F, as.is = T)
+    targets <- read.table(opt$samplesFile, header = T, as.is = T)
     for (i in 1:nrow(targets)){
         Final_Folder <- opt$mappingFolder
         if(!file.exists(file.path(Final_Folder))) dir.create(file.path(Final_Folder), recursive = TRUE, showWarnings = FALSE)
@@ -113,7 +113,7 @@ system('mv 02-mappingSTAR/*Unmapped.out.mate* 03-Ummapped/')
 
 #Creating mapping report
 Final_Folder <- opt$mappingFolder
-samples <- read.table(opt$samplesFile, header = F, as.is = T)
+samples <- read.table(opt$samplesFile, header = T, as.is = T)
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
     report_sample[i] <- read.table(paste(Final_Folder, '/', i, '_', 'STAR_Log.final.out', sep = ""), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
