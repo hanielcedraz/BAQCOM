@@ -74,7 +74,7 @@ if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), 
 
 # Trimmomatic analysis function
 trimmomatic.function <- function(){
-  targets <- read.table(opt$samplesFile, header = F, as.is = T)
+  targets <- read.table(opt$samplesFile, header = T, as.is = T)
   for (i in 1:nrow(targets)){
   Final_Folder <- opt$output
   if(!file.exists(file.path(Final_Folder))) dir.create(file.path(Final_Folder), recursive = TRUE, showWarnings = FALSE)
@@ -102,7 +102,7 @@ res_final <- trimmomatic.function()
 
 
 # Creating samples report
-samples <- read.table(opt$samplesFile, header = F, as.is = T)
+samples <- read.table(opt$samplesFile, header = T, as.is = T)
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
   report_sample[i] <- read.table(paste(report_folder, '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
