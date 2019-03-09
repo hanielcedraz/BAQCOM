@@ -34,7 +34,7 @@ option_list <- list(
     make_option(c("-s", "--sjdboverhang"), type="integer", default=100,
                 help="Specifie the length of the genomic sequence around the annotated junction to be used in constructing the splice junctions database [default %default]",
                 dest="annoJunction"),
-    make_option(c("-e", "--extractFolder"), type="character", default="03-Ummapped",
+    make_option(c("-e", "--unmappedFolder"), type="character", default="03-Unmapped",
                 help="if extractUnmapped, and/or extractMapped is TRUE, save resulting fastq to this folder [default %default]",
                 dest="extractedFolder"),
     make_option(c("-z", "--readfilesCommand"), type = "character", default = "gunzip",
@@ -62,9 +62,6 @@ if (detectCores() < opt$procs){
     paste('Using ', detectCores(), 'threads')
 }
 
-# creating extracted_Folder
-extracted_Folder <- opt$extractedFolder
-if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
 
 ####################
 ### GENOME GENERATE
@@ -108,8 +105,14 @@ mapping.STAR.function <- function(){
 
 mapping_genom <- mapping.STAR.function()
 
-# Moving all unmapped files from 02-mappingSTAR folder to 03-Ummapped folder
-system('mv 02-mappingSTAR/*Unmapped.out.mate* 03-Ummapped/')
+
+# creating unmapped_Folder
+extracted_Folder <- opt$extractedFolder
+if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
+
+
+# Moving all unmapped files from 02-mappingSTAR folder to 03-Unmapped folder
+system('mv 02-mappingSTAR/*Unmapped.out.mate* 03-Unmapped/')
 
 #Creating mapping report
 Final_Folder <- opt$mappingFolder
