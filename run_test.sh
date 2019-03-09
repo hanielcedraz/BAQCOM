@@ -1,12 +1,12 @@
-gunzip exemples/genome/Escherichia*
+gunzip examples/genome/Escherichia*
 echo -e "files extracted successfully\n"
 
 #create input_folder
 mkdir 00-Fastq
 echo -e "00-Fast1 created successfully\n"
 
-#moving files from exemples folder to 00-Fastq Folder
-cp exemples/SAMPLE* 00-Fastq/
+#moving files from examples folder to 00-Fastq Folder
+cp examples/SAMPLE* 00-Fastq/
 echoh -e "files moved successfully\n"
 
 #Creating samples.txt
@@ -25,4 +25,4 @@ echo -e "\n"
 echo -e "\n"
 echo "Running Mapping Analysis"
 echo -e "\n"
-./baqcom_mapping.R -p 20 -m exemples/genome -t exemples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g exemples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
+./baqcom_mapping.R -p 20 -m examples/genome -t examples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g examples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
