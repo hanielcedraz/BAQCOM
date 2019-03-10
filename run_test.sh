@@ -3,7 +3,7 @@ echo -e "files extracted successfully\n"
 
 #create input_folder
 mkdir 00-Fastq
-echo -e "00-Fast1 created successfully\n"
+echo -e "00-Fastq created successfully\n"
 
 #moving files from examples folder to 00-Fastq Folder
 cp examples/SAMPLE* 00-Fastq/
