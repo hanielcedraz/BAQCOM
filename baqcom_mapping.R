@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-#STAR 
+#STAR
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
