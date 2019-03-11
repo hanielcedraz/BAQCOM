@@ -44,7 +44,7 @@ option_list <- list(
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 
-'Version: 0.0.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+'Version: 0.0.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 paste('##------', 'Analysis started on', date(), '------##')
@@ -71,6 +71,11 @@ if ( !file.exists(opt$samplesFile) ) {
 report_folder <- 'report_QC_temp'
 if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
 
+#Creating Fastqc plots before Quality Control
+antQC <- 'antQC'
+if(!file.exists(file.path(antQC))) dir.create(file.path(antQC), recursive = TRUE, showWarnings = FALSE)
+argments_antQC = c('00-Fastq/*', paste0('--outdir=', 'antQC/'))
+system2('fastqc', args = argments_antQC)
 
 # Trimmomatic analysis function
 trimmomatic.function <- function(){
@@ -99,6 +104,16 @@ system2('java', args = argments)
   }
 }
 res_final <- trimmomatic.function()
+
+
+#Creating Fastqc plots after Quality Control
+posQC <- 'posQC'
+if(!file.exists(file.path(posQC))) dir.create(file.path(posQC), recursive = TRUE, showWarnings = FALSE)
+
+argments_postQC = c('01-trimmomatic/*trim_PE*', paste0('--outdir=', 'posQC/'))
+system2('fastqc', args = argments_postQC)
+
+
 
 
 # Creating samples report
