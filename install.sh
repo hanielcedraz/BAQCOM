@@ -40,5 +40,5 @@ ln -s bin/FastQC/fastqc .
 
 mv baqcom_qc .baqcom_qc
 mv install_packages.R .install_packages.R
-
+chmod +x bin/FastQC/*.jar fastqc
 echo "successfully installed"
