@@ -3,4 +3,4 @@
 <b> baqcom_mapping Version 0.0.2 - 03/11/2019 </b><br>
 Changed genomeDir parameter in baqcom_mapping. Now does not need to indicate the genome index path. The default is the same path to gtf_target.<br><br>
 <b> baqcom_qc Version 0.0.2 - 03/11/2019 </b><br>
-added FastQC option
+added FastQC plots
