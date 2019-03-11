@@ -34,7 +34,7 @@ else
     ln -s bin/STAR_mac_2.7.0e STAR
     echo "Using MacOS"
 fi
-unzip bin/fastqc_v0.11.8.zip
+unzip -q bin/fastqc_v0.11.8.zip -d bin
 rm -f bin/fastqc_v0.11.8.zip
 ln -s bin/FastQC/fastqc .
 
