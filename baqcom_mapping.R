@@ -28,6 +28,9 @@ option_list <- list(
     make_option(c("-p", "--processors"), type="integer", default=8,
                 help="number of processors to use [default %default]",
                 dest="procs"),
+    make_option(c("-r", "--memoram"), type="character", default='31000000000',
+                help="maximum available RAM (bytes) for genome generation  [default %default]",
+                dest="mram"),
     make_option(c("-s", "--sjdboverhang"), type="integer", default=100,
                 help="Specifie the length of the genomic sequence around the annotated junction to be used in constructing the splice junctions database [default %default]",
                 dest="annoJunction"),
@@ -72,17 +75,13 @@ star.index.function <- function(){
     if(!file.exists(file.path(paste(index_Folder, '/', 'Genome', sep = '')))){ dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE)
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs));
         PE <-paste()
-        argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1)
+        argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1, '--limitGenomeGenerateRAM', opt$mram)
         system2('STAR', args = argments_index)
         
     } 
 }
 index_genom <- star.index.function()
 
-if (!file.exists(paste(dirname(opt$gtfTarget), '/', 'index_STAR', '/', 'Genome', sep = ''))) {
-    write(paste("Genome file does not exist\n"), stderr())
-    stop()
-}
 
 # Mapping analysis function
 mapping.STAR.function <- function(){
