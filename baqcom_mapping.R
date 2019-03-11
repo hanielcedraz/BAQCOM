@@ -73,7 +73,7 @@ star.index.function <- function(){
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs));
         PE <-paste()
         argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1)
-        system2('/Users/haniel/Documents/BAQCOM/STAR_mac_2.7.0e', args = argments_index)
+        system2('STAR', args = argments_index)
         
     } 
 }
