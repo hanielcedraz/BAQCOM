@@ -7,7 +7,7 @@ echo -e "00-Fastq created successfully\n"
 
 #moving files from examples folder to 00-Fastq Folder
 cp examples/SAMPLE* 00-Fastq/
-echoh -e "files moved successfully\n"
+echo -e "files moved successfully\n"
 
 #Creating samples.txt
 ./create_samples.sh
