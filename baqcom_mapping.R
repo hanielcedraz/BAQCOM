@@ -1,24 +1,30 @@
 #!/usr/bin/env Rscript
 
-#STAR
+
+
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
 
-# specify our desired options in a list
-# by default OptionParser will add an help option equivalent to
-# make_option(c("-h", "--help"), action="store_true", default=FALSE,
-# help="Show this help message and exit")
 option_list <- list(
     make_option(c("-f", "--file"), type="character", default="samples.txt",
                 help="The filename of the sample file [default %default]",
                 dest="samplesFile"),
+    make_option(c("-c", "--column"), type="character", default="SAMPLE_ID",
+                help="Column name from the sample sheet to use as read folder names [default %default]",
+                dest="samplesColumn"),    
     make_option(c("-i", "--inputFolder"), type="character", default="01-trimmomatic",
                 help="Directory where the sequence data is stored [default %default]",
-                dest="inputFolder"),
+                dest="inputFolder"),    
     make_option(c("-b", "--mappingFolder"), type="character", default='02-mappingSTAR',
                 help="Directory where to store the mapping results [default %default]",
                 dest="mappingFolder"),
+    make_option(c('-m', '--genome'), type = 'character', default = 'index_STAR',
+                help = 'Folder that contains fasta file genome [default %default]',
+                dest = 'genomeDir'),
+    make_option(c("-M", "--mappingAlgorithm"), type="character", default="STAR",
+                help="Mapping algorithm to use, supported is 'STAR' [default %default]",
+                dest="mappingAlgorithm"),
     make_option(c("-t", "--mappingTargets"), type="character", default="mapping_targets.txt",
                 help="Path to a fasta file, or tab delimeted file with [target name]\t[target fasta]\t[target gtf, optional] to run mapping against [default %default]",
                 dest="mappingTarget"),
@@ -26,11 +32,11 @@ option_list <- list(
                 help="Path to a gtf file, or tab delimeted file with [target name]\t[target fasta]\t[target gtf] to run mapping against [default %default]",
                 dest="gtfTarget"),
     make_option(c("-p", "--processors"), type="integer", default=8,
-                help="number of processors to use [default %default]",
+                help="number of processors to use [defaults %default]",
                 dest="procs"),
-    make_option(c("-r", "--memoram"), type="character", default='31000000000',
-                help="maximum available RAM (bytes) for genome generation  [default %default]",
-                dest="mram"),
+    make_option(c("-q", "--sampleprocs"), type="integer", default=2,
+                help="number of samples to process at time [default %default]",
+                dest="mprocs"),
     make_option(c("-s", "--sjdboverhang"), type="integer", default=100,
                 help="Specifie the length of the genomic sequence around the annotated junction to be used in constructing the splice junctions database [default %default]",
                 dest="annoJunction"),
@@ -41,30 +47,98 @@ option_list <- list(
                 help = "UncompressionCommandoption, whereUncompressionCommandis theun-compression command that takes the file name as input parameter, and sends the uncom-pressed output to stdout.",
                 dest = "Uncompress")
 )
-
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 
-'Version: 0.0.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
-if ( !file.exists(opt$samplesFile) ) {
-    write(paste("Sample file",file,"does not exist\n"), stderr())
-    stop()
+
+
+######################################################################
+## loadSampleFile
+"loadSamplesFile" <- function(file, reads_folder, column){
+    ## debug
+    file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
+    ##
+    if ( !file.exists(file) ) {
+        write(paste("Sample file",file,"does not exist\n"), stderr())
+        stop()
+    }    
+    ### column SAMPLE_ID should be the sample name
+    ### rows can be commented out with #
+    targets <- read.table(file,sep="",header=TRUE,as.is=TRUE)
+    if( !all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets)) ){
+        write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+        stop()
+    }
+    for (i in seq.int(nrow(targets$SAMPLE_ID))){
+        if (targets[i, column]){
+            ext <- unique(file_ext(dir(file.path(reads_folder,targets[i,column]),pattern="gz")))
+            if (length(ext) == 0){
+                write(paste("Cannot locate fastq or sff file in folder",targets[i,column],"\n"), stderr())
+                stop()
+            }
+            # targets$type[i] <- paste(ext,sep="/")
+        }
+        else {
+            ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
+            if (length(ext) == 0){
+                write(paste(targets[i,column],"is not a gz file\n"), stderr())
+                stop()
+            }
+            
+        }
+    }
+    write(paste("samples sheet contains", nrow(targets), "samples to process",sep=" "),stdout())    
+    return(targets)    
 }
+
+
+
+
 
 
 ######################################################################
 ## prepareCore
-##      Set up the numer of processors to use
-if (detectCores() < opt$procs){
-    write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep=" "),stdout())
-    paste('Using ', detectCores(), 'threads')
+##    Set up the numer of processors to use
+## 
+## Parameters
+##    opt_procs: processors given on the option line
+##    samples: number of samples
+##    targets: number of targets
+"prepareCore" <- function(opt_procs){
+    # if opt_procs set to 0 then expand to samples by targets
+    if (detectCores() < opt$procs){
+        write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep=" "),stdout())
+        paste('Using ', detectCores(), 'threads')
+    }
 }
 
-# creating extracted_Folder
-extracted_Folder <- opt$extractedFolder
-if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
+
+
+
+######################
+"mappingList" <- function(samples, reads_folder, column, algorithm){
+    mapping_list <- list()
+    for (i in seq.int(to=nrow(samples))){
+        reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
+        map <- lapply(c("_PE1","_PE2"),grep,x=reads,value=TRUE)
+        names(map) <- c("PE1","PE2")
+        for(j in samples$SAMPLE_ID){
+            mapping_list[[paste(map$sampleFolder,j[1],sep="_")]] <- map
+            mapping_list[[paste(map$sampleFolder,j[1],sep="_")]]$target_name <- j[1]
+            mapping_list[[paste(map$sampleFolder,j[1],sep="_")]]$target_path <- j[2]
+        }
+    }
+    write(paste("Setting up",length(mapping_list),"jobs",sep=" "),stdout())
+    return(mapping_list)
+}
+
+
+samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn) 
+procs <- prepareCore(opt$procs)
+mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn, opt$mappingAlgorithm)
+
 
 ####################
 ### GENOME GENERATE
@@ -75,7 +149,7 @@ star.index.function <- function(){
     if(!file.exists(file.path(paste(index_Folder, '/', 'Genome', sep = '')))){ dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE)
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs));
         PE <-paste()
-        argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1, '--limitGenomeGenerateRAM', opt$mram)
+        argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1)
         system2('STAR', args = argments_index)
         
     } 
@@ -83,27 +157,44 @@ star.index.function <- function(){
 index_genom <- star.index.function()
 
 
-# Mapping analysis function
-mapping.STAR.function <- function(){
-    targets <- read.table(opt$samplesFile, header = T, as.is = T)
-    for (i in 1:nrow(targets)){
-        Final_Folder <- opt$mappingFolder
-        if(!file.exists(file.path(Final_Folder))) dir.create(file.path(Final_Folder), recursive = TRUE, showWarnings = FALSE)
-        input_read1 <- paste(opt$inputFolder, '/', targets[i,1], '_trim_PE1.fastq.gz', sep = "")
-        input_read2 <- paste(opt$inputFolder, '/', targets[i,1], '_trim_PE2.fastq.gz', sep = "")
-        output_sample <- paste(opt$mappingFolder, '/', targets[i,1], '_', 'STAR_', sep = "")
-        procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))
-        samtype <- paste('--outSAMtype', 'BAM Unsorted', 'SortedByCoordinate', sep = ' ')
-        quantMode <- paste('--quantMode', 'TranscriptomeSAM', 'GeneCounts', sep = ' ')
-        gzip <- paste('--readFilesCommand', opt$Uncompress, '-c', sep = ' ' )
-        argments_mapping <- c('--genomeDir', paste(dirname(opt$gtfTarget), '/', 'index_STAR', '/', sep = ''), '--runThreadN', procs, gzip, '--readFilesIn', input_read1, input_read2, samtype, quantMode, '--outReadsUnmapped', 'Fastx', '--outFileNamePrefix', output_sample)
-        
-        system2('STAR', args = argments_mapping)
-        
-    }
+
+## create output folder
+mapping_Folder <- opt$mappingFolder
+if(!file.exists(file.path(mapping_Folder))) dir.create(file.path(mapping_Folder), recursive = TRUE, showWarnings = FALSE)
+
+
+# creating extracted_Folder
+extracted_Folder <- opt$extractedFolder
+if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
+
+
+star.mapping <- mclapply(mapping, function(index){
+    try({
+        system(paste('STAR', 
+                     '--genomeDir', 
+                     paste0(dirname(opt$gtfTarget), '/', 'index_STAR', '/'), 
+                     '--runThreadN', 
+                     ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
+                     '--readFilesCommand',
+                     paste(opt$Uncompress, '-c'),
+                     '--readFilesIn', 
+                     paste0(opt$inputFolder, '/', index$target_name, '_trim_PE1.fastq', collapse=","), 
+                     paste0(opt$inputFolder, '/', index$target_name, '_trim_PE2.fastq', collapse=","), 
+                     '--outSAMtype BAM Unsorted SortedByCoordinate', 
+                     '--quantMode TranscriptomeSAM GeneCounts', 
+                     '--outReadsUnmapped Fastx', 
+                     '--outFileNamePrefix', 
+                     paste0(opt$mappingFolder, '/', index$target_name, '_STAR_')))
+    })
     
+}, mc.cores = opt$mprocs
+)
+
+if (!all(sapply(star.mapping, "==", 0L))){
+    write(paste("Something went wrong with STAR mapping some jobs failed"),stderr())
+    stop()
 }
-mapping_genom <- mapping.STAR.function()
+
 
 # Moving all unmapped files from 02-mappingSTAR folder to 03-Ummapped folder
 system('mv 02-mappingSTAR/*Unmapped.out.mate* 03-Ummapped/')
@@ -113,7 +204,7 @@ Final_Folder <- opt$mappingFolder
 samples <- read.table(opt$samplesFile, header = T, as.is = T)
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
-    report_sample[i] <- read.table(paste(Final_Folder, '/', i, '_', 'STAR_Log.final.out', sep = ""), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
+    report_sample[i] <- read.table(paste0(Final_Folder, '/', i, '_STAR_Log.final.out'), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
     report_sample <- as.data.frame(report_sample)
 }
 
