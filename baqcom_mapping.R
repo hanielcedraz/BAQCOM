@@ -19,12 +19,9 @@ option_list <- list(
     make_option(c("-b", "--mappingFolder"), type="character", default='02-mappingSTAR',
                 help="Directory where to store the mapping results [default %default]",
                 dest="mappingFolder"),
-    make_option(c('-m', '--genome'), type = 'character', default = 'index_STAR',
+    make_option(c('-E', '--edgeR'), type = 'character', default = '04-EdgeR',
                 help = 'Folder that contains fasta file genome [default %default]',
-                dest = 'genomeDir'),
-    make_option(c("-M", "--mappingAlgorithm"), type="character", default="STAR",
-                help="Mapping algorithm to use, supported is 'STAR' [default %default]",
-                dest="mappingAlgorithm"),
+                dest = 'edgerFolder'),
     make_option(c("-t", "--mappingTargets"), type="character", default="mapping_targets.txt",
                 help="Path to a fasta file, or tab delimeted file with [target name]\t[target fasta]\t[target gtf, optional] to run mapping against [default %default]",
                 dest="mappingTarget"),
@@ -118,7 +115,7 @@ opt <- parse_args(OptionParser(option_list = option_list, description =  paste('
 
 
 ######################
-"mappingList" <- function(samples, reads_folder, column, algorithm){
+"mappingList" <- function(samples, reads_folder, column){
     mapping_list <- list()
     for (i in seq.int(to=nrow(samples))){
         reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
@@ -137,7 +134,7 @@ opt <- parse_args(OptionParser(option_list = option_list, description =  paste('
 
 samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn) 
 procs <- prepareCore(opt$procs)
-mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn, opt$mappingAlgorithm)
+mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
 
 
 ####################
@@ -197,7 +194,7 @@ if (!all(sapply(star.mapping, "==", 0L))){
 
 
 # Moving all unmapped files from 02-mappingSTAR folder to 03-Ummapped folder
-system('mv 02-mappingSTAR/*Unmapped.out.mate* 03-Ummapped/')
+system(paste0('mv', opt$mappingFolder, '/*Unmapped.out.mate* ', opt$extractedFolder, '/'))
 
 #Creating mapping report
 Final_Folder <- opt$mappingFolder
@@ -215,10 +212,10 @@ write.table(report_final, file = 'mapping_report_STAR.txt', sep = "\t", row.name
 
 
 # Creating EdgeR folder and preparing files
-edgeR_Folder <- '04-EdgeR'
+edgeR_Folder <- opt$edgerFolder
 if(!file.exists(file.path(edgeR_Folder))) dir.create(file.path(edgeR_Folder), recursive = TRUE, showWarnings = FALSE)
 
 
-comand_line <- paste('for i in $(ls 02-mappingSTAR/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t" $2', '}','\'', ' >', ' 04-EdgeR/"$b"_ReadsPerGene.counts; done', sep = '')
+comand_line <- paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t" $2', '}','\'', ' >', ' ', edgeR_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = '')
 
 system(comand_line, intern = FALSE)
