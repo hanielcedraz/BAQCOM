@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript 
 
-trimmomatic_dir <- paste('/Volumes/RED_32GB/BAQCOM_parallel/Trimmomatic-0.38/')
+trimmomatic_dir <- paste('XXX/Trimmomatic-0.38/')
 trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.38.jar', sep = "")
 ########################################
 ### LOADING PACKAGa################
@@ -154,12 +154,10 @@ write(paste("Start fastqc - AntQC"), stderr())
 antQC <- 'antQC'
 if(!file.exists(file.path(antQC))) dir.create(file.path(antQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,2:3]){
-        system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc',
+        system2('fastqc',
                paste0('00-Fastq/', i, ' --outdir=', 'antQC/'))
 }
 
-#argments_antQC = c('00-Fastq/*', paste0('--outdir=', 'antQC/'))
-#system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc', args = argments_antQC)
 
 ## create output folder
 output_Folder <- opt$output
@@ -196,7 +194,7 @@ write(paste("Start fastqc - PostQC"), stderr())
 posQC <- 'posQC'
 if(!file.exists(file.path(posQC))) dir.create(file.path(posQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
-    system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc',
+    system2('fastqc',
             paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'posQC/'))
 }
 
