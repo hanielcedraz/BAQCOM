@@ -1,11 +1,10 @@
 #!/usr/bin/env Rscript 
 
-trimmomatic_dir <- paste('XXX/Trimmomatic-0.38/')
+trimmomatic_dir <- paste('/Volumes/RED_32GB/BAQCOM_parallel/Trimmomatic-0.38/')
 trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.38.jar', sep = "")
 ########################################
-### LOADING PACKAGES
-########################################
-
+### LOADING PACKAGa################
+suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("optparse"))
 suppressPackageStartupMessages(library("parallel"))
 
@@ -18,38 +17,46 @@ suppressPackageStartupMessages(library("parallel"))
 # make_option(c("-h", "--help"), action="store_true", default=FALSE,
 # help="Show this help message and exit")
 option_list <- list(
-  make_option(c("-f", "--file"), type = "character", default = "samples.txt",
-              help = "The filename of the sample file [default %default]",
-              dest = "samplesFile"),
-  make_option(c("-d", "--directory"), type = "character", default = "00-Fastq",
-              help = "Directory where the raw sequence data is stored [default %default]",
-              dest = "Raw_Folder"),
-  make_option(c("-o", "--output"), type = "character", default = "01-trimmomatic",
-              help = "output folder [default %default]",
-              dest = "output"),
-  make_option(c("-p", "--processors"), type = "integer", default = 8,
-              help = "number of processors to use [default %default]",
-              dest = "procs"),
-  make_option(c("-a", "--adapters"), type  = 'character', default = 'TruSeq2-PE.fa',
-              help = "Directory where the adapter data is stored [default %default]",
-              dest = "adapters"),
-  make_option(c('-q', '--quality'), type = 'integer', default = 15,
-              help = 'Quality score to use during trimming [default %default]',
-              dest = 'qual'),
-  make_option(c("-m", "--miniumumLength"), type="integer", default=70,
-              help="Discard reads less then minimum length [default %default]",
-              dest="minL")
+    make_option(c("-f", "--file"), type = "character", default = "samples.txt",
+                help = "The filename of the sample file [default %default]",
+                dest = "samplesFile"),
+    make_option(c("-d", "--directory"), type = "character", default = "00-Fastq",
+                help = "Directory where the raw sequence data is stored [default %default]",
+                dest = "Raw_Folder"),
+    make_option(c("-c", "--column"), type="character", default="SAMPLE_ID",
+                help="Column name from the sample sheet to use as read folder names [default %default]",
+                dest="samplesColumn"),
+    make_option(c("-o", "--output"), type = "character", default = "01-trimmomatic",
+                help = "output folder [default %default]",
+                dest = "output"),
+    make_option(c("-p", "--processors"), type = "integer", default = 8,
+                help = "number of processors to use [default %default]",
+                dest = "procs"),
+    make_option(c("-s", "--sampleprocs"), type="integer", default=2,
+                help="number of samples to process at each time [default %default]",
+                dest="sampleToprocs"),
+    make_option(c("-a", "--adapters"), type  = 'character', default = 'TruSeq2-PE.fa',
+                help = "Directory where the adapter data is stored [default %default]",
+                dest = "adapters"),
+    make_option(c('-q', '--quality'), type = 'integer', default = 15,
+                help = 'Quality score to use during trimming [default %default]',
+                dest = 'qual'),
+    make_option(c('-w', '--window'), type = 'integer', default = 4,
+                help = 'Quality window to use during trimming quality [default %default]',
+                dest = 'window'),
+    make_option(c("-m", "--miniumumLength"), type="integer", default=70,
+                help="Discard reads less then minimum length [default %default]",
+                dest="minL")
 )
 
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 
-'Version: 0.1.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+                                                                               'Version: 0.2.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 paste('##------', 'Analysis started on', date(), '------##')
 
-paste('version: 0.0.1')
 
 ########################################
 ### PERFORMING QC ANALYSIS
@@ -57,71 +64,149 @@ paste('version: 0.0.1')
 
 
 if (detectCores() < opt$procs){
-  write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep=" "),stdout()) 
-  paste('Using ', detectCores(), 'threads')
+    write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep=" "),stdout()) 
+    paste('Using ', detectCores(), 'threads')
 }
 
 # verify if sample_file exist
 if ( !file.exists(opt$samplesFile) ) {
-  write(paste("Sample file",opt$samplesFile,"does not exist\n"), stderr())
-  stop()
+    write(paste("Sample file",opt$samplesFile,"does not exist\n"), stderr())
+    stop()
 }
+
+
+## loadSampleFile
+loadSamplesFile <- function(file, reads_folder, column){
+    ## debug
+    file = opt$samplesFile; reads_folder = opt$Raw_Folder; column = opt$samplesColumn
+    ##
+    if ( !file.exists(file) ) {
+        write(paste("Sample file",file,"does not exist\n"), stderr())
+        stop()
+    }    
+    ### column SAMPLE_ID should be the sample name
+    ### rows can be commented out with #
+    targets <- read.table(file,sep="",header=TRUE,as.is=TRUE)
+    if( !all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets)) ){
+        write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+        stop()
+    }
+    for (i in seq.int(nrow(targets$SAMPLE_ID))){
+        if (targets[i, column]){
+            ext <- unique(file_ext(dir(file.path(reads_folder,targets[i,column]),pattern="gz")))
+            if (length(ext) == 0){
+                write(paste("Cannot locate fastq or sff file in folder",targets[i,column],"\n"), stderr())
+                stop()
+            }
+            # targets$type[i] <- paste(ext,sep="/")
+        }
+        else {
+            ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
+            if (length(ext) == 0){
+                write(paste(targets[i,column],"is not a gz file\n"), stderr())
+                stop()
+            }
+            
+        }
+    }
+    write(paste("samples.txt contains", nrow(targets), "samples to process",sep=" "),stdout())    
+    return(targets)    
+}
+
+
+prepareCore <- function(opt_procs){
+    # if opt_procs set to 0 then expand to samples by targets
+    if(detectCores() < opt$procs) opt_procs <- detectCores()
+    write(paste("Using",opt_procs,"processors",sep=" "),stdout())
+    return(opt_procs)
+}
+
+qcList <- function(samples, reads_folder, column){
+    mapping_list <- list()
+    for (i in 1:nrow(samples)){
+        reads <- dir(path=file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+        #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+        map <- lapply(c("_R1","_R2"),grep,x=reads,value=TRUE)
+        names(map) <- c("R1","R2")
+        map$sampleName <-  samples[i,column]
+        map$R1 <- samples[i,2]
+        map$R2 <- samples[i,3]
+        for(j in samples$SAMPLE_ID){
+            mapping_list[[paste(map$R1, map$R2,sep="\n")]] <- map
+            mapping_list[[paste(map$sampleName,sep="_")]]
+        }
+    }
+    write(paste("Setting up",length(mapping_list),"jobs",sep=" "),stdout())
+    return(mapping_list)
+}
+
+samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
+procs <- prepareCore(opt$procs)
+qcquery <- qcList(samples, opt$Raw_Folder, opt$samplesColumn)
+
 
 # create report_QC_temp folder
 report_folder <- 'report_QC_temp'
 if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
 
 #Creating Fastqc plots before Quality Control
+write(paste("Start fastqc - AntQC"), stderr())
 antQC <- 'antQC'
 if(!file.exists(file.path(antQC))) dir.create(file.path(antQC), recursive = TRUE, showWarnings = FALSE)
-argments_antQC = c('00-Fastq/*', paste0('--outdir=', 'antQC/'))
-system2('fastqc', args = argments_antQC)
+for (i in samples[,2:3]){
+        system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc',
+               paste0('00-Fastq/', i, ' --outdir=', 'antQC/'))
+}
+
+#argments_antQC = c('00-Fastq/*', paste0('--outdir=', 'antQC/'))
+#system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc', args = argments_antQC)
+
+## create output folder
+output_Folder <- opt$output
+if(!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder), recursive = TRUE, showWarnings = FALSE)
+
 
 # Trimmomatic analysis function
-trimmomatic.function <- function(){
-  targets <- read.table(opt$samplesFile, header = T, as.is = T)
-  for (i in 1:nrow(targets)){
-  Final_Folder <- opt$output
-  if(!file.exists(file.path(Final_Folder))) dir.create(file.path(Final_Folder), recursive = TRUE, showWarnings = FALSE)
-  input_read1 <- paste(opt$Raw_Folder, '/', targets[i,2], sep = "")
-  input_read2 <- paste(opt$Raw_Folder, '/', targets[i,3], sep = "")
-  output_PE1 <- paste(opt$output, '/', targets[i,1], '_',
-                      'trim_PE1.fastq.gz', sep = "")
-  output_PE2 <- paste(opt$output, '/', targets[i,1], '_',
-                      'trim_PE2.fastq.gz', sep = "")
-  output_SE1 <- paste(opt$output, '/', targets[i,1], '_',
-                     'trim_SE1.fastq.gz', sep = "")
-  output_SE2 <- paste(opt$output, '/', targets[i,1], '_',
-                     'trim_SE2.fastq.gz', sep = "")
-  summary <- paste('-summary ', report_folder, '/', targets[i,1], '_', 'statsSummaryFile.txt', sep = "")
-  adapter <- paste('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', opt$adapters, ':2:30:10', sep = "")
-  minL <- paste('MINLEN:', opt$minL, sep = "")
-  procs <- ifelse(detectCores() < opt$procs, detectCores(), paste( opt$procs))
-  qual <- paste('SLIDINGWINDOW:4:', opt$qual, sep = '')
-argments = c('-jar', trimmomatic, 'PE', '-threads ', procs, input_read1, input_read2, output_PE1, output_SE1, output_PE2, output_SE2, adapter, 'LEADING:5', 'TRAILING:5', qual, minL, summary)
+write(paste("START Trimmomatic"), stderr())
+trimmomatic.function <- mclapply(qcquery, function(index){
+    try({
+        system(paste('java', '-jar', trimmomatic, 'PE', 
+        '-threads ',
+        ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
+        paste0(opt$Raw_Folder, '/', index$R1),
+        paste0(opt$Raw_Folder, '/', index$R2),
+        paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
+        paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
+        paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
+        paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'),
+        paste0('-summary ', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+        paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
+               opt$adapters, ':2:30:10'),		
+        paste0('MINLEN:', opt$minL),
+        paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual)
+)
+)
+})
+}, mc.cores = opt$sampleToprocs)
 
-system2('java', args = argments)
-  }
-}
-res_final <- trimmomatic.function()
 
 
 #Creating Fastqc plots after Quality Control
+write(paste("Start fastqc - PostQC"), stderr())
 posQC <- 'posQC'
 if(!file.exists(file.path(posQC))) dir.create(file.path(posQC), recursive = TRUE, showWarnings = FALSE)
-
-argments_postQC = c('01-trimmomatic/*trim_PE*', paste0('--outdir=', 'posQC/'))
-system2('fastqc', args = argments_postQC)
-
-
+for (i in samples[,1]){
+    system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc',
+            paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'posQC/'))
+}
 
 
 # Creating samples report
 samples <- read.table(opt$samplesFile, header = T, as.is = T)
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
-  report_sample[i] <- read.table(paste(report_folder, '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
-  report_sample <- as.data.frame(report_sample)
+    report_sample[i] <- read.table(paste(report_folder, '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
+    report_sample <- as.data.frame(report_sample)
 }
 
 
