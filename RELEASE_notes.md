@@ -10,3 +10,6 @@ added FastQC plots<br><br>
 <b> baqcom_mapping Version 0.2.0 - 03/19/2019 </b><br>
 Now you can run samples in parallel <br><br>
 <h1></h1>
+<b> baqcom_qc Version 0.2.0 - 03/21/2019 </b><br>
+Now you can run samples in parallel <br><br>
+<h1></h1>
