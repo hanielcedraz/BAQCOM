@@ -155,7 +155,7 @@ antQC <- 'antQC'
 if(!file.exists(file.path(antQC))) dir.create(file.path(antQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,2:3]){
         system2('fastqc',
-               paste0('00-Fastq/', i, ' --outdir=', 'antQC/', ' -t ', length(samples)))
+               paste0('00-Fastq/', i, ' --outdir=', 'antQC/', ' -t ', opt$sampleToprocs))
 }
 
 
@@ -195,7 +195,7 @@ posQC <- 'posQC'
 if(!file.exists(file.path(posQC))) dir.create(file.path(posQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
     system2('fastqc',
-            paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'posQC/', ' -t ', length(samples)))
+            paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'posQC/', ' -t ', opt$sampleToprocs))
 }
 
 
