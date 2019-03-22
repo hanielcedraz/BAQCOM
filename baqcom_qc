@@ -27,7 +27,7 @@ option_list <- list(
                 help="Column name from the sample sheet to use as read folder names [default %default]",
                 dest="samplesColumn"),
     make_option(c("-l", "--fastqc"), type="character", default="NO",
-                help="FastQC analysis. If desired, 'YES' [default %default]",
+                help="FastQC analysis. Specify 'yes' or 'no', (default: yes).  [default %default]",
                 dest="fastqc"),
     make_option(c("-o", "--output"), type = "character", default = "01-trimmomatic",
                 help = "output folder [default %default]",
