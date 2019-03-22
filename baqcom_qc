@@ -153,16 +153,15 @@ report_folder <- 'report_QC_temp'
 if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
 
 #Creating Fastqc plots before Quality Control
-if(opt$fastqc == 'YES'){
+if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
     write(paste("Start fastqc - BeforeQC"), stderr())
     beforeQC <- 'BeforeQC'
     if(!file.exists(file.path(beforeQC))) dir.create(file.path(beforeQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,2:3]){
-        system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc',
+        system2('fastqc',
                paste0('00-Fastq/', i, ' -o ', 'BeforeQC/', ' -t ', opt$sampleToprocs))
     }
 }
-
 
 
 ## create output folder
@@ -196,12 +195,12 @@ trimmomatic.function <- mclapply(qcquery, function(index){
 
 
 #Creating Fastqc plots after Quality Control
-if(opt$fastqc == 'YES'){
+if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
 write(paste("Start fastqc - AfterQC"), stderr())
 afterQC <- 'AfterQC'
 if(!file.exists(file.path(afterQC))) dir.create(file.path(afterQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
-    system2('/Volumes/RED_32GB/BAQCOM_parallel/bin/FastQC/fastqc',
+    system2('fastqc',
             paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'AfterQC/'))
     }
 }
