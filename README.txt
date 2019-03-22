@@ -60,7 +60,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 		#TruSeq3-PE.fa
 		#TruSeq3-SE.fa
 
-	$ baqcom_qc.R -p 36 
+	$ baqcom_qc.R -p 36 -s 3 -l yes
 
 STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
@@ -70,7 +70,7 @@ STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
 #This code will generate index and mapping.
 
-> baqcom_mapping.R -p 20 -q 3 -t /genome_annotation_directory/genome.fa -g /genome_annotation_directory/annotation_version/annotation_version.gtf 
+	$ baqcom_mapping.R -p 20 -q 3 -t /genome_annotation_directory/genome.fa -g /genome_annotation_directory/annotation_version/annotation_version.gtf 
 
 
 #obs. If needs to run the script with more than 20 thread, it must change ulimit in the system used (see "increasing_Limit_CentOS_7" file ==> https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/).
