@@ -35,10 +35,10 @@ option_list <- list(
                 help="number of samples to process at time [default %default]",
                 dest="mprocs"),
     make_option(c("-s", "--sjdboverhang"), type="integer", default=100,
-                help="Specifie the length of the genomic sequence around the annotated junction to be used in constructing the splice junctions database [default %default]",
+                help="Specify the length of the genomic sequence around the annotated junction to be used in constructing the splice junctions database [default %default]",
                 dest="annoJunction"),
-    make_option(c("-e", "--extractFolder"), type="character", default="03-Ummapped",
-                help="if extractUnmapped, and/or extractMapped is TRUE, save resulting fastq to this folder [default %default]",
+    make_option(c("-e", "--extractFolder"), type="character", default="03-Unmapped",
+                help="Save Unmapped reads to this folder [default %default]",
                 dest="extractedFolder"),
     make_option(c("-z", "--readfilesCommand"), type = "character", default = "gunzip",
                 help = "UncompressionCommandoption, whereUncompressionCommandis theun-compression command that takes the file name as input parameter, and sends the uncom-pressed output to stdout.",
@@ -193,8 +193,8 @@ if (!all(sapply(star.mapping, "==", 0L))){
 }
 
 
-# Moving all unmapped files from 02-mappingSTAR folder to 03-Ummapped folder
-system(paste0('mv', opt$mappingFolder, '/*Unmapped.out.mate* ', opt$extractedFolder, '/'))
+# Moving all unmapped files from 02-mappingSTAR folder to 03-Unmapped folder
+system(paste0('mv ', opt$mappingFolder, '/*Unmapped.out.mate* ', opt$extractedFolder, '/'))
 
 #Creating mapping report
 Final_Folder <- opt$mappingFolder
