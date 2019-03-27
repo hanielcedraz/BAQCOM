@@ -1,5 +1,17 @@
+if [[ $1 == "-h" ]];
+    then
+        echo "#Use this script to create a sample file from 00-Fastq folder"
+        exit 0
+elif [[ $# > 0 ]];
+    then
+        echo "It is not a valid argment. Try ./install.sh -h"
+        exit 1
+fi
+
+
+
 #
-#Criar o arquivo samples.txt
+#Creating samples_file.txt
 file="samples.txt"
 rm -f $file
 
