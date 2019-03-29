@@ -206,6 +206,7 @@ for (i in samples[,1]){
 }
 
 # Creating samples report
+if(length(samples[,1]) > 1){
 samples <- read.table(opt$samplesFile, header = T, as.is = T)
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
@@ -221,7 +222,7 @@ write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.na
 
 #Delete report folder
 unlink(report_folder, recursive = TRUE)
-
+}
 
 paste('##------', 'Analysis finished on', date(), '------##')
 
