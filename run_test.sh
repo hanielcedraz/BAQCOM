@@ -1,4 +1,4 @@
-bunzip2 examples/genome/Sus_scrofa*
+gunzip examples/genome/Escherichia*
 echo -e "files extracted successfully\n"
 
 #create input_folder
@@ -25,4 +25,4 @@ echo -e "\n"
 echo -e "\n"
 echo "Running Mapping Analysis"
 echo -e "\n"
-./baqcom_mapping.R -p 20 -q 2 -t examples/genome/Sus_scrofa.Sscrofa11.1.dna.chromosome.1.fa -g examples/genome/Sus_scrofa.Sscrofa11.1.95.chromosome.1.gtf
+./baqcom_mapping.R -p 20 -q 2 -t examples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g examples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
