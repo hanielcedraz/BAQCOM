@@ -35,14 +35,14 @@ fi
 
 if [ "$(uname)" == "Linux" ];
     then
-      chmod +x bin/STAR_linux_2.7.0e
+      chmod +x bin/STAR_linux_2.7.0f
       rm -f STAR
-      ln -s bin/STAR_linux_2.7.0e STAR
+      ln -s bin/STAR_linux_2.7.0f STAR
       echo "Symbolic link (STAR) created successfully"
     else
-      chmod +x bin/STAR_mac_2.7.0e
+      chmod +x bin/STAR_mac_2.7.0f
       rm -f STAR
-      ln -s bin/STAR_mac_2.7.0e STAR
+      ln -s bin/STAR_mac_2.7.0f STAR
       echo "Symbolic link (STAR) created successfully"
 fi
 
