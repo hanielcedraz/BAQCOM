@@ -16,8 +16,8 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	 $ ./install.sh<br>
 <br>
 <br>
-#STEP.2 - Install R and required libraries<br>
-	#Install 'optparse' and 'parallel' packages
+#STEP.2 - Install R <br>
+	
 
 
 
