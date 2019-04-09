@@ -45,7 +45,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 #	File R2: SAMPLENAME_any_necessary_information_R2_001.fastq.gz
 
 # If the files are splited in more than one R1 or R2 will be necessary to combine the equal R1 and R2 files. 
-	#you may follow this command: gunzip -c raw_fastq/*R1_001.fastq.gz > SAMPLEID_any_information_R1_001.fastq; gzip 00-Fastq/SAMPLEID_any_information_R1_001.fastq 00-Fastq/SAMPLEID_any_information_R1_001.fastq.gz; gunzip -c raw_fastq/*R2_001.fastq.gz > SAMPLEID_any_information_R2_001.fastq; gzip 00-Fastq/SAMPLEID_any_information_R2_001.fastq 00-Fastq/SAMPLEID_any_information_R2_001.fastq.gz
+	#you may follow this command: gunzip -c raw_fastq/*R1_001.fastq.gz > 00-Fastq/SAMPLEID_any_information_R1_001.fastq; gzip 00-Fastq/SAMPLEID_any_information_R1_001.fastq 00-Fastq/SAMPLEID_any_information_R1_001.fastq.gz; gunzip -c raw_fastq/*R2_001.fastq.gz > 00-Fastq/SAMPLEID_any_information_R2_001.fastq; gzip 00-Fastq/SAMPLEID_any_information_R2_001.fastq 00-Fastq/SAMPLEID_any_information_R2_001.fastq.gz
 	
 
 #STEP.6 - Run the quality control with Trimmomatic (baqcom_qc pipeline):
