@@ -1,0 +1,15 @@
+#################
+### CITATION
+#################
+Please cite Trimmomatic software:
+  'Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.'
+
+
+
+Please cite MultiQC software:
+  'MultiQC: Summarize analysis results for multiple tools and samples in a single report', 'Philip Ewels, Måns Magnusson, Sverker Lundin and Max Käller','Bioinformatics (2016)','doi: 10.1093/bioinformatics/btw354', 'PMID: 27312411'
+
+
+
+Please cite FastQC software:
+  'Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc'
