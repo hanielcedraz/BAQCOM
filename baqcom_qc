@@ -178,7 +178,7 @@ for (i in samples[,2:3]){
 output_Folder <- opt$output
 if(!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder), recursive = TRUE, showWarnings = FALSE)
 
-setwd('/Users/haniel/Downloads/BAQCOM/')
+
 # Trimmomatic analysis function
 write(paste("START Trimmomatic"), stderr())
 trimmomatic.function <- mclapply(qcquery, function(index){
@@ -249,19 +249,4 @@ write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.na
 #unlink(report_folder, recursive = TRUE)
 }
 
-#################
-### CITATION
-#################
-write(paste('Please cite Trimmomatic software:', sep = '\n', collapse = '\n', 'Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.'), stderr())
-
-write(paste('\n'), stderr())
-
-if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-    write(paste('Please cite MultiQC software:', sep = '\n', collapse = '\n', 'MultiQC: Summarize analysis results for multiple tools and samples in a single report', 'Philip Ewels, Måns Magnusson, Sverker Lundin and Max Käller','Bioinformatics (2016)','doi: 10.1093/bioinformatics/btw354', 'PMID: 27312411'), stderr())
-}
-
-write(paste('\n'), stderr())
-
-if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
-    write(paste('Please cite FastQC software:', sep = '\n', collapse = '\n', 'Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc'), stderr())
-}
+write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/How%20to%20citehttps://github.com/hanielcedraz/BAQCOM/blob/master/How%20to%20cite", "or see the file how_to_cite.txt"), stderr())
