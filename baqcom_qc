@@ -185,7 +185,7 @@ trimmomatic.function <- mclapply(qcquery, function(index){
             paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
                    opt$adapters, ':2:30:10'),		
             paste0('MINLEN:', opt$minL),
-            paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual), collapse = '\n'
+            paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual), collapse = '\t'
 )
 )
 })
