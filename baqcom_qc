@@ -59,7 +59,7 @@ option_list <- list(
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 
-                                                                               'Version: 0.2.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+                                                                               'Version: 0.2.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -249,4 +249,4 @@ write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.na
 #unlink(report_folder, recursive = TRUE)
 }
 
-write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/How%20to%20citehttps://github.com/hanielcedraz/BAQCOM/blob/master/How%20to%20cite", "or see the file how_to_cite.txt"), stderr())
+write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file how_to_cite.txt"), stderr())
