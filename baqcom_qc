@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript 
 
-trimmomatic_dir <- paste('XXX/Trimmomatic-0.38/')
+trimmomatic_dir <- paste('/Users/haniel/Downloads/BAQCOM/Trimmomatic-0.38/')
 trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.38.jar', sep = "")
 ########################################
 ### LOADING PACKAGES
@@ -30,6 +30,9 @@ option_list <- list(
     make_option(c("-l", "--fastqc"), type="character", default="no",
                 help="FastQC analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
                 dest="fastqc"),
+    make_option(c("-r", "--multiqc"), type="character", default="no",
+                help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
+                dest="multiqc"),
     make_option(c("-o", "--output"), type = "character", default = "01-trimmomatic",
                 help = "output folder [default %default]",
                 dest = "output"),
@@ -63,6 +66,15 @@ opt <- parse_args(OptionParser(option_list = option_list, description =  paste('
 ########################################
 ### PERFORMING QC ANALYSIS
 ########################################
+
+
+multiqc <- system('which multiqc > /dev/null')
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+    if(multiqc != 0){
+        write(paste("If you would like to use multiqc analysis, please install it using administrator permission or remove -r parameter"), stderr())
+        stop()
+    }
+}
 
 
 if (detectCores() < opt$procs){
@@ -187,12 +199,22 @@ trimmomatic.function <- mclapply(qcquery, function(index){
             paste0('MINLEN:', opt$minL),
             paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
             paste0('2> ',  report_folder, '/', index$sampleName, '_', 'multiqc_out.log'), collapse = '\t'
-)
+), ignore.stdout = TRUE
 )
 })
 }, mc.cores = opt$sampleToprocs)
 
+if (!all(sapply(trimmomatic.function, "==", 0L))){
+    write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+    stop()
+}
 
+
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+    system2('multiqc', c(report_folder, '-i', 'trimmomatic_'))
+}
+
+write(paste('\n'), stderr())
 
 #Creating Fastqc plots after Quality Control
 if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
@@ -205,6 +227,8 @@ for (i in samples[,1]){
     }
 }
 
+write(paste('\n'), stderr())
+
 # Creating samples report
 if(length(samples[,1]) > 1){
 samples <- read.table(opt$samplesFile, header = T, as.is = T)
@@ -213,6 +237,7 @@ for (i in samples[,1]) {
     report_sample[i] <- read.table(paste(report_folder, '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
     report_sample <- as.data.frame(report_sample)
 }
+
 
 
 trans_report <- t(report_sample); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_Read_Pairs', 'Pairs_Reads', 'Pairs_Read_Percent', 'Forward_Only_Surviving_Reads', 'Forward_Only_Surviving_Read_Percent', 'Reverse_Only_Surviving_Reads', 'Reverse_Only_Surviving_Read_Percent', 'Dropped_Reads', 'Dropped_Read_Percent')
@@ -224,4 +249,19 @@ write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.na
 unlink(report_folder, recursive = TRUE)
 }
 
+#################
+### CITATION
+#################
+write(paste('Please cite Trimmomatic software:', sep = '\n', collapse = '\n', 'Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.'), stderr())
 
+write(paste('\n'), stderr())
+
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+    write(paste('Please cite MultiQC software:', sep = '\n', collapse = '\n', 'MultiQC: Summarize analysis results for multiple tools and samples in a single report', 'Philip Ewels, Måns Magnusson, Sverker Lundin and Max Käller','Bioinformatics (2016)','doi: 10.1093/bioinformatics/btw354', 'PMID: 27312411'), stderr())
+}
+
+write(paste('\n'), stderr())
+
+if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
+    write(paste('Please cite FastQC software:', sep = '\n', collapse = '\n', 'Andrews S. (2010). FastQC: a quality control tool for high throughput sequence data. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc'), stderr())
+}
