@@ -19,6 +19,9 @@ option_list <- list(
     make_option(c("-b", "--mappingFolder"), type="character", default='02-mappingSTAR',
                 help="Directory where to store the mapping results [default %default]",
                 dest="mappingFolder"),
+    make_option(c("-r", "--multiqc"), type="character", default="no",
+                help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
+                dest="multiqc"),
     make_option(c('-E', '--edgeR'), type = 'character', default = '04-EdgeR',
                 help = 'Folder that contains fasta file genome [default %default]',
                 dest = 'edgerFolder'),
@@ -53,6 +56,13 @@ opt <- parse_args(OptionParser(option_list = option_list, description =  paste('
 
 
 
+multiqc <- system('which multiqc > /dev/null')
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+  if(multiqc != 0){
+    write(paste("Multiqc is not installed. If you would like to use multiqc analysis, please install it using administrator permission or remove -r parameter"), stderr())
+    stop()
+  }
+}
 
 ######################################################################
 ## loadSampleFile
@@ -132,7 +142,7 @@ mappingList <- function(samples, reads_folder, column){
         map$SE1 <- map$SE1[i]
         map$SE2 <- map$SE2[i]
         for(j in samples$SAMPLE_ID){
-        mapping_list[[paste(map$PE1, map$PE2, map$SE1, map$SE2, collapse = "\n")]] <- map
+        mapping_list[[paste(map$sampleName)]] <- map
         mapping_list[[paste(map$sampleName, sep="_")]]
     }
     }
@@ -240,6 +250,11 @@ trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),]); report_fi
 write.table(report_final, file = 'mapping_report_STAR.txt', sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }
 
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+  system2('multiqc', c(opt$mappingFolder, '-i', 'STAR_'))
+}
+
+write(paste('\n'), stderr())
 
 # Creating EdgeR folder and preparing files
 if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
@@ -248,4 +263,13 @@ if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
 edgeR_Folder <- opt$edgerFolder
 if(!file.exists(file.path(edgeR_Folder))){ dir.create(file.path(edgeR_Folder), recursive = TRUE, showWarnings = FALSE)}
 system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t" $2', '}','\'', ' >', ' ', edgeR_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
+}
+
+
+write(paste('Please cite STAR software:', sep = '\n', collapse = '\n', 'Alexander Dobin, Carrie A. Davis, Felix Schlesinger, Jorg Drenkow, Chris Zaleski, Sonali Jha, Philippe Batut, Mark Chaisson, Thomas R. Gingeras, STAR: ultrafast universal RNA-seq aligner, Bioinformatics, Volume 29, Issue 1, January 2013, Pages 15–21, https://doi.org/10.1093/bioinformatics/bts635'), stderr())
+
+write(paste('\n'), stderr())
+
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+  write(paste('Please cite MultiQC software', sep = '\n', collapse = '\n', 'MultiQC: Summarize analysis results for multiple tools and samples in a single report', 'Philip Ewels, Måns Magnusson, Sverker Lundin and Max Käller','Bioinformatics (2016)','doi: 10.1093/bioinformatics/btw354', 'PMID: 27312411'), stderr())
 }
