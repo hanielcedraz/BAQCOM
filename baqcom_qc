@@ -158,8 +158,8 @@ procs <- prepareCore(opt$procs)
 qcquery <- qcList(samples, opt$Raw_Folder, opt$samplesColumn)
 
 
-# create report_QC_temp folder
-report_folder <- 'report_QC_temp'
+# create report_QC folder
+report_folder <- 'report_QC'
 if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
 
 #Creating Fastqc plots before Quality Control
@@ -178,7 +178,7 @@ for (i in samples[,2:3]){
 output_Folder <- opt$output
 if(!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder), recursive = TRUE, showWarnings = FALSE)
 
-
+setwd('/Users/haniel/Downloads/BAQCOM/')
 # Trimmomatic analysis function
 write(paste("START Trimmomatic"), stderr())
 trimmomatic.function <- mclapply(qcquery, function(index){
@@ -204,14 +204,14 @@ trimmomatic.function <- mclapply(qcquery, function(index){
 })
 }, mc.cores = opt$sampleToprocs)
 
-if (!all(sapply(trimmomatic.function, "==", 0L))){
-    write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
-    stop()
-}
+# if (!all(sapply(trimmomatic.function, "==", 0L))){
+#     write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+#     stop()
+# }
 
 
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-    system2('multiqc', c(report_folder, '-i', 'trimmomatic_'))
+    system2('multiqc', paste(report_folder, '-i', 'trimmomatic_'))
 }
 
 write(paste('\n'), stderr())
@@ -246,7 +246,7 @@ write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.na
 
 
 #Delete report folder
-unlink(report_folder, recursive = TRUE)
+#unlink(report_folder, recursive = TRUE)
 }
 
 #################
