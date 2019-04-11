@@ -266,10 +266,7 @@ system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  
 }
 
 
-write(paste('Please cite STAR software:', sep = '\n', collapse = '\n', 'Alexander Dobin, Carrie A. Davis, Felix Schlesinger, Jorg Drenkow, Chris Zaleski, Sonali Jha, Philippe Batut, Mark Chaisson, Thomas R. Gingeras, STAR: ultrafast universal RNA-seq aligner, Bioinformatics, Volume 29, Issue 1, January 2013, Pages 15–21, https://doi.org/10.1093/bioinformatics/bts635'), stderr())
 
-write(paste('\n'), stderr())
 
-if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-  write(paste('Please cite MultiQC software', sep = '\n', collapse = '\n', 'MultiQC: Summarize analysis results for multiple tools and samples in a single report', 'Philip Ewels, Måns Magnusson, Sverker Lundin and Max Käller','Bioinformatics (2016)','doi: 10.1093/bioinformatics/btw354', 'PMID: 27312411'), stderr())
-}
+
+write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file how_to_cite.txt"), stderr())
