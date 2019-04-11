@@ -3,7 +3,8 @@
 trimmomatic_dir <- paste('XXX/Trimmomatic-0.38/')
 trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.38.jar', sep = "")
 ########################################
-### LOADING PACKAGa################
+### LOADING PACKAGES
+########################################
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("optparse"))
 suppressPackageStartupMessages(library("parallel"))
@@ -57,8 +58,6 @@ option_list <- list(
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 
                                                                                'Version: 0.2.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
-
-paste('##------', 'Analysis started on', date(), '------##')
 
 
 ########################################
@@ -129,19 +128,18 @@ qcList <- function(samples, reads_folder, column){
     for (i in 1:nrow(samples)){
         reads <- dir(path=file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
         #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-        map <- lapply(c("_R1","_R2"),grep,x=reads,value=TRUE)
+        map <- lapply(c("_R1","_R2"), grep, x = reads, value = TRUE)
         names(map) <- c("R1","R2")
         map$sampleName <-  samples[i,column]
         map$R1 <- samples[i,2]
         map$R2 <- samples[i,3]
-        for(j in samples$SAMPLE_ID){
-            mapping_list[[paste(map$R1, map$R2,sep="\n")]] <- map
-            mapping_list[[paste(map$sampleName,sep="_")]]
-        }
+            mapping_list[[paste(map$sampleName)]] <- map
+            #mapping_list[[paste(map$sampleName)]]
     }
     write(paste("Setting up",length(mapping_list),"jobs",sep=" "),stdout())
     return(mapping_list)
 }
+
 
 samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
 procs <- prepareCore(opt$procs)
@@ -223,7 +221,5 @@ write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.na
 #Delete report folder
 unlink(report_folder, recursive = TRUE)
 }
-
-paste('##------', 'Analysis finished on', date(), '------##')
 
 
