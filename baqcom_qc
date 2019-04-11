@@ -171,20 +171,21 @@ if(!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder), 
 write(paste("START Trimmomatic"), stderr())
 trimmomatic.function <- mclapply(qcquery, function(index){
     try({
-        system(paste('java', '-jar', trimmomatic, 'PE', 
-        '-threads ',
-        ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
-        paste0(opt$Raw_Folder, '/', index$R1),
-        paste0(opt$Raw_Folder, '/', index$R2),
-        paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
-        paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
-        paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
-        paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'),
-        paste0('-summary ', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
-        paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
-               opt$adapters, ':2:30:10'),		
-        paste0('MINLEN:', opt$minL),
-        paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual)
+        system(
+            paste('java', '-jar', trimmomatic, 'PE', 
+            paste0('-threads ',
+            ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
+            paste0(opt$Raw_Folder, '/', index$R1),
+            paste0(opt$Raw_Folder, '/', index$R2),
+            paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
+            paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
+            paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
+            paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'),
+            paste0('-summary ', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+            paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
+                   opt$adapters, ':2:30:10'),		
+            paste0('MINLEN:', opt$minL),
+            paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual)
 )
 )
 })
