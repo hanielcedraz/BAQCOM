@@ -220,7 +220,7 @@ trimmomatic.analysis <- mclapply(qcquery, function(index){
     })
 }, mc.cores = opt$sampleToprocs)
 
-if (!all(sapply(trimmomatic.function, "==", 0L))){
+if (!all(sapply(trimmomatic.analysis, "==", 0L))){
     write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
     stop()
 }
