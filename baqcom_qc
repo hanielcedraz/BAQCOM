@@ -43,7 +43,8 @@ option_list <- list(
                 help="number of samples to process at each time [default %default]",
                 dest="sampleToprocs"),
     make_option(c("-a", "--adapters"), type  = 'character', default = 'TruSeq2-PE.fa',
-                help = "Directory where the adapter data is stored [default %default]",
+                help = "Directory where the adapter data is stored. Options: TruSeq3-PE-2.fa, TruSeq3-SE.fa, NexteraPE-PE.fa, TruSeq3-PE.fa, TruSeq2-PE.fa, TruSeq2-SE.fa
+ [default %default]",
                 dest = "adapters"),
     make_option(c('-q', '--quality'), type = 'integer', default = 15,
                 help = 'Quality score to use during trimming [default %default]',
