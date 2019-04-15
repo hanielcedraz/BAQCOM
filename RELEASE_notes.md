@@ -17,6 +17,6 @@
   Including multiqc analysis <br><br>
 <h1></h1>
 <b> baqcom_qc Version 0.2. - 04/15/2019 </b><br>
-  Including two more options on trimming: LEADING and TRAILING <br><br>
+  Including two more options on trimming: LEADING and TRAILING <br>
   Including pigz option<br><br>
 <h1></h1>
