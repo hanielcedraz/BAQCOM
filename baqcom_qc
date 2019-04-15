@@ -186,37 +186,49 @@ output_Folder <- opt$output
 if(!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder), recursive = TRUE, showWarnings = FALSE)
 
 
+
 # Trimmomatic analysis function
+pigz <- system('which pigz > /dev/null')
 write(paste("START Trimmomatic"), stderr())
-trimmomatic.function <- mclapply(qcquery, function(index){
+trimmomatic.analysis <- mclapply(qcquery, function(index){
     try({
         system(
             paste('java', '-jar', trimmomatic, 'PE', 
-            paste0('-threads ',
-            ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
-            paste0(opt$Raw_Folder, '/', index$R1),
-            paste0(opt$Raw_Folder, '/', index$R2),
-            paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
-            paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
-            paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
-            paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'),
-            paste0('-summary ', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
-            paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
-                   opt$adapters, ':2:30:10'),
-            paste0('LEADING:', opt$leading),
-            paste0('TRAILING:', opt$trailing),
-            paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
-            paste0('MINLEN:', opt$minL),
-            paste0('2> ',  report_folder, '/', index$sampleName, '_', 'multiqc_out.log'), collapse = '\t'
-), ignore.stdout = TRUE
-)
-})
+                  paste0('-threads ',
+                  ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
+                  paste0(opt$Raw_Folder, '/', index$R1),
+                  paste0(opt$Raw_Folder, '/', index$R2),
+                  if(pigz == 0){
+                      paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq'))}        
+                  else{
+                      paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'))},
+                  paste0('-summary ', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+                  paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
+                         opt$adapters, ':2:30:10'),
+                  paste0('LEADING:', opt$leading),
+                  paste0('TRAILING:', opt$trailing),
+                  paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
+                  paste0('MINLEN:', opt$minL),
+                  paste0('2> ',  report_folder, '/', index$sampleName, '_', 'multiqc_out.log'), collapse = '\t'), ignore.stdout = TRUE
+        )
+    })
 }, mc.cores = opt$sampleToprocs)
 
-# if (!all(sapply(trimmomatic.function, "==", 0L))){
-#     write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
-#     stop()
-# }
+if (!all(sapply(trimmomatic.function, "==", 0L))){
+    write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+    stop()
+}
+
+
+if(pigz == 0){
+    system(paste0('pigz ', '-p ', opt$procs,' ', opt$output,'/*.fastq'))
+}
 
 
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
