@@ -80,19 +80,5 @@ if [ -e install_packages.R ];
         echo "packages are already installed"
 fi
 
-which multiqc > /dev/null
-if [ $? -ne 0 ];
-    then
-        echo "If you would like to use multiqc analysis, please install using administrator permission"
-        echo "Installation
-        #If pip is not installed, please install as follow:
-            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            python get-pip.py
-
-        #You can install MultiQC from PyPI using pip as follow:
-            pip install multiqc"
-
-        echo "More information, please acesse https://github.com/ewels/MultiQC"
-fi
 
 #echo "successfully installed"
