@@ -27,6 +27,19 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 #STEP.3 - Run install.sh. This file will replace the trimmomatic path into the .baqcom_qc and update ~/bash_profile directory path, so you can call the files from any directory.
 
 	$ ./install.sh
+	
+	If you would like to use multiqc analysis, please install it.
+Installation:
+        #If pip is not installed, please install as follow:
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python get-pip.py
+
+        #You can install MultiQC from PyPI using pip as follow:
+            pip install multiqc
+	More information, please acesse https://github.com/ewels/MultiQC
+	
+	
+	If you would like to use all power of the parallel, install pigz.
 
 #############
 ### RUNNING
