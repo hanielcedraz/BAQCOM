@@ -22,7 +22,7 @@ option_list <- list(
     make_option(c("-r", "--multiqc"), type="character", default="no",
                 help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
                 dest="multiqc"),
-    make_option(c('-E', '--edgeR'), type = 'character', default = '04-EdgeR',
+    make_option(c('-E', '--edgeR'), type = 'character', default = '04-GeneCounts',
                 help = 'Folder that contains fasta file genome [default %default]',
                 dest = 'edgerFolder'),
     make_option(c("-t", "--mappingTargets"), type="character", default="mapping_targets.fa",
