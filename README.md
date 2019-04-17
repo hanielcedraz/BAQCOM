@@ -16,8 +16,9 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	 $ ./install.sh<br>
 <br>
 <br>
-## STEP.2 - Install R: <br>
-	# Access https://cran.r-project.org
+
+## STEP.2 - Install R<br>
+	# Access https://cran.r-project.org<br>
 <br>
 <br>
 
