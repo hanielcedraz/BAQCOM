@@ -16,9 +16,10 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	 $ ./install.sh<br>
 <br>
 <br>
-## STEP.2 - Install R <br>
+## STEP.2 - Install R: <br>
+	# Access https://cran.r-project.org
 <br>
-
+<br>
 ## STEP.3 - Install pip and MultiQC:
 	# If you would like to use multiqc analysis, please install it.
 	# Installation:
@@ -28,7 +29,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	    
         # You can install MultiQC from PyPI using pip as follow:<br>
 		$ pip install multiqc<br>
-	# More information, please acesse https://github.com/ewels/MultiQC<br>
+	# More information, please access https://github.com/ewels/MultiQC<br>
 	<br>
 	<br>
 
