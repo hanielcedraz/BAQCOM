@@ -40,7 +40,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	     # Centos
 		$ sudo yum install pigz
 	     # Ubuntu
-	     	$ suto apt install pigz
+	     	$ sudo apt install pigz
 <br>
 <br>
 <br>
