@@ -13,7 +13,8 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 
 
 #STEP.1 - Install R and required libraries
-	#Install 'optparse' and 'parallel' packages
+	# Acsess https://cran.r-project.org
+	# Install 'optparse' and 'parallel' packages
 
 
 #################
@@ -36,7 +37,7 @@ Installation:
 
         #You can install MultiQC from PyPI using pip as follow:
             pip install multiqc
-	More information, please acesse https://github.com/ewels/MultiQC
+	More information, please acsess https://github.com/ewels/MultiQC
 	
 	
 	If you would like to use all power of the parallel, install pigz.
