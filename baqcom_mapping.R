@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-
-
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
@@ -24,7 +22,7 @@ option_list <- list(
                 dest="multiqc"),
     make_option(c('-E', '--edgeR'), type = 'character', default = '04-GeneCounts',
                 help = 'Folder that contains fasta file genome [default %default]',
-                dest = 'edgerFolder'),
+                dest = 'countsFolder'),
     make_option(c("-t", "--mappingTargets"), type="character", default="mapping_targets.fa",
                 help="Path to a fasta file, or tab delimeted file with [target fasta] to run mapping against [default %default]",
                 dest="mappingTarget"),
@@ -256,13 +254,13 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
 
 write(paste('\n'), stderr())
 
-# Creating EdgeR folder and preparing files
+# Creating GeneCounts folder and preparing files
 if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
   write(paste('Counts file was not generated because mapping step is running without gtf files'), stderr())
 } else{ 
-edgeR_Folder <- opt$edgerFolder
-if(!file.exists(file.path(edgeR_Folder))){ dir.create(file.path(edgeR_Folder), recursive = TRUE, showWarnings = FALSE)}
-system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t" $2', '}','\'', ' >', ' ', edgeR_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
+counts_Folder <- opt$countsFolder
+if(!file.exists(file.path(counts_Folder))){ dir.create(file.path(counts_Folder), recursive = TRUE, showWarnings = FALSE)}
+system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t" $2', '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
 }
 
 
