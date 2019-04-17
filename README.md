@@ -8,7 +8,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 <br>
 <br>
 <br>
-#STEP.1 - Download this repository to a preference path:<br>
+## STEP.1 - Download this repository to a preference path:<br>
 	# Git is required<br>
 	 $ git clone https://github.com/hanielcedraz/BAQCOM.git<br>
 	 $ cd BAQCOM<br>
@@ -16,7 +16,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	 $ ./install.sh<br>
 <br>
 <br>
-#STEP.2 - Install R <br>
+## STEP.2 - Install R <br>
 <br>
 If you would like to use multiqc analysis, please install it.
 Installation:
@@ -31,7 +31,8 @@ Installation:
 	<br>
 	If you would like to use all power of the parallel, install pigz.
 	
-
-
+<br>
+<br>
+<br>
 
 ## <a href="https://github.com/hanielcedraz/BAQCOM/blob/47ef1813f68f6c79f51e59a126024ab5d6ce1b3f/RELEASE_notes.md">RELEASEnotes</a>
