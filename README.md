@@ -20,6 +20,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	# Access https://cran.r-project.org
 <br>
 <br>
+
 ## STEP.3 - Install pip and MultiQC:
 	# If you would like to use multiqc analysis, please install it.
 	# Installation:
