@@ -37,7 +37,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 <br>
 
 ## STEP.4 - Install PigZ:
-	# If you would like to use parallel, Install the pigz to speed up your analysis results.
+	# To speed up your analysis results, install the pigz.
 	     # Centos
 		$ sudo yum install pigz
 	     # Ubuntu
