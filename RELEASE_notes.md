@@ -16,7 +16,7 @@
 <b> baqcom_qc and baqcom_mapping Version 0.2.1 - 04/11/2019 </b><br>
   Including multiqc analysis <br><br>
 <h1></h1>
-<b> baqcom_qc Version 0.2. - 04/15/2019 </b><br>
+<b> baqcom_qc Version 0.2.2 - 04/15/2019 </b><br>
   Including two more options on trimming: LEADING and TRAILING <br>
   Including pigz option<br><br>
 <h1></h1>
