@@ -172,12 +172,11 @@ star.index.function <- function(){
     index_Folder <- if(casefold(opt$gtfTarget, upper = FALSE) != 'no'){paste(dirname(opt$gtfTarget), '/', 'index_STAR', '/', sep = '')}else{paste(dirname(opt$mappingTarget), '/', 'index_STAR', '/', sep = '')}
     if(!file.exists(file.path(paste(index_Folder, '/', 'Genome', sep = '')))){ dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE)
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs));
-        #PE <-paste()
         argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
           write(paste('Running genomeGenerate without gtf file'), stderr())}
           else{ 
           c(paste('--sjdbGTFfile', opt$gtfTarget),
-          paste(' --sjdbOverhang ', opt$annoJunction-1))})
+          paste(' --sjdbOverhang ', opt$annoJunction-1))}, if(file.exists(star_parameters)){line})
         system2('STAR', args = argments_index)
         
     } 
