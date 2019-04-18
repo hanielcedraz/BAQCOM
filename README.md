@@ -32,8 +32,9 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
         # You can install MultiQC from PyPI using pip as follow:<br>
 		$ pip install multiqc<br>
 	# More information, please access https://github.com/ewels/MultiQC<br>
-	<br>
-	<br>
+	
+<br>
+<br>
 
 ## STEP.4 - Install PigZ:
 	# If you would like to use parallel, Install the pigz to speed up your analysis results.
