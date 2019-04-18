@@ -78,7 +78,7 @@ opt <- parse_args(OptionParser(option_list = option_list, description =  paste('
 multiqc <- system('which multiqc 2> /dev/null')
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
     if(multiqc != 0){
-        write(paste("Multiqc is not installed. If you would like to use multiqc analysis, please install it using administrator permission or remove -r parameter"), stderr())
+        write(paste("Multiqc is not installed. If you would like to use multiqc analysis, please install it or remove -r parameter"), stderr())
         stop()
     }
 }
