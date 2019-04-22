@@ -233,7 +233,7 @@ if(pigz == 0){
 
 
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-    system2('multiqc', paste(report_folder, '-i', 'trimmomatic_'))
+    system2('multiqc', paste(report_folder, '-i', 'trimmomatic_', '-f'))
 }
 
 write(paste('\n'), stderr())
