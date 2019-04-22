@@ -35,9 +35,12 @@ option_list <- list(
     make_option(c("-q", "--sampleprocs"), type="integer", default=2,
                 help="number of samples to process at time [default %default]",
                 dest="mprocs"),
-    make_option(c("-s", "--sjdboverhang"), type="integer", default=100,
+    make_option(c("-a", "--sjdboverhang"), type="integer", default=100,
                 help="Specify the length of the genomic sequence around the annotated junction to be used in constructing the splice junctions database [default %default]",
                 dest="annoJunction"),
+    make_option(c('-s', '--stranded'), type = 'character', default = 'no',
+                help = 'Select the output according to the strandedness of your data. options: no, yes and reverse [default %default]',
+                dest = 'stranded'),
     make_option(c("-e", "--extractFolder"), type="character", default="03-Unmapped",
                 help="Save Unmapped reads to this folder [default %default]",
                 dest="extractedFolder"),
@@ -50,7 +53,7 @@ option_list <- list(
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -250,11 +253,14 @@ write.table(report_final, file = 'mapping_report_STAR.txt', sep = "\t", row.name
 
 #MultiQC analysis
 trimo_report_folder <- 'report_QC'
-trimo_multiqc_folder <- 'trimmomatic__multiqc_report_data'
+multiqc_folder_trim_fastqc <- 'trimmomatic_fastQC_multiqc_report_data'
+trim_multiqc <- 'trimmomatic_multiqc_report_data'
+multiqc_data <- 'multiqc_data'
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-  if(file.exists(trimo_multiqc_folder)){
-  system2('multiqc', c(opt$mappingFolder, trimo_report_folder, '-f'))
-    unlink(c(trimo_multiqc_folder, 'STAR__multiqc_report_data', 'trimmomatic__multiqc_report.html', 'STAR__multiqc_report.html'), recursive = TRUE)
+  if(file.exists(multiqc_folder_trim_fastqc) || file.exists(multiqc_data) || file.exists(trim_multiqc)){
+    if(file.exists('BeforeQC') || file.exists('AfterQC')){
+  system2('multiqc', c(opt$mappingFolder, trimo_report_folder, 'BeforeQC', 'AfterQC', '-f'))}else{system2('multiqc', c(opt$mappingFolder, trimo_report_folder, '-f'))}
+    unlink(c(multiqc_folder_trim_fastqc, 'trimmomatic_fastQC_multiqc_report.html', trim_multiqc, 'trimmoatic_multiqc_report.html', 'STAR__multiqc_report.html', 'STAR__multiqc_report_data'), recursive = TRUE)
   }else{
     system2('multiqc', c(opt$mappingFolder, '-i', 'STAR_', '-f'))
   }
@@ -263,12 +269,24 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
 write(paste('\n'), stderr())
 
 # Creating GeneCounts folder and preparing files
+if(opt$stranded == 'no'){
+  opt$stranded <- 2
+}
+if(opt$stranded == 'yes'){
+  opt$stranded  <- 3
+}
+if(opt$stranded == 'reverse'){
+  opt$stranded  <- 4
+}
+
+
+
 if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
   write(paste('Counts file was not generated because mapping step is running without gtf files'), stderr())
 } else{ 
 counts_Folder <- opt$countsFolder
 if(!file.exists(file.path(counts_Folder))){ dir.create(file.path(counts_Folder), recursive = TRUE, showWarnings = FALSE)}
-system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t" $2', '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
+system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t"', '$', opt$stranded, '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
 }
 
 
