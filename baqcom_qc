@@ -31,7 +31,7 @@ option_list <- list(
                 help="FastQC analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
                 dest="fastqc"),
     make_option(c("-r", "--multiqc"), type="character", default="no",
-                help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
+                help="multiqc analysis. Specify 'yes' or 'no'.  [default %default]",
                 dest="multiqc"),
     make_option(c("-o", "--output"), type = "character", default = "01-trimmomatic",
                 help = "output folder [default %default]",
@@ -170,9 +170,9 @@ report_folder <- 'report_QC'
 if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
 
 #Creating Fastqc plots before Quality Control
+beforeQC <- 'BeforeQC'
 if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
     write(paste("Start fastqc - BeforeQC"), stderr())
-    beforeQC <- 'BeforeQC'
     if(!file.exists(file.path(beforeQC))) dir.create(file.path(beforeQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,2:3]){
         system2('fastqc',
@@ -232,22 +232,28 @@ if(pigz == 0){
 }
 
 
-if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-    system2('multiqc', paste(report_folder, '-i', 'trimmomatic_', '-f'))
-}
-
 write(paste('\n'), stderr())
 
 #Creating Fastqc plots after Quality Control
+afterQC <- 'AfterQC'
 if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
 write(paste("Start fastqc - AfterQC"), stderr())
-afterQC <- 'AfterQC'
 if(!file.exists(file.path(afterQC))) dir.create(file.path(afterQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
     system2('fastqc',
             paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'AfterQC/'))
     }
 }
+
+write(paste('\n'), stderr())
+
+if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
+    if(file.exists(beforeQC) || file.exists(afterQC)){
+    system2('multiqc', paste(report_folder, beforeQC, afterQC, '-i', 'trimmomatic_fastQC', '-f'))
+    }else{
+        system2('multiqc', paste(report_folder, '-i', 'trimmomatic', '-f'))
+    }    
+}     
 
 write(paste('\n'), stderr())
 
