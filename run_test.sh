@@ -18,11 +18,11 @@ echo -e "\n"
 echo -e "\n"
 echo "Running Quality Control Analysis"
 echo -e "\n"
-./baqcom_qc.R -p 36 -s 2 -l yes
+./baqcom_qc.R -p 36 -s 2 -l yes -r yes
 echo -e "\n"
 
 #Run baqcom_mapping.R
 echo -e "\n"
 echo "Running Mapping Analysis"
 echo -e "\n"
-./baqcom_mapping.R -p 20 -q 2 -t examples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g examples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf
+./baqcom_mapping.R -p 20 -q 2 -t examples/genome/Escherichia_coli.HUSEC2011CHR1.dna.toplevel.fa -g examples/genome/Escherichia_coli.HUSEC2011CHR1.42.gtf -r yes
