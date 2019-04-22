@@ -195,6 +195,7 @@ extracted_Folder <- opt$extractedFolder
 if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
 
 
+#Mapping
 star.mapping <- mclapply(mapping, function(index){
     try({
         system(paste('STAR', 
@@ -247,8 +248,16 @@ trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),]); report_fi
 write.table(report_final, file = 'mapping_report_STAR.txt', sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }
 
+#MultiQC analysis
+trimo_report_folder <- 'report_QC'
+trimo_multiqc_folder <- 'trimmomatic__multiqc_report_data'
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-  system2('multiqc', c(opt$mappingFolder, '-i', 'STAR_'))
+  if(file.exists(trimo_multiqc_folder)){
+  system2('multiqc', c(opt$mappingFolder, trimo_report_folder, '-f'))
+    unlink(c(trimo_multiqc_folder, 'STAR__multiqc_report_data', 'trimmomatic__multiqc_report.html', 'STAR__multiqc_report.html'), recursive = TRUE)
+  }else{
+    system2('multiqc', c(opt$mappingFolder, '-i', 'STAR_', '-f'))
+  }
 }
 
 write(paste('\n'), stderr())
