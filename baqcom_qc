@@ -176,7 +176,7 @@ if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
     if(!file.exists(file.path(beforeQC))) dir.create(file.path(beforeQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,2:3]){
         system2('fastqc',
-               paste0('00-Fastq/', i, ' -o ', 'BeforeQC/', ' -t ', opt$sampleToprocs))
+               paste0(opt$Raw_Folder, i, ' -o ', 'BeforeQC/', ' -t ', opt$sampleToprocs))
     }
 }
 
@@ -241,7 +241,7 @@ write(paste("Start fastqc - AfterQC"), stderr())
 if(!file.exists(file.path(afterQC))) dir.create(file.path(afterQC), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
     system2('fastqc',
-            paste0('01-trimmomatic/', i, '_trim_PE*', ' --outdir=', 'AfterQC/'))
+            paste0(opt$output, i, '_trim_PE*', ' -0', 'AfterQC/', ' -t ', opt$sampleToprocs))
     }
 }
 
