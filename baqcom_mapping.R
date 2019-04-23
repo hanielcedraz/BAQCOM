@@ -106,7 +106,7 @@ loadSamplesFile <- function(file, reads_folder, column){
 
 
 
-
+ifelse(system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE) == 0, opt$Uncompress <- 'unpigz', 'gunzip')
 
 
 ######################################################################
