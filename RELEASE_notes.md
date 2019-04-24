@@ -24,6 +24,9 @@
   Including stranded options <br>
   <br><br>
 <h1></h1>
-
+<b> baqcom_qc and baqcom_mapping Version 0.2.3 - 04/23/2019 </b><br>
+  Change the fold names pattern and set up pigz as default of compressed files <br>
+  <br><br>
+<h1></h1>
 
 
