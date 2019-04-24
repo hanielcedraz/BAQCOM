@@ -11,18 +11,21 @@ option_list <- list(
     make_option(c("-c", "--column"), type="character", default="SAMPLE_ID",
                 help="Column name from the sample sheet to use as read folder names [default %default]",
                 dest="samplesColumn"),    
-    make_option(c("-i", "--inputFolder"), type="character", default="01-trimmomatic",
+    make_option(c("-i", "--inputFolder"), type="character", default="01-CleanedReads",
                 help="Directory where the sequence data is stored [default %default]",
                 dest="inputFolder"),    
-    make_option(c("-b", "--mappingFolder"), type="character", default='02-mappingSTAR',
+    make_option(c("-b", "--mappingFolder"), type="character", default='02-MappedReads',
                 help="Directory where to store the mapping results [default %default]",
                 dest="mappingFolder"),
-    make_option(c("-r", "--multiqc"), type="character", default="no",
-                help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
-                dest="multiqc"),
+    make_option(c("-e", "--extractFolder"), type="character", default="03-UnmappedReads",
+                help="Save Unmapped reads to this folder [default %default]",
+                dest="extractedFolder"),
     make_option(c('-E', '--edgeR'), type = 'character', default = '04-GeneCounts',
                 help = 'Folder that contains fasta file genome [default %default]',
                 dest = 'countsFolder'),
+    make_option(c("-r", "--multiqc"), type="character", default="no",
+                help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
+                dest="multiqc"),
     make_option(c("-t", "--mappingTargets"), type="character", default="mapping_targets.fa",
                 help="Path to a fasta file, or tab delimeted file with [target fasta] to run mapping against [default %default]",
                 dest="mappingTarget"),
@@ -41,23 +44,21 @@ option_list <- list(
     make_option(c('-s', '--stranded'), type = 'character', default = 'no',
                 help = 'Select the output according to the strandedness of your data. options: no, yes and reverse [default %default]',
                 dest = 'stranded'),
-    make_option(c("-e", "--extractFolder"), type="character", default="03-Unmapped",
-                help="Save Unmapped reads to this folder [default %default]",
-                dest="extractedFolder"),
-    make_option(c("-z", "--readfilesCommand"), type = "character", default = "gunzip",
-                help = "UncompressionCommandoption, whereUncompressionCommandis theun-compression command that takes the file name as input parameter, and sends the uncom-pressed output to stdout.",
-                dest = "Uncompress"),
     make_option(c("-x", "--external"), action = 'store', type = "character", default='FALSE',
                 help="a space delimeted file with a single line contain several external parameters from STAR [default %default]",
                 dest="externalParameters")
+    # make_option(c("-z", "--readfilesCommand"), type = "character", default = "gunzip",
+    #             help = "UncompressionCommandoption, whereUncompressionCommandis theun-compression command that takes the file name as input parameter, and sends the uncom-pressed output to stdout.",
+    #             dest = "Uncompress"),
+    
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.3', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
-multiqc <- system('which multiqc > /dev/null')
+multiqc <- system('which multiqc > /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
   if(multiqc != 0){
     write(paste("Multiqc is not installed. If you would like to use multiqc analysis, please install it or remove -r parameter"), stderr())
@@ -104,10 +105,12 @@ loadSamplesFile <- function(file, reads_folder, column){
     return(targets)    
 }
 
-
-
-ifelse(system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE) == 0, opt$Uncompress <- 'unpigz', 'gunzip')
-
+#pigz <- system('which pigz 2> /dev/null')
+if(system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE) == 0){
+  uncompress <- paste('unpigz', '-p', opt$procs)
+}else{
+  uncompress <- 'gunzip'
+}
 
 ######################################################################
 ## prepareCore
@@ -150,7 +153,6 @@ mappingList <- function(samples, reads_folder, column){
     write(paste("Setting up", length(mapping_list), "jobs"),stdout())
     return(mapping_list)
 }
-
 
 
 star_parameters <- opt$externalParameters
@@ -207,7 +209,7 @@ star.mapping <- mclapply(mapping, function(index){
                      '--runThreadN', 
                      ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
                      '--readFilesCommand',
-                     paste(opt$Uncompress, '-c'),
+                     paste(uncompress, '-c'),
                      '--readFilesIn',
                      paste0(index$PE1, collapse=","),
                      paste0(index$PE2, collapse=","), 
@@ -235,37 +237,40 @@ if (!all(sapply(star.mapping, "==", 0L))){
 system(paste0('mv ', opt$mappingFolder, '/*Unmapped.out.mate* ', opt$extractedFolder, '/'))
 
 #Creating mapping report
-Final_Folder <- opt$mappingFolder
-samples <- read.table(opt$samplesFile, header = T, as.is = T)
+reportsall <- '05-Reports'
+if(!file.exists(file.path(reportsall))) dir.create(file.path(reportsall), recursive = TRUE, showWarnings = FALSE)
+# Final_Folder <- opt$mappingFolder
+# samples <- read.table(opt$samplesFile, header = T, as.is = T)
 
 if(length(samples[,1]) > 1){
 report_sample <- array(dim = 0)
 for (i in samples[,1]) {
-    report_sample[i] <- read.table(paste0(Final_Folder, '/', i, '_STAR_Log.final.out'), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
+    report_sample[i] <- read.table(paste0(mapping_Folder, '/', i, '_STAR_Log.final.out'), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
     report_sample <- as.data.frame(report_sample)
 }
 
 t(report_sample[c(5, 8, 9),])
 trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),]); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', '%_reads_unmapped:short', '%_reads_unmapped:other')
 
-write.table(report_final, file = 'mapping_report_STAR.txt', sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
+write.table(report_final, file = paste0(reportsall, '/', 'mapping_report_STAR.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }
+
+
 
 #MultiQC analysis
-trimo_report_folder <- 'report_QC'
-multiqc_folder_trim_fastqc <- 'trimmomatic_fastQC_multiqc_report_data'
-trim_multiqc <- 'trimmomatic_multiqc_report_data'
+report_02 <- '02-Reports'
+fastqcbefore <- 'FastQCBefore'
+fastqcafter <- 'FastQCAfter'
 multiqc_data <- 'multiqc_data'
+baqcomqcreport <- 'reportBaqcomQC'
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
-  if(file.exists(multiqc_folder_trim_fastqc) || file.exists(multiqc_data) || file.exists(trim_multiqc)){
-    if(file.exists('BeforeQC') || file.exists('AfterQC')){
-  system2('multiqc', c(opt$mappingFolder, trimo_report_folder, 'BeforeQC', 'AfterQC', '-f'))}else{system2('multiqc', c(opt$mappingFolder, trimo_report_folder, '-f'))}
-    unlink(c(multiqc_folder_trim_fastqc, 'trimmomatic_fastQC_multiqc_report.html', trim_multiqc, 'trimmoatic_multiqc_report.html', 'STAR__multiqc_report.html', 'STAR__multiqc_report_data'), recursive = TRUE)
-  }else{
-    system2('multiqc', c(opt$mappingFolder, '-i', 'STAR_', '-f'))
-  }
-}
+  if(file.exists(paste0(report_02,'/',fastqcafter)) || file.exists(paste0(report_02,'/',fastqcbefore)) || file.exists(paste0(report_02,'/',multiqc_data))){
+  system2('multiqc', c(opt$mappingFolder, paste0(report_02,'/',fastqcbefore), paste0(report_02,'/',fastqcafter), paste0(report_02,'/',baqcomqcreport), '-o',  reportsall, '-f'))
+    }else{
+    system2('multiqc', c(opt$mappingFolder, '-o', reportsall, '-f'))
 
+    }
+}
 write(paste('\n'), stderr())
 
 # Creating GeneCounts folder and preparing files
@@ -286,11 +291,15 @@ if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
 } else{ 
 counts_Folder <- opt$countsFolder
 if(!file.exists(file.path(counts_Folder))){ dir.create(file.path(counts_Folder), recursive = TRUE, showWarnings = FALSE)}
-system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', '02-mappingSTAR', '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t"', '$', opt$stranded, '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
+system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', opt$mappingFolder, '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t"', '$', opt$stranded, '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
 }
 
+if(file.exists(report_02)){
+system(paste('mv', paste0(report_02, '/', baqcomqcreport), paste0(report_02, '/', 'qc_report_trimmomatic.txt'), paste0(report_02, '/', 'Fast*'), reportsall))
+}
 
-
-
+if(file.exists(report_02)){
+unlink(report_02, recursive = TRUE)
+}
 
 write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file how_to_cite.txt"), stderr())
