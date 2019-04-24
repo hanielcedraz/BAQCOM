@@ -28,12 +28,12 @@ option_list <- list(
                 help="Column name from the sample sheet to use as read folder names [default %default]",
                 dest="samplesColumn"),
     make_option(c("-l", "--fastqc"), type="character", default="no",
-                help="FastQC analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
+                help="FastQC analysis. Specify 'yes' or 'no'.  [default %default]",
                 dest="fastqc"),
     make_option(c("-r", "--multiqc"), type="character", default="no",
                 help="multiqc analysis. Specify 'yes' or 'no'.  [default %default]",
                 dest="multiqc"),
-    make_option(c("-o", "--output"), type = "character", default = "01-trimmomatic",
+    make_option(c("-o", "--output"), type = "character", default = "01-CleanedReads",
                 help = "output folder [default %default]",
                 dest = "output"),
     make_option(c("-p", "--processors"), type = "integer", default = 8,
@@ -66,7 +66,7 @@ option_list <- list(
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 
-                                                                               'Version: 0.2.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+                                                                               'Version: 0.2.3', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -114,7 +114,7 @@ loadSamplesFile <- function(file, reads_folder, column){
     }
     for (i in seq.int(nrow(targets$SAMPLE_ID))){
         if (targets[i, column]){
-            ext <- unique(file_ext(dir(file.path(reads_folder,targets[i,column]),pattern="gz")))
+            ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
             if (length(ext) == 0){
                 write(paste("Cannot locate fastq or sff file in folder",targets[i,column],"\n"), stderr())
                 stop()
@@ -122,7 +122,7 @@ loadSamplesFile <- function(file, reads_folder, column){
             # targets$type[i] <- paste(ext,sep="/")
         }
         else {
-            ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
+            ext <- file_ext(grep("gz", dir(file.path(reads_folder, targets[i, column])), value = TRUE))
             if (length(ext) == 0){
                 write(paste(targets[i,column],"is not a gz file\n"), stderr())
                 stop()
@@ -160,23 +160,28 @@ qcList <- function(samples, reads_folder, column){
 }
 
 
-samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
+samples <- loadSamplesFile(opt$samplesFile, opt$Raw_Folder, opt$samplesColumn)
 procs <- prepareCore(opt$procs)
 qcquery <- qcList(samples, opt$Raw_Folder, opt$samplesColumn)
 
 
-# create report_QC folder
-report_folder <- 'report_QC'
-if(!file.exists(file.path(report_folder))) dir.create(file.path(report_folder), recursive = TRUE, showWarnings = FALSE)
+# create report folders
+reports <- '02-Reports'
+if(!file.exists(file.path(reports))) dir.create(file.path(reports), recursive = TRUE, showWarnings = FALSE)
+
+report_folder <- 'reportBaqcomQC'
+if(!file.exists(file.path(paste0(reports,'/',report_folder)))) dir.create(file.path(paste0(reports,'/',report_folder)), recursive = TRUE, showWarnings = FALSE)
+
+
 
 #Creating Fastqc plots before Quality Control
-beforeQC <- 'BeforeQC'
+beforeQC <- 'FastQCBefore'
 if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
-    write(paste("Start fastqc - BeforeQC"), stderr())
-    if(!file.exists(file.path(beforeQC))) dir.create(file.path(beforeQC), recursive = TRUE, showWarnings = FALSE)
+    write(paste("Start fastqc - FastQCBefore"), stderr())
+    if(!file.exists(file.path(paste0(reports,'/', beforeQC)))) dir.create(file.path(paste0(reports,'/', beforeQC)), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
         system2('fastqc',
-               paste0(opt$Raw_Folder, '/', i,'*', ' -o ', 'BeforeQC/', ' -t ', opt$sampleToprocs))
+               paste0(opt$Raw_Folder, '/', i,'*', ' -o ', paste0(reports,'/', beforeQC), ' -t ', opt$sampleToprocs))
     }
 }
 
@@ -188,7 +193,7 @@ if(!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder), 
 
 
 # Trimmomatic analysis function
-pigz <- system('which pigz 2> /dev/null')
+pigz <- system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
 write(paste("START Trimmomatic"), stderr())
 trimmomatic.analysis <- mclapply(qcquery, function(index){
     try({
@@ -208,14 +213,14 @@ trimmomatic.analysis <- mclapply(qcquery, function(index){
                       paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
                       paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
                       paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'))},
-                  paste0('-summary ', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+                  paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
                   paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/', 
                          opt$adapters, ':2:30:10'),
                   paste0('LEADING:', opt$leading),
                   paste0('TRAILING:', opt$trailing),
                   paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
                   paste0('MINLEN:', opt$minL),
-                  paste0('2> ',  report_folder, '/', index$sampleName, '_', 'multiqc_out.log'), collapse = '\t'), ignore.stdout = TRUE
+                  paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'multiqc_out.log'), collapse = '\t'), ignore.stdout = TRUE
         )
     })
 }, mc.cores = opt$sampleToprocs)
@@ -228,22 +233,22 @@ if (!all(sapply(trimmomatic.analysis, "==", 0L))){
 
 if(pigz == 0){
     write(paste("Compressing files with pigz using", opt$procs, 'processors'),stderr())
-    system(paste0('pigz ', '-p ', opt$procs,' ', opt$output,'/*.fastq'))
+    system(paste0('pigz ', '-f ', '-p ', opt$procs,' ', opt$output,'/*.fastq'))
 }
 
 
 write(paste('\n'), stderr())
 
 #Creating Fastqc plots after Quality Control
-afterQC <- 'AfterQC'
+afterQC <- 'FastQCAfter'
 if(casefold(opt$fastqc, upper = FALSE) == 'yes'){
-write(paste("Start fastqc - AfterQC"), stderr())
-if(!file.exists(file.path(afterQC))) dir.create(file.path(afterQC), recursive = TRUE, showWarnings = FALSE)
+write(paste("Start fastqc - FastQCAfter"), stderr())
+if(!file.exists(file.path(paste0(reports,'/', afterQC)))) dir.create(file.path(paste0(reports,'/', afterQC)), recursive = TRUE, showWarnings = FALSE)
 for (i in samples[,1]){
     system2('fastqc',
-            paste0(opt$output, '/', i, '_trim_PE1*', ' -o ', 'AfterQC/', ' -t ', opt$sampleToprocs))
+            paste0(opt$output, '/', i, '_trim_PE1*', ' -o ', paste0(reports,'/', afterQC), ' -t ', opt$sampleToprocs))
     system2('fastqc',
-            paste0(opt$output, '/', i, '_trim_PE2*', ' -o ', 'AfterQC/', ' -t ', opt$sampleToprocs))
+            paste0(opt$output, '/', i, '_trim_PE2*', ' -o ', paste0(reports,'/',afterQC), ' -t ', opt$sampleToprocs))
     }
 }
 
@@ -251,9 +256,9 @@ write(paste('\n'), stderr())
 
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
     if(file.exists(beforeQC) || file.exists(afterQC)){
-    system2('multiqc', paste(report_folder, beforeQC, afterQC, '-i', 'trimmomatic_fastQC', '-f'))
+    system2('multiqc', paste(paste0(reports,'/', report_folder), paste0(reports,'/',beforeQC), paste0(reports,'/',afterQC), '-o', reports, '-f'))
     }else{
-        system2('multiqc', paste(report_folder, '-i', 'trimmomatic', '-f'))
+        system2('multiqc', paste(paste0(reports,'/', report_folder), '-o', reports, '-f'))
     }    
 }     
 
@@ -264,7 +269,7 @@ if(length(samples[,1]) > 1){
 samples <- read.table(opt$samplesFile, header = T, as.is = T)
 report_sample <- array(dim = 0)
 for (i in as.character(samples[,1])) {
-    report_sample[i] <- read.table(paste(report_folder, '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
+    report_sample[i] <- read.table(paste(paste0(reports,'/', report_folder), '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
     report_sample <- as.data.frame(report_sample)
 }
 
@@ -272,7 +277,7 @@ for (i in as.character(samples[,1])) {
 
 trans_report <- t(report_sample); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_Read_Pairs', 'Pairs_Reads', 'Pairs_Read_Percent', 'Forward_Only_Surviving_Reads', 'Forward_Only_Surviving_Read_Percent', 'Reverse_Only_Surviving_Reads', 'Reverse_Only_Surviving_Read_Percent', 'Dropped_Reads', 'Dropped_Read_Percent')
 
-write.table(report_final, file = 'qc_report_trimmomatic.txt', sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
+write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 
 
 #Delete report folder
