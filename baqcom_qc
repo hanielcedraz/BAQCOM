@@ -220,7 +220,7 @@ trimmomatic.analysis <- mclapply(qcquery, function(index){
                   paste0('TRAILING:', opt$trailing),
                   paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
                   paste0('MINLEN:', opt$minL),
-                  paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'multiqc_out.log'), collapse = '\t'), ignore.stdout = TRUE
+                  paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
         )
     })
 }, mc.cores = opt$sampleToprocs)
