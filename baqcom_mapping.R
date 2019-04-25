@@ -248,13 +248,19 @@ for (i in samples[,1]) {
     report_sample[i] <- read.table(paste0(mapping_Folder, '/', i, '_STAR_Log.final.out'), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
     report_sample <- as.data.frame(report_sample)
 }
-
-t(report_sample[c(5, 8, 9),])
+#t(report_sample[c(5, 8, 9),])
 trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),]); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', '%_reads_unmapped:short', '%_reads_unmapped:other')
 
 write.table(report_final, file = paste0(reportsall, '/', 'mapping_report_STAR.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
+}else{
+  report_sample <- read.table(paste0(mapping_Folder, '/', samples[,1], '_STAR_Log.final.out'), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
+  report_final <- data.frame(Samples = samples[,1], t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),])); 
+  
+  colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', '%_reads_unmapped:short', '%_reads_unmapped:other')
+  
+  
+  write.table(report_final, file = paste0(reportsall, '/', 'mapping_report_STAR.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }
-
 
 
 #MultiQC analysis
@@ -294,7 +300,7 @@ if(!file.exists(file.path(counts_Folder))){ dir.create(file.path(counts_Folder),
 system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', opt$mappingFolder, '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t"', '$', opt$stranded, '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
 }
 
-if(file.exists(report_02)){
+if(file.exists(report_02) || file.exists(fastqcbefore) || file.exists(fastqcafter)){
 system(paste('mv', paste0(report_02, '/', baqcomqcreport), paste0(report_02, '/', 'qc_report_trimmomatic.txt'), paste0(report_02, '/', 'Fast*'), reportsall))
 }
 
