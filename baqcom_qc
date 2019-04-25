@@ -272,16 +272,14 @@ for (i in as.character(samples[,1])) {
     report_sample[i] <- read.table(paste(paste0(reports,'/', report_folder), '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
     report_sample <- as.data.frame(report_sample)
 }
-
-
-
 trans_report <- t(report_sample); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_Read_Pairs', 'Pairs_Reads', 'Pairs_Read_Percent', 'Forward_Only_Surviving_Reads', 'Forward_Only_Surviving_Read_Percent', 'Reverse_Only_Surviving_Reads', 'Reverse_Only_Surviving_Read_Percent', 'Dropped_Reads', 'Dropped_Read_Percent')
 
 write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
-
-
-#Delete report folder
-#unlink(report_folder, recursive = TRUE)
+}else{
+    report_sample <- read.table(paste(paste0(reports,'/', report_folder), '/', samples[,1], '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
+    trans_report <- t(report_sample); 
+    colnames(trans_report) <- c('Input_Read_Pairs', 'Pairs_Reads', 'Pairs_Read_Percent', 'Forward_Only_Surviving_Reads', 'Forward_Only_Surviving_Read_Percent', 'Reverse_Only_Surviving_Reads', 'Reverse_Only_Surviving_Read_Percent', 'Dropped_Reads', 'Dropped_Read_Percent')
+    report_final <- data.frame(Samples = samples[,1], trans_report);
+    write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }
-
 write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file how_to_cite.txt"), stderr())
