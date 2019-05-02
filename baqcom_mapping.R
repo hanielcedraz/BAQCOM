@@ -300,7 +300,7 @@ if(!file.exists(file.path(counts_Folder))){ dir.create(file.path(counts_Folder),
 system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', opt$mappingFolder, '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t"', '$', opt$stranded, '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
 }
 
-if(file.exists(report_02) || file.exists(fastqcbefore) || file.exists(fastqcafter)){
+if(file.exists(report_02) || file.exists(paste0(report_02,'/',fastqcbefore)) || file.exists(paste0(report_02,'/',fastqcafter))){
 system(paste('mv', paste0(report_02, '/', baqcomqcreport), paste0(report_02, '/', 'qc_report_trimmomatic.txt'), paste0(report_02, '/', 'Fast*'), reportsall))
 }
 
