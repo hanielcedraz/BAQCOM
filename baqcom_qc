@@ -237,7 +237,7 @@ if(pigz == 0){
 }
 
 
-write(paste('\n'), stderr())
+cat('\n')
 
 #Creating Fastqc plots after Quality Control
 afterQC <- 'FastQCAfter'
@@ -252,7 +252,7 @@ for (i in samples[,1]){
     }
 }
 
-write(paste('\n'), stderr())
+cat('\n')
 
 if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
     if(file.exists(beforeQC) || file.exists(afterQC)){
@@ -262,7 +262,7 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
     }    
 }     
 
-write(paste('\n'), stderr())
+cat('\n')
 
 # Creating samples report
 if(length(samples[,1]) > 1){
@@ -282,4 +282,9 @@ write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt')
     report_final <- data.frame(Samples = samples[,1], trans_report);
     write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }
+
+system2('cat', paste0(reports,'/','qc_report_trimmomatic.txt'))
+
+cat('\n')
+
 write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file how_to_cite.txt"), stderr())
