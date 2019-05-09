@@ -277,7 +277,7 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
 
     }
 }
-write(paste('\n'), stderr())
+cat('\n')
 
 # Creating GeneCounts folder and preparing files
 if(opt$stranded == 'no'){
@@ -308,4 +308,8 @@ if(file.exists(report_02)){
 unlink(report_02, recursive = TRUE)
 }
 
+        
+system2('cat', paste0(reportsall, '/', 'mapping_report_STAR.txt'))
+
+cat('\n')
 write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file how_to_cite.txt"), stderr())
