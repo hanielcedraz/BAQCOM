@@ -11,7 +11,7 @@ option_list <- list(
     make_option(c("-c", "--column"), type="character", default="SAMPLE_ID",
                 help="Column name from the sample sheet to use as read folder names [default %default]",
                 dest="samplesColumn"),    
-    make_option(c("-i", "--inputFolder"), type="character", default="01-CleanedReads",
+    make_option(c("-r", "--inputFolder"), type="character", default="01-CleanedReads",
                 help="Directory where the sequence data is stored [default %default]",
                 dest="inputFolder"),    
     make_option(c("-b", "--mappingFolder"), type="character", default='02-MappedReads',
@@ -20,17 +20,17 @@ option_list <- list(
     make_option(c("-e", "--extractFolder"), type="character", default="03-UnmappedReads",
                 help="Save Unmapped reads to this folder [default %default]",
                 dest="extractedFolder"),
-    make_option(c('-E', '--edgeR'), type = 'character', default = '04-GeneCounts',
+    make_option(c('-E', '--countFolder'), type = 'character', default = '04-GeneCounts',
                 help = 'Folder that contains fasta file genome [default %default]',
                 dest = 'countsFolder'),
-    make_option(c("-r", "--multiqc"), type="character", default="no",
+    make_option(c("-m", "--multiqc"), type="character", default="no",
                 help="multiqc analysis. Specify 'yes' or 'no', (default: no).  [default %default]",
                 dest="multiqc"),
     make_option(c("-t", "--mappingTargets"), type="character", default="mapping_targets.fa",
-                help="Path to a fasta file, or tab delimeted file with [target fasta] to run mapping against [default %default]",
+                help="Path to a fasta file, or tab delimeted file with [target fasta] to run mapping against (default %default); or path to the directory where the genome indices are stored (path to the genoma_file/index_STAR.",
                 dest="mappingTarget"),
     make_option(c("-g", "--gtfTargets"), type="character", default="gtf_targets.gtf",
-                help="Path to a gtf file, or tab delimeted file with [target gtf] to run mapping against. If would like to run without gtf file, specify 'no' at the -g option [default %default]",
+                help="Path to a gtf file, or tab delimeted file with [target gtf] to run mapping against. If would like to run without gtf file, -g option is not required [default %default]",
                 dest="gtfTarget"),
     make_option(c("-p", "--processors"), type="integer", default=8,
                 help="number of processors to use [defaults %default]",
@@ -45,8 +45,17 @@ option_list <- list(
                 help = 'Select the output according to the strandedness of your data. options: no, yes and reverse [default %default]',
                 dest = 'stranded'),
     make_option(c("-x", "--external"), action = 'store', type = "character", default='FALSE',
-                help="a space delimeted file with a single line contain several external parameters from STAR [default %default]",
-                dest="externalParameters")
+                help="A space delimeted file with a single line contain several external parameters from STAR [default %default]",
+                dest="externalParameters"),
+    make_option(c("-i", "--index"), action="store_true", default=FALSE,
+                help="This option directs STAR to re-run genome indices generation job. [%default]",
+                dest="indexBuild"),
+    make_option(c("-o", "--outSAMtype"), type="character", default="SortedByCoordinate",
+                help="Output sorted by coordinate Aligned.sortedByCoord.out.bam file (default: %default); Output unsorted Aligned.out.bam file (Unsorted); Output both unsorted and sorted files (UnsortedSortedByCoordinate).",
+                dest="outSAMtype"),
+    make_option(c("-u", "--quantMode"), type="character", default="GeneCounts",
+                help="Types of quantifcation requested: Output SAM/BAM alignments to transcriptome into a separate file (TranscriptomeSAM); Count reads per gene (default: %default); Output both transcriptome and reads per gene files (TranscriptomeSAMGeneCounts).",
+                dest="quantMode")
     # make_option(c("-z", "--readfilesCommand"), type = "character", default = "gunzip",
     #             help = "UncompressionCommandoption, whereUncompressionCommandis theun-compression command that takes the file name as input parameter, and sends the uncom-pressed output to stdout.",
     #             dest = "Uncompress"),
@@ -54,7 +63,7 @@ option_list <- list(
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.3', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.2.4', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -165,19 +174,27 @@ samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
 procs <- prepareCore(opt$procs)
 mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
 
-
+cat('\n')
 
 ####################
 ### GENOME GENERATE
 ####################
 
 #gtf <- if(file.exists(opt$gtfTarget)){paste('--sjdbGTFfile', opt$gtfTarget)}
+index_Folder <- paste(dirname(opt$mappingTarget), '/', 'index_STAR', '/', sep = '')
+
+if(opt$indexBuild){
+  #file.remove(index_Folder, recursive = TRUE)
+  unlink(index_Folder, recursive = TRUE, force = TRUE)
+  #system(paste('rm -rf', paste0(dirname(opt$mappingTarget), '/', 'index_STAR', '/')))
+}
 
 star.index.function <- function(){
-    index_Folder <- if(casefold(opt$gtfTarget, upper = FALSE) != 'no'){paste(dirname(opt$gtfTarget), '/', 'index_STAR', '/', sep = '')}else{paste(dirname(opt$mappingTarget), '/', 'index_STAR', '/', sep = '')}
+    index_Folder <- paste(dirname(opt$mappingTarget), '/', 'index_STAR', '/', sep = '')
     if(!file.exists(file.path(paste(index_Folder, '/', 'Genome', sep = '')))){ dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE)
+      write(paste('Starting genomeGenerate'), stderr())
         procs <- ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs));
-        argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
+        argments_index <- c('--runMode', 'genomeGenerate', '--runThreadN', procs, '--genomeDir', index_Folder, '--genomeFastaFiles', opt$mappingTarget, if(!file.exists(opt$gtfTarget)){
           write(paste('Running genomeGenerate without gtf file'), stderr())}
           else{ 
           c(paste('--sjdbGTFfile', opt$gtfTarget),
@@ -186,10 +203,19 @@ star.index.function <- function(){
         
     } 
 }
+
 index_genom <- star.index.function()
 
 
+if(opt$outSAMtype == casefold(paste('UnsortedSortedByCoordinate'), upper = FALSE)){
+opt$outSAMtype <- paste('Unsorted SortedByCoordinate')
+}
 
+if(opt$quantMode == casefold(paste('TranscriptomeSAMGeneCounts'), upper = FALSE)){
+  opt$quantMode <- paste('TranscriptomeSAM GeneCounts')
+}
+
+  
 ## create output folder
 mapping_Folder <- opt$mappingFolder
 if(!file.exists(file.path(mapping_Folder))) dir.create(file.path(mapping_Folder), recursive = TRUE, showWarnings = FALSE)
@@ -199,13 +225,16 @@ if(!file.exists(file.path(mapping_Folder))) dir.create(file.path(mapping_Folder)
 extracted_Folder <- opt$extractedFolder
 if(!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
 
-
+cat('\n')
 #Mapping
+
+
 star.mapping <- mclapply(mapping, function(index){
+  write(paste('Starting Mapping'), stderr())
     try({
         system(paste('STAR', 
                      '--genomeDir', 
-                     if(file.exists(opt$gtfTarget)){paste(dirname(opt$gtfTarget), '/', 'index_STAR', '/', sep = '')}else{paste(dirname(opt$mappingTarget), '/', 'index_STAR', '/', sep = '')}, 
+                     paste(dirname(opt$mappingTarget), '/', 'index_STAR', '/', sep = ''), 
                      '--runThreadN', 
                      ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
                      '--readFilesCommand',
@@ -216,11 +245,16 @@ star.mapping <- mclapply(mapping, function(index){
                      '--outFileNamePrefix',
                      paste0(opt$mappingFolder, '/', index$sampleName, '_STAR_'),
                      '--outReadsUnmapped Fastx',
-                     if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
-                       write(paste('Mapping without gtf file'), stderr())}
+                     if(file.exists(paste0(index_Folder, 'sjdbList.fromGTF.out.tab'))){
+                       paste('--outSAMtype BAM Unsorted SortedByCoordinate', '--quantMode TranscriptomeSAM GeneCounts', '--sjdbOverhang', opt$annoJunction-1)
+                       }
                        else{
-                         paste('--outSAMtype BAM Unsorted SortedByCoordinate', '--quantMode TranscriptomeSAM GeneCounts', '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1)
-                           },
+                         if(file.exists(opt$gtfTarget)){
+                           paste('--outSAMtype BAM', opt$outSAMtype, '--quantMode', opt$quantMode, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction-1)
+                         }else{
+                         write(paste('The index was built without the gtf file. Please specify the gtf file if you would like to count reads'), stderr())
+                           }
+                         },
                      if(file.exists(star_parameters))line))})
     }, mc.cores = opt$mprocs
 )
@@ -249,14 +283,14 @@ for (i in samples[,1]) {
     report_sample <- as.data.frame(report_sample)
 }
 #t(report_sample[c(5, 8, 9),])
-trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),]); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', '%_reads_unmapped:short', '%_reads_unmapped:other')
+trans_report <- t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 30, 31, 32, 33),]); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:11]); colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', 'reads_unmapped:short', '%_reads_unmapped:short', 'reads_unmapped:other', '%_reads_unmapped:other')
 
 write.table(report_final, file = paste0(reportsall, '/', 'mapping_report_STAR.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
 }else{
   report_sample <- read.table(paste0(mapping_Folder, '/', samples[,1], '_STAR_Log.final.out'), header = F, as.is = T, fill = TRUE, sep = c('\t', '|', ' '), row.names = 1);
-  report_final <- data.frame(Samples = samples[,1], t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 29, 30),])); 
+  report_final <- data.frame(Samples = samples[,1], t(report_sample[c(5, 8, 9, 23, 24, 25, 26, 30, 31, 32, 33),])); 
   
-  colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', '%_reads_unmapped:short', '%_reads_unmapped:other')
+  colnames(report_final) <- c('Samples', 'Input_reads', 'Mapped_reads', 'Mapped_reads_%', 'Mapped_multiLoci', 'Mapped_multiLoci_%', 'Mapped_manyLoci', 'Mapped_manyLoci_%', 'reads_unmapped:short', '%_reads_unmapped:short', 'reads_unmapped:other', '%_reads_unmapped:other')
   
   
   write.table(report_final, file = paste0(reportsall, '/', 'mapping_report_STAR.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
@@ -292,7 +326,7 @@ if(opt$stranded == 'reverse'){
 
 
 
-if(casefold(opt$gtfTarget, upper = FALSE) == 'no'){
+if(!file.exists(paste0(mapping_Folder, '/', samples[1,1],'_STAR_ReadsPerGene.out.tab'))){
   write(paste('Counts file was not generated because mapping step is running without gtf files'), stderr())
 } else{ 
 counts_Folder <- opt$countsFolder
