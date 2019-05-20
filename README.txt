@@ -76,7 +76,7 @@ Installation:
 		#TruSeq3-PE.fa
 		#TruSeq3-SE.fa
 
-	$ baqcom_qc.R -p 36 -s 3 -l yes
+	$ baqcom_qc.R -p 36 -s 3
 
 STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 
@@ -84,9 +84,11 @@ STEP.7 - Mapping with STAR (baqcom_mapping pipeline):
 #https://www.ensembl.org/info/data/ftp/index.html
 #Generate the genome indexes files. This step needs to be performed just once for each genome/annotation version.  After the index generation step, the mapping will be started automatically.
 
-#This code will generate index and mapping.
+#To index:
+	$ baqcom_mapping.R -t /genome_annotation_directory/genome.fa -g /genome_annotation_directory/annotation_version/annotation_version.gtf -p 20 -q 3 
 
-	$ baqcom_mapping.R -p 20 -q 3 -t /genome_annotation_directory/genome.fa -g /genome_annotation_directory/annotation_version/annotation_version.gtf 
+#To mapping:
+	$ baqcom_mapping.R -t /genome_annotation_directory/index_STAR -p 20 -q 3 
 
 
 #obs. If needs to run the script with more than 20 thread, it must change ulimit in the system used (see "increasing_Limit_CentOS_7" file ==> https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/).
