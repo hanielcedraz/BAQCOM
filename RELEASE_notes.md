@@ -30,5 +30,11 @@
   Minor bugs fixed
   <br><br>
 <h1></h1>
+<b> baqcom_mapping Version 0.2.4 - 05/20/2019 </b><br>
+  Change requirements to genome generate, mapping and counting<br>
+  Set up more parameters<br>
+  Minor bugs fixed
+  <br><br>
+<h1></h1>
   
 
