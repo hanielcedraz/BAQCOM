@@ -75,13 +75,15 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
   }
 }
 
+
+#cat('\n')
 ######################################################################
 ## loadSampleFile
 loadSamplesFile <- function(file, reads_folder, column){
     ## debug
     file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
     ##
-    if ( !file.exists(file) ) {
+    if (!file.exists(file) ) {
         write(paste("Sample file",file,"does not exist\n"), stderr())
         stop()
     }    
@@ -246,7 +248,7 @@ star.mapping <- mclapply(mapping, function(index){
                      paste0(opt$mappingFolder, '/', index$sampleName, '_STAR_'),
                      '--outReadsUnmapped Fastx',
                      if(file.exists(paste0(index_Folder, 'sjdbList.fromGTF.out.tab'))){
-                       paste('--outSAMtype BAM Unsorted SortedByCoordinate', '--quantMode TranscriptomeSAM GeneCounts', '--sjdbOverhang', opt$annoJunction-1)
+                       paste('--outSAMtype BAM', opt$outSAMtype, '--quantMode', opt$quantMode, '--sjdbOverhang', opt$annoJunction-1)
                        }
                        else{
                          if(file.exists(opt$gtfTarget)){
@@ -314,13 +316,11 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
 cat('\n')
 
 # Creating GeneCounts folder and preparing files
-if(opt$stranded == 'no'){
+if(casefold(opt$stranded, upper = FALSE) == 'no'){
   opt$stranded <- 2
-}
-if(opt$stranded == 'yes'){
+}else if(casefold(opt$stranded, upper = FALSE) == 'yes'){
   opt$stranded  <- 3
-}
-if(opt$stranded == 'reverse'){
+}else if(casefold(opt$stranded, upper = FALSE) == 'reverse'){
   opt$stranded  <- 4
 }
 
