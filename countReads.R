@@ -26,6 +26,11 @@ option_list <- list(
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
+if (!(opt$stranded %in% c("reverse", "yes", "no")))
+  cat('\n')
+  #write(paste('May have a mistake with the argument in -s parameter. Please verify if the argument is written in the right way'), stderr())
+stop(paste('May have a mistake with the argument in -s parameter. Please verify if the argument is written in the right way'))
+
 
 loadSamplesFile <- function(file, reads_folder, column){
     ## debug
