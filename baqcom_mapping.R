@@ -76,11 +76,12 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
 }
 
 
-if (!(opt$stranded %in% c("reverse", "yes", "no")))
-  cat('\n')
-  #write(paste('May have a mistake with the argument in -s parameter. Please verify if the argument is written in the right way'), stderr())
-stop(paste('May have a mistake with the argument in -s parameter. Please verify if the argument is written in the right way'))
 
+if (!(opt$stranded %in% c("reverse", "yes", "no"))){
+cat('\n')
+    write(paste('May have a mistake with the argument in -s parameter. Please verify if the argument is written in the right way'), stderr())
+stop()
+}
 
 
 #cat('\n')
