@@ -18,6 +18,19 @@ Please cite the follows softwares:
 
 #STAR
   'Alexander Dobin, Carrie A. Davis, Felix Schlesinger, Jorg Drenkow, Chris Zaleski, Sonali Jha, Philippe Batut, Mark Chaisson, Thomas R. Gingeras, STAR: ultrafast universal RNA-seq aligner, Bioinformatics, Volume 29, Issue 1, January 2013, Pages 15–21, https://doi.org/10.1093/bioinformatics/bts635'
+  
+  
+#Hisat2
+  'Kim D, Langmead B and Salzberg SL. HISAT: a fast spliced aligner with low memory requirements. Nature Methods 2015'
+  
+  
+#featureCounts
+  'Liao Y, Smyth GK and Shi W (2014). featureCounts: an efficient general purpose program for assigning sequence reads to genomic features. Bioinformatics, 30(7):923-30.'
+  
+  
+#HTSeqCount
+  'Simon Anders, Paul Theodor Pyl, Wolfgang Huber, HTSeq — A Python framework to work with high-throughput sequencing data
+Bioinformatics (2014), in print, online at doi:10.1093/bioinformatics/btu638'
 
 
 #BAQCOM
