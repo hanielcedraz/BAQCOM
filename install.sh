@@ -49,11 +49,14 @@ fi
 if [[  -f baqcom_qc ]];
     then
         cat "baqcom_qc" | sed "s|XXX|$PWD|" > baqcom_qc.R
-        chmod +x baqcom_qc.R baqcom_mapping.R install_packages.R create_samples.sh run_test.sh;
+        chmod +x baqcom_qc.R;
         rm baqcom_qc
     else
         echo "baqcom_qc.R already exists"
 fi
+
+
+      chmod +x baqcom_mapping.R create_samples.sh run_test.sh;
 
 if [[ -e bin/fastqc_v0.11.8.zip ]];
    then
@@ -71,6 +74,7 @@ fi
 
 if [ -e install_packages.R ];
     then
+        chmod +x install_packages.R;
         ./install_packages.R;
         mv install_packages.R .install_packages.R
         echo "packages installed successfully"
