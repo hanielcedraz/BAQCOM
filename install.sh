@@ -42,12 +42,10 @@ if [ "$(uname)" == "Linux" ];
       chmod +x bin/STAR_linux_2.7.1a
       rm -f STAR
       ln -s bin/STAR_linux_2.7.1a STAR
-      echo "STAR symbolic link created successfully"
     else
       chmod +x bin/STAR_mac_2.7.1a
       rm -f STAR
       ln -s bin/STAR_mac_2.7.1a STAR
-      echo " STAR symbolic link created successfully"
 fi
 
 
