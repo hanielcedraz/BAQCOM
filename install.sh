@@ -17,14 +17,10 @@ if [ $? -ne 0 ];
     then
       if [ "$(uname)" == "Linux" ]; then
         echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD:\n" >> ~/.bashrc;
-        #echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD/bin/hisat2-
-  2.1.0_linux:\n" >> ~/.bashrc;
         bash;
         echo "Path" $PWD "added in ~/.bashrc successfully"
       else
         echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
-        #echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD/bin/hisat2-
-  2.1.0_linux:\n" >> ~/.bash_profile;
         source ~/.bash_profile;
         echo "Path" $PWD "added in ~/.bash_profile successfully"
     fi
@@ -66,9 +62,9 @@ if [[ -e bin/fastqc_v0.11.8.zip ]];
        rm -f fastqc
        ln -s bin/FastQC/fastqc
        chmod +x fastqc
-       echo "fastqc symbolic link created successfully"
+       echo "Symbolic link (fastqc) created successfully"
    else
-       echo "fastqc symbolic link already exists"
+       echo "fastqc (Symbolic link) already exists"
 
 fi
 
@@ -81,7 +77,6 @@ if [ -e install_packages.R ];
     else
         echo "packages are already installed"
 fi
-
 
 
 #echo "successfully installed"
