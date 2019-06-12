@@ -42,12 +42,12 @@ if [ "$(uname)" == "Linux" ];
       chmod +x bin/STAR_linux_2.7.1a
       rm -f STAR
       ln -s bin/STAR_linux_2.7.1a STAR
-      echo "Symbolic link (STAR) created successfully"
+      echo "STAR symbolic link created successfully"
     else
       chmod +x bin/STAR_mac_2.7.1a
       rm -f STAR
       ln -s bin/STAR_mac_2.7.1a STAR
-      echo "Symbolic link (STAR) created successfully"
+      echo " STAR symbolic link created successfully"
 fi
 
 
@@ -68,9 +68,9 @@ if [[ -e bin/fastqc_v0.11.8.zip ]];
        rm -f fastqc
        ln -s bin/FastQC/fastqc
        chmod +x fastqc
-       echo "Symbolic link (fastqc) created successfully"
+       echo "fastqc symbolic link created successfully"
    else
-       echo "fastqc (Symbolic link) already exists"
+       echo "fastqc symbolic link already exists"
 
 fi
 
