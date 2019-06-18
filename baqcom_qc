@@ -265,25 +265,31 @@ if(casefold(opt$multiqc, upper = FALSE) == 'yes'){
 cat('\n')
 
 # Creating samples report
-if(length(samples[,1]) > 1){
-samples <- read.table(opt$samplesFile, header = T, as.is = T)
-report_sample <- array(dim = 0)
-for (i in as.character(samples[,1])) {
-    report_sample[i] <- read.table(paste(paste0(reports,'/', report_folder), '/', i, '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
-    report_sample <- as.data.frame(report_sample)
-}
-trans_report <- t(report_sample); report_final <- data.frame(Samples = rownames(trans_report), trans_report[,1:9]); colnames(report_final) <- c('Samples', 'Input_Read_Pairs', 'Pairs_Reads', 'Pairs_Read_Percent', 'Forward_Only_Surviving_Reads', 'Forward_Only_Surviving_Read_Percent', 'Reverse_Only_Surviving_Reads', 'Reverse_Only_Surviving_Read_Percent', 'Dropped_Reads', 'Dropped_Read_Percent')
-
-write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
-}else{
-    report_sample <- read.table(paste(paste0(reports,'/', report_folder), '/', samples[,1], '_', 'statsSummaryFile.txt', sep = ""), header = F, as.is = T, sep = ':', row.names = 1);
-    trans_report <- t(report_sample); 
-    colnames(trans_report) <- c('Input_Read_Pairs', 'Pairs_Reads', 'Pairs_Read_Percent', 'Forward_Only_Surviving_Reads', 'Forward_Only_Surviving_Read_Percent', 'Reverse_Only_Surviving_Reads', 'Reverse_Only_Surviving_Read_Percent', 'Dropped_Reads', 'Dropped_Read_Percent')
-    report_final <- data.frame(Samples = samples[,1], trans_report);
-    write.table(report_final, file = paste0(reports,'/','qc_report_trimmomatic.txt'), sep = "\t", row.names = FALSE, col.names = TRUE, quote = F)
+TidyTable <- function(x) {
+    final <- data.frame('Input_Read_Pairs' = x[1,2],
+                        'Pairs_Reads' = x[2,2],
+                        'Pairs_Read_Percent' = x[3,2],
+                        'Forward_Only_Surviving_Reads' = x[4,2],
+                        'Forward_Only_Surviving_Read_Percent' = x[5,2],
+                        'Reverse_Only_Surviving_Reads' = x[6,2],
+                        'Reverse_Only_Surviving_Read_Percent' = x[7,2],
+                        'Dropped_Reads' = x[8,2],
+                        'Dropped_Read_Percent' = x[9,2])
+    return(final)
 }
 
-system2('cat', paste0(reports,'/','qc_report_trimmomatic.txt'))
+report_sample <- list()
+for (i in samples[,1]) { # change this to your "samples"
+    report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
+                                     header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
+}
+
+df <- lapply(report_sample, FUN = function(x) TidyTable(x))
+final_df <- do.call("rbind", df)
+
+write.table(final_df, file = paste0(reports, '/', 'QualityControlReportSummary.txt'), sep = "\t", row.names = TRUE, col.names = TRUE, quote = F)
+
+system2('cat', paste0(reports,'/','QualityControlReportSummary.txt'))
 
 cat('\n')
 
