@@ -83,7 +83,6 @@ if (!(opt$stranded %in% c("reverse", "yes", "no"))) {
   stop()
 }
 
-setwd("/Users/haniel/Documents/Temporary/")
 #cat('\n')
 ######################################################################
 ## loadSampleFile
