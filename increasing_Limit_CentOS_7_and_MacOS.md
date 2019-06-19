@@ -42,10 +42,10 @@ Commands require root access
     
     Some set it to 1048576 (over a million).
 
-## Since sudo is needed, you are prompted for a password.
 
-## PROTIP: Because this would go back to defaults on reboot, add this command in your ~/.bash_profile
-```html
-Font: https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/
-Font: https://wilsonmar.github.io/maximum-limits/
-```
+
+#### PROTIP: Because this would go back to defaults on reboot, add this command in your ~/.bash_profile
+
+Font: https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/ <br>
+Font: https://wilsonmar.github.io/maximum-limits/ - macOS and others
+
