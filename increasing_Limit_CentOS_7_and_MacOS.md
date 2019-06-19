@@ -1,8 +1,9 @@
-# Increasing File Descriptors and Open Files Limit on CentOS 7
+# Increasing File limits (Cent OS 7 and macOS)
+Operating systems (Linux and macOS included) have settings which limit the number of files and processes that are allowed to be open. This limit protects the system from being overrun. But its default is usually set too low, when machines had way less power. Thus a “gotcha” that is only apparent when “too many files open” crashes appear only under load (as in during a stress test or production spike).
 
-Some programs like Apache and MySQL require a higher number of file descriptors.
-This is how you can increase that limit for all users in CentOS 7
-Commands require root access
+
+# On CentOS 7
+    # Commands require root access
 
 ## Find the default limit – check the open files line – it will be 1024
     $ sudo ulimit -a
@@ -21,9 +22,13 @@ Commands require root access
 ## Next run the command
     $ sudo sysctl -p
 
+Font: https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/ 
 
+<br>
+<br>
+<br>
+# On macOS
 
-# Increasing File Descriptors and Open Files Limit on macOS
 ## Obtain the current limit:
     $ launchctl limit maxfiles
 
@@ -43,8 +48,5 @@ Commands require root access
     Some set it to 1048576 (over a million).
 
 
-
-
-Font: https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/ <br>
 Font: https://wilsonmar.github.io/maximum-limits/ - macOS and others
 
