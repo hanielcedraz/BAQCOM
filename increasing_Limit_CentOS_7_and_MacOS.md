@@ -44,7 +44,6 @@ Commands require root access
 
 
 
-#### PROTIP: Because this would go back to defaults on reboot, add this command in your ~/.bash_profile
 
 Font: https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/ <br>
 Font: https://wilsonmar.github.io/maximum-limits/ - macOS and others
