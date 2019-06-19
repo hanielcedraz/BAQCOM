@@ -5,23 +5,22 @@ This is how you can increase that limit for all users in CentOS 7
 Commands require root access
 
 ## Find the default limit – check the open files line – it will be 1024
-$ sudo ulimit -a
+    $ sudo ulimit -a
 
-#To increase edit nano /etc/sysctl.conf add the below line, save and exit
+## To increase edit nano /etc/sysctl.conf add the below line, save and exit
+    $ fs.file-max = 100000
 
-fs.file-max = 100000
+## We also need to increase hard and soft limits
+  #Edit /etc/security/limits.conf add the below lines before the "#End of file", save and exit
 
-#We also need to increase hard and soft limits
-#Edit /etc/security/limits.conf add the below lines before the #End, save and exit
+    * soft nproc 65535
+    * hard nproc 65535
+    * soft nofile 65535
+    * hard nofile 65535
 
- * soft nproc 65535
- * hard nproc 65535
- * soft nofile 65535
- * hard nofile 65535
+## Next run the command
 
-#Next run the command
-
-sudo sysctl -p
+    $ sudo sysctl -p
 
 
 
