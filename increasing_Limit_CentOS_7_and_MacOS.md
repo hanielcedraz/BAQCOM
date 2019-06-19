@@ -12,7 +12,7 @@ Operating systems (Linux and macOS included) have settings which limit the numbe
     fs.file-max = 100000
 
 ## We also need to increase hard and soft limits
-  #Edit /etc/security/limits.conf add the below lines before the "#End of file", save and exit
+  #Edit /etc/security/limits.conf add the below lines before the "#End of file" line, save and exit
 
     * soft nproc 65535
     * hard nproc 65535
@@ -27,26 +27,27 @@ Font: https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-f
 <br>
 <br>
 <br>
+
 # On macOS
 
 ## Obtain the current limit:
     $ launchctl limit maxfiles
 
 ## The response output should have numbers like this:
-    maxfiles    65536          200000
+    # maxfiles    65536          200000
 
-    The first number is the “soft” limit and the second number is the “hard” limit.
+    # The first number is the “soft” limit and the second number is the “hard” limit.
 
 ## Configuration changes are necessary if lower numbers are displayed, such as:
 
-    maxfiles    256            unlimited
+    # maxfiles    256            unlimited
     
 ## If the soft limit is too low (such as 256), set the current session to:
 
     $ sudo launchctl limit maxfiles 65536 200000
     
-    Some set it to 1048576 (over a million).
+    # Some set it to 1048576 (over a million).
 
 
-Font: https://wilsonmar.github.io/maximum-limits/ - macOS and others
+Font: https://wilsonmar.github.io/maximum-limits/
 
