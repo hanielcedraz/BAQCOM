@@ -25,4 +25,4 @@ echo -e "\n"
 echo -e "\n"
 echo "Running Mapping Analysis"
 echo -e "\n"
-./baqcom_mapping.R -p 20 -t examples/genome/Sus.Scrofa.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.gene.annotation.gtf -m
+./baqcom_mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
