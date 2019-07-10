@@ -14,7 +14,7 @@ cp examples/HE2* 00-Fastq/
 echo -e "files moved successfully\n"
 
 #Creating samples.txt
-./create_samples.sh
+./createSamples.sh
 echo -e "\n"
 
 
