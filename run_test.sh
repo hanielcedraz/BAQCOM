@@ -1,3 +1,7 @@
+#!/bin/bash
+
+pipeline=$1
+
 gunzip examples/genome/Sus.Scrofa*
 echo -e "files extracted successfully\n"
 
@@ -14,15 +18,15 @@ echo -e "files moved successfully\n"
 echo -e "\n"
 
 
-#Run baqcom_qc.R
+#Run baqcomTrimmomatic.R
 echo -e "\n"
 echo "Running Quality Control Analysis"
 echo -e "\n"
-./baqcom_qc.R -p 36 -s 2 -l yes -r yes
+./baqcomTrimmomatic.R -p 36 -s 2 -l -r
 echo -e "\n"
 
-#Run baqcom_mapping.R
+#Run baqcomSTARmapping.R
 echo -e "\n"
 echo "Running Mapping Analysis"
 echo -e "\n"
-./baqcom_mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m yes
+./$pipeline -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
