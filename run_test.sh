@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## Example: ./run_test.sh baqcomSTARmapping.R
+
+
 pipeline=$1
 
 gunzip examples/genome/Sus.Scrofa*
