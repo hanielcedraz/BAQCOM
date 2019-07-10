@@ -41,7 +41,7 @@ if [ "$(uname)" == "Linux" ];
       echo "STAR symbolic link created successfully"
       wget http://ccb.jhu.edu/software/hisat2/dl/hisat2-2.1.0-Linux_x86_64.zip -O bin/hisat2-2.1.0-Linux_x86_64.zip
       cd bin/
-      unzip hisat2-2.1.0-Linux_x86_64.zip
+      unzip -q hisat2-2.1.0-Linux_x86_64.zip
       cd ..
       ln -s bin/hisat2-2.1.0/hisat2 hisat2
       echo "hisat2 downloaded and symbolic link created successfully"
@@ -52,7 +52,7 @@ if [ "$(uname)" == "Linux" ];
       echo "STAR symbolic link created successfully"
       wget http://ccb.jhu.edu/software/hisat2/dl/hisat2-2.1.0-OSX_x86_64.zip -O bin/hisat2-2.1.0-OSX_x86_64.zip
       cd bin/
-      unzip hisat2-2.1.0-OSX_x86_64.zip
+      unzip -q hisat2-2.1.0-OSX_x86_64.zip
       cd ..
       ln -s bin/hisat2-2.1.0/hisat2 hisat2
       echo "hisat2 downloaded and symbolic link created successfully"
