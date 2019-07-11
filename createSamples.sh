@@ -3,13 +3,11 @@
 
 usage() {
     cat <<EOF
-Usage: $0 [options]
+Usage: $0 [options] -- createSample version 0.3.0
+
+    Use this script to create a sample ID file.
 
 Arguments:
-
-  -h, --help
-    Display this usage message and exit.
-
   -d <val>
     Specify the folder which is storage the fastq files. [default: 00-Fastq].
 
@@ -19,24 +17,6 @@ Arguments:
 EOF
 }
 
-
-  # --
-  #   Treat the remaining arguments as file names.  Useful if the first
-  #   file name might begin with '-'.
-  #
-  # file...
-  #   Optional list of file names.  If the first file name in the list
-  #   begins with '-', it will be treated as an option unless it comes
-  #   after the '--' option.
-#check if command line argument is empty or not present
-# if [ "$1" != " "  ] && [ "$1" != "pair"  ] && [ "$1" != "single" ] && [ "$1" != "single" ];
-# then
-#     #echo "Parameter -p is empty or a invalid argument"
-#     echo "Please enter a valid argument"
-#     echo "Example: create_samples.sh -p pair"
-#     echo "Example: create_samples.sh -p single"
-#     exit 0
-# fi
 
 
 # handy logging and error handling functions
