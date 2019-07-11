@@ -44,7 +44,7 @@
 
 #
 # BAQCOM 0.3.0 - 07/20/2019
-Feature updates: Counting reads from STAR analysis and single-end analysis
+
 ### baqcomSTARmapping
   Change pattern folder names <br>
     Minor bugs fixed
@@ -61,6 +61,13 @@ Feature updates: Counting reads from STAR analysis and single-end analysis
   
 ### baqcomHtseqCounting 
   release of a new pipeline to count reads 
+  
+  
+  
+  
+Our team are working on future updates
+  Counting reads from STAR analysis;
+  single-end analysis;
   
  
   
