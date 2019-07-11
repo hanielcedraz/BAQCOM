@@ -62,12 +62,16 @@
 ### baqcomHtseqCounting 
   release of a new pipeline to count reads 
   
-  
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
   
   
 Our team are working on future updates
-  Counting reads from STAR analysis;
-  single-end analysis;
+  Counting reads from STAR analysis; <br>
+  single-end analysis; <br>
   
  
   
