@@ -80,7 +80,7 @@ if [[  -f baqcomTrimmomatic ]];
 fi
 
 
-      chmod +x baqcomFeaturesCount.R baqcomHisat2Mapping.R baqcomHtseqCounting.R baqcomSTARmapping.R createSamples.sh run_test.sh
+      chmod +x baqcomFeaturesCount.R baqcomHisat2Mapping.R baqcomHtseqCounting.R baqcomSTARmapping.R createSamples.sh runTest.sh
 
 if [[ -e bin/fastqc_v0.11.8.zip ]];
    then
@@ -96,11 +96,11 @@ if [[ -e bin/fastqc_v0.11.8.zip ]];
 fi
 
 
-if [ -e install_packages.R ];
+if [ -e installPackages.R ];
     then
-        chmod +x install_packages.R;
-        ./install_packages.R;
-        mv install_packages.R .install_packages.R
+        chmod +x installPackages.R;
+        ./installPackages.R;
+        mv installPackages.R .installPackages.R
         echo "packages installed successfully"
     else
         echo "packages are already installed"
