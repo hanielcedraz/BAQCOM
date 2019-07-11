@@ -107,7 +107,7 @@ loadSamplesFile <- function(file, reads_folder, column){
     }
     ### column SAMPLE_ID should be the sample name
     ### rows can be commented out with #
-    targets <- read.table(file, sep="", header=TRUE, as.is = TRUE)
+    targets <- read.table(file, sep="", header = TRUE, as.is = TRUE)
     if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
         write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
         stop()
@@ -179,11 +179,28 @@ beforeQC <- 'FastQCBefore'
 if (opt$fastqc) {
     write(paste("Start fastqc - FastQCBefore"), stderr())
     if (!file.exists(file.path(paste0(reports,'/', beforeQC)))) dir.create(file.path(paste0(reports,'/', beforeQC)), recursive = TRUE, showWarnings = FALSE)
-for (i in samples[,1]) {
-        system2('fastqc',
-               paste0(opt$Raw_Folder, '/', i,'*', ' -o ', paste0(reports,'/', beforeQC), ' -t ', opt$sampleToprocs))
-    }
+    fastq.defore <- mclapply(qcquery, function(index){
+        try({
+            system(
+                paste('fastqc',
+                      paste0(opt$Raw_Folder, '/',index$sampleName,'*'),
+                      #paste0(opt$Raw_Folder, '/',index$R2),
+                      ' -o ',
+                      paste0(reports,'/', beforeQC),
+                      '-t', opt$sampleToprocs
+                )
+            )
+        })
+    }, mc.cores = opt$sampleToprocs)
+# for (i in samples[,1]) {
+#         system2('fastqc',
+#                paste0(opt$Raw_Folder, '/', i,'*', ' -o ', paste0(reports,'/', beforeQC), ' -t ', opt$sampleToprocs))
+#     }
 }
+
+
+
+
 
 
 ## create output folder
@@ -239,17 +256,53 @@ if (pigz == 0) {
 
 cat('\n')
 
+output_folder <- opt$output
+afterqcList <- function(samples, output_folder, column){
+    mapping_list <- list()
+    for (i in 1:nrow(samples)) {
+        reads <- dir(path = file.path(output_folder), pattern = "fastq.gz$", full.names = TRUE)
+        # for (i in seq.int(to=nrow(samples))){
+        #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
+        map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
+        names(map) <- c("PE1", "PE2", "SE1", "SE2")
+        map$sampleName <-  samples[i,column]
+        map$PE1 <- map$PE1[i]
+        map$PE2 <- map$PE2[i]
+        map$SE1 <- map$SE1[i]
+        map$SE2 <- map$SE2[i]
+        mapping_list[[paste(map$sampleName)]] <- map
+        mapping_list[[paste(map$sampleName, sep = "_")]]
+    }
+    write(paste("Setting up", length(mapping_list), "jobs"),stdout())
+    return(mapping_list)
+}
+
+query.after <- afterqcList(samples, opt$output, opt$samplesColumn)
+
 #Creating Fastqc plots after Quality Control
 afterQC <- 'FastQCAfter'
 if (opt$fastqc) {
 write(paste("Start fastqc - FastQCAfter"), stderr())
 if (!file.exists(file.path(paste0(reports,'/', afterQC)))) dir.create(file.path(paste0(reports,'/', afterQC)), recursive = TRUE, showWarnings = FALSE)
-for (i in samples[,1]) {
-    system2('fastqc',
-            paste0(opt$output, '/', i, '_trim_PE1*', ' -o ', paste0(reports,'/', afterQC), ' -t ', opt$sampleToprocs))
-    system2('fastqc',
-            paste0(opt$output, '/', i, '_trim_PE2*', ' -o ', paste0(reports,'/',afterQC), ' -t ', opt$sampleToprocs))
-    }
+    fastq.after <- mclapply(qcquery, function(index){
+        try({
+            system(
+                paste('fastqc',
+                      paste0(opt$output, '/',index$sampleName,'*'),
+                      #paste0(opt$Raw_Folder, '/',index$R2),
+                      ' -o ',
+                      paste0(reports,'/', afterQC),
+                      '-t', opt$sampleToprocs
+                )
+            )
+        })
+    }, mc.cores = opt$sampleToprocs)
+# for (i in samples[,1]) {
+#     system2('fastqc',
+#             paste0(opt$output, '/', i, '_trim_PE1*', ' -o ', paste0(reports,'/', afterQC), ' -t ', opt$sampleToprocs))
+#     system2('fastqc',
+#             paste0(opt$output, '/', i, '_trim_PE2*', ' -o ', paste0(reports,'/',afterQC), ' -t ', opt$sampleToprocs))
+#     }
 }
 
 cat('\n')
