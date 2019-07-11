@@ -46,12 +46,10 @@
 # BAQCOM 0.3.0 - 07/20/2019
 ### baqcomSTARmapping
   Change pattern folder names <br>
-  Set up single-end analysis <br>
-  Minor bugs fixed
+    Minor bugs fixed
   
 ### baqcomTrimmomatic 
   Change pattern folder names <br>
-  Set up single-end analysis <br>
   Minor bugs fixed
   
 ### baqcomHisat2Mapping 
