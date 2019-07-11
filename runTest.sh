@@ -3,7 +3,7 @@
 ## Example: ./run_test.sh baqcomSTARmapping.R
 
 
-usage="$(basename "$0") [options] -- runTest version 0.3.0
+usage="usage: ./$(basename "$0") [options] -- runTest version 0.3.0
 where:
      Use this script to test the functionality of the pipelines
      This script runs by default baqcomTrimmomatic.R. You have to specify which mapping pipeline you want to test
