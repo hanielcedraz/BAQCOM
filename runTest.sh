@@ -35,7 +35,6 @@ shift $((OPTIND-1))
 
 pipeline=$1
 
-
 #check if command line argument is empty or not present
 #
 if [ "$1" != ""  ] && [ "$1" != "baqcomSTARmapping.R"  ] && [ "$1" != "baqcomHisat2Mapping.R" ] && [ "$1" != "all" ];
@@ -47,24 +46,43 @@ then
     exit 0
 fi
 
-
-
-gunzip examples/genome/Sus.Scrofa*
-echo -e "files extracted successfully\n"
+genome=examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz
+annotation=examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf.gz
+if [ -x "$genome" ] && [ -x "$annotation" ];
+then
+    gunzip examples/genome/Sus.Scrofa*
+    echo -e "genome and annotation files extracted successfully\n"
+else
+    echo -e "\ngenome and annotation files it is already uncompressed\n"
+fi
 
 #create input_folder
-mkdir 00-Fastq
-echo -e "00-Fastq created successfully\n"
-
+if [ ! -d 00-Fastq ];
+then
+    mkdir 00-Fastq
+    if [ "$(ls -A 00-Fastq)" ]
+    then
+        echo -e "00-Fastq and files already exist\n"
+    else
+        cp examples/HE2* 00-Fastq/
+        echo -e "00-Fastq created and files moved successfully\n"
+    fi
+else
+    echo -e "00-Fastq and files already exist\n"
+fi
 #moving files from examples folder to 00-Fastq Folder
-cp examples/HE2* 00-Fastq/
-echo -e "files moved successfully\n"
+
+
 
 #Creating samples.txt
-./createSamples.sh
-echo -e "\n"
-
-
+if [ ! -f samples.txt ];
+then
+    ./createSamples.sh
+    echo -e "\n"
+else
+    echo -e "samples.txt already exists\n"
+fi
+#
 run.trimmomatic () {
     echo -e "\n"
     echo "Running baqcomTrimmomatic test"
@@ -153,4 +171,3 @@ then
 elif [[ "$pipeline" == "all" ]]; then
     run.all.pipelines
 fi
-
