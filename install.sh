@@ -52,7 +52,7 @@ if [ "$(uname)" == "Linux" ];
         else
              echo "hisat2 exists and doesn't need to download"
         fi
-        if [ -x  "$(command -v featureCounts)" ];
+        if ! [ -x  "$(command -v featureCounts)" ];
         then
             wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
             cd bin/
@@ -62,7 +62,7 @@ if [ "$(uname)" == "Linux" ];
             cd ../../../
             ln -s bin/subread-1.6.4-source/bin/featureCounts featureCounts
         else
-            echo "hisat2 exists and doesn't need to download"
+            echo "featureCounts exists and doesn't need to download"
         fi
     else
       chmod +x bin/STAR_mac_2.7.1a
