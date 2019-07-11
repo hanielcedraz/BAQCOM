@@ -46,6 +46,7 @@ if [ "$(uname)" == "Linux" ];
               unzip -q hisat2-2.1.0-Linux_x86_64.zip
               cd ..
               ln -s bin/hisat2-2.1.0/hisat2 hisat2
+              n -s bin/hisat2-2.1.0/hisat2-build hisat2-build
               ln -s bin/hisat2-2.1.0/hisat2_extract_exons.py
               ln -s bin/hisat2-2.1.0/hisat2_extract_splice_sites.py
               echo "hisat2 downloaded and symbolic link created successfully"
@@ -76,6 +77,7 @@ if [ "$(uname)" == "Linux" ];
               unzip -q hisat2-2.1.0-OSX_x86_64.zip
               cd ..
               ln -s bin/hisat2-2.1.0/hisat2 hisat2
+              n -s bin/hisat2-2.1.0/hisat2-build hisat2-build
               ln -s bin/hisat2-2.1.0/hisat2_extract_exons.py
               ln -s bin/hisat2-2.1.0/hisat2_extract_splice_sites.py
               echo "hisat2 downloaded and symbolic link created successfully"
