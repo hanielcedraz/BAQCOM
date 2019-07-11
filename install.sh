@@ -2,8 +2,7 @@
 
 if [[ $1 == "-h" ]];
     then
-        echo "#Use this script to change the trimmomatic path in ".baqcom_qc", configure files,
-            and put theses file into the bash. More information read LEIAME.txt"
+        echo -e "\nUse this script to configurate the pipelines, install required softwares, configure files, and put theses files into the bash. More information read LEIAME.txt\n"
         exit 0
 elif [[ $# > 0 ]];
     then
