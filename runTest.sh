@@ -35,8 +35,7 @@ shift $((OPTIND-1))
 
 pipeline=$1
 
-filetype=${1:-pair}
-dir=${2:-00-Fastq}
+
 #check if command line argument is empty or not present
 #
 if [ "$1" != ""  ] && [ "$1" != "baqcomSTARmapping.R"  ] && [ "$1" != "baqcomHisat2Mapping.R" ] && [ "$1" != "all" ];
