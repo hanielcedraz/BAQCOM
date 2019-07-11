@@ -218,7 +218,9 @@ genome.index.function <- function(){
     })
 }
 
-
+if (length(dir(path = index_Folder, full.names = TRUE, all.files = FALSE, pattern = '.ht2$')) == 0) {
+    index_genom <- genome.index.function()
+}
 userInput <- function(question) {
     cat(question)
     con <- file("stdin")
