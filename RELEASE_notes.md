@@ -69,7 +69,7 @@
   <br>
   
   
-Our team are working on future updates
+Our team are working on future updates: <br>
   Counting reads from STAR analysis; <br>
   single-end analysis; <br>
   
