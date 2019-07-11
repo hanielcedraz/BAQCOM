@@ -70,7 +70,7 @@
   
   
 Our team are working on future updates: <br>
-  Counting reads from STAR analysis; <br>
+  Count reads using featuresCount in Star results; <br>
   single-end analysis; <br>
   
  
