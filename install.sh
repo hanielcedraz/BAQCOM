@@ -56,7 +56,7 @@ if [ "$(uname)" == "Linux" ];
         then
             wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
             cd bin/
-            tar xzvf subread-1.6.4-source.tar.gz
+            tar xzf subread-1.6.4-source.tar.gz
             cd subread-1.6.4-source/src
             make -f Makefile.Linux
             cd ../../../
@@ -86,7 +86,7 @@ if [ "$(uname)" == "Linux" ];
         then
             wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
             cd bin/
-            tar xzvf subread-1.6.4-source.tar.gz
+            tar xzf subread-1.6.4-source.tar.gz
             cd subread-1.6.4-source/src
             make -f make -f Makefile.MacOS
             cd ../../../
