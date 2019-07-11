@@ -46,9 +46,23 @@ if [ "$(uname)" == "Linux" ];
               unzip -q hisat2-2.1.0-Linux_x86_64.zip
               cd ..
               ln -s bin/hisat2-2.1.0/hisat2 hisat2
+              ln -s bin/hisat2-2.1.0/hisat2_extract_exons.py
+              ln -s bin/hisat2-2.1.0/hisat2_extract_splice_sites.py
               echo "hisat2 downloaded and symbolic link created successfully"
         else
              echo "hisat2 exists and doesn't need to download"
+        fi
+        if [ -x  "$(command -v featureCounts)" ];
+        then
+            wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
+            cd bin/
+            tar xzvf subread-1.6.4-source.tar.gz
+            cd subread-1.6.4-source/src
+            make -f Makefile.Linux
+            cd ../../../
+            ln -s bin/subread-1.6.4-source/bin/featureCounts featureCounts
+        else
+            echo "hisat2 exists and doesn't need to download"
         fi
     else
       chmod +x bin/STAR_mac_2.7.1a
@@ -62,9 +76,23 @@ if [ "$(uname)" == "Linux" ];
               unzip -q hisat2-2.1.0-OSX_x86_64.zip
               cd ..
               ln -s bin/hisat2-2.1.0/hisat2 hisat2
+              ln -s bin/hisat2-2.1.0/hisat2_extract_exons.py
+              ln -s bin/hisat2-2.1.0/hisat2_extract_splice_sites.py
               echo "hisat2 downloaded and symbolic link created successfully"
         else
              echo "hisat2 exists and doesn't need to download"
+        fi
+        if ! [ -x  "$(command -v featureCounts)" ];
+        then
+            wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
+            cd bin/
+            tar xzvf subread-1.6.4-source.tar.gz
+            cd subread-1.6.4-source/src
+            make -f make -f Makefile.MacOS
+            cd ../../../
+            ln -s bin/subread-1.6.4-source/bin/featureCounts featureCounts
+        else
+            echo "featureCounts exists and doesn't need to download"
         fi
 fi
 
