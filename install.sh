@@ -48,7 +48,7 @@ if [ "$(uname)" == "Linux" ];
               ln -s bin/hisat2-2.1.0/hisat2 hisat2
               echo "hisat2 downloaded and symbolic link created successfully"
         else
-             echo "hisat2 exists and doesn't to download"
+             echo "hisat2 exists and doesn't need to download"
         fi
     else
       chmod +x bin/STAR_mac_2.7.1a
@@ -64,7 +64,7 @@ if [ "$(uname)" == "Linux" ];
               ln -s bin/hisat2-2.1.0/hisat2 hisat2
               echo "hisat2 downloaded and symbolic link created successfully"
         else
-             echo "hisat2 exists and doesn't to download"
+             echo "hisat2 exists and doesn't need to download"
         fi
 fi
 
