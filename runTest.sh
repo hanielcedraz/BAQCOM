@@ -76,6 +76,11 @@ rm -f samples.txt
 ./createSamples.sh
 echo -e "\n"
 #
+
+
+
+
+
 run.trimmomatic () {
     echo -e "\n"
     echo "Running baqcomTrimmomatic test"
@@ -85,37 +90,30 @@ run.trimmomatic () {
     echo "baqcomTrimmomatic test is done"
 }
 
-run.trimmomatic.and.STAR () {
-    echo -e "\n"
-    echo "Running baqcomTrimmomatic test"
-    echo -e "\n"
-    ./baqcomTrimmomatic.R -p 36 -s 2 -l -r
-    echo -e "\n"
-    echo "baqcomTrimmomatic test is done"
-    echo -e "\n"
-    echo "Running baqcomSTARmapping"
-    echo -e "\n"
-    ./baqcomSTARmapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo "baqcomSTARmapping test is done"
+
+run.STAR () {
+    echo -e "\nRunning baqcomSTARmapping\n"
+        ./baqcomSTARmapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
+    echo -e "\nbaqcomSTARmapping test is done\n"
 }
 
-run.trimmomatic.and.hisat2.and.counts () {
-    echo -e "\n"
-    echo "Running baqcomTrimmomatic test"
-    echo -e "\n"
-    ./baqcomTrimmomatic.R -p 36 -s 2 -l -r
-    echo -e "\n"
-    echo "baqcomTrimmomatic test is done"
-    echo -e "\n"
-    echo "Running baqcomHisat2Mapping test"
-    echo -e "\n"
+
+run.HISAT2 () {
+
+    echo -e "\nRunning baqcomHisat2Mapping test\n"
     ./baqcomHisat2Mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo "baqcomHisat2Mapping test is done"
-    echo -e "\n"
-    echo "Running baqcomHtseqCounting test"
-    echo -e "\n"
+    echo -e "\nbaqcomHisat2Mapping test is done\n"
+}
+
+
+run.HTSEQ () {
+    echo -e "\nRunning baqcomHtseqCounting test\n"
     ./baqcomHtseqCounting.R -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo -e "\n"
+    echo -e "\nbaqcomHtseqCounting test is done\n"
+}
+
+
+run.FeatCount () {
     echo "Running baqcomFeaturesCount test"
     echo -e "\n"
     ./baqcomFeaturesCount.R -a examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
@@ -123,44 +121,24 @@ run.trimmomatic.and.hisat2.and.counts () {
     echo -e "\n"
 }
 
-run.all.pipelines () {
-    echo -e "\n"
-    echo "Running baqcomTrimmomatic test"
-    echo -e "\n"
-    ./baqcomTrimmomatic.R -p 36 -s 2 -l -r
-    echo -e "\n"
-    echo "baqcomTrimmomatic test is done"
-    echo -e "\n"
-    echo "Running baqcomSTARmapping"
-    echo -e "\n"
-    ./baqcomSTARmapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo "baqcomSTARmapping test is done"
-    echo -e "\n"
-    echo "Running baqcomHisat2Mapping test"
-    echo -e "\n"
-    ./baqcomHisat2Mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo "baqcomHisat2Mapping test is done"
-    echo -e "\n"
-    echo "Running baqcomHtseqCounting test"
-    echo -e "\n"
-    ./baqcomHtseqCounting.R -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo -e "\n"
-    echo "Running baqcomFeaturesCount test"
-    echo -e "\n"
-    ./baqcomFeaturesCount.R -a examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
-    echo "baqcomFeaturesCount test is done"
-    echo -e "\n"
-}
 
 if [ "$pipeline" == "" ];
 then
     run.trimmomatic
 elif [[ "$pipeline" == "baqcomSTARmapping.R" ]];
 then
-    run.trimmomatic.and.STAR
+    run.trimmomatic
+    run.STAR
 elif [[ "$pipeline" == "baqcomHisat2Mapping" ]];
 then
-    run.trimmomatic.and.hisat2.and.counts
+    run.trimmomatic
+    run.HISAT2
+    run.HTSEQ
+    run.FeatCount
 elif [[ "$pipeline" == "all" ]]; then
-    run.all.pipelines
+    run.trimmomatic
+    run.STAR
+    run.HISAT2
+    run.HTSEQ
+    run.FeatCount
 fi
