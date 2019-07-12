@@ -52,8 +52,6 @@ if [ -x "$genome" ] && [ -x "$annotation" ];
 then
     gunzip examples/genome/Sus.Scrofa*
     echo -e "genome and annotation files extracted successfully\n"
-else
-    echo -e "\ngenome and annotation files it is already uncompressed\n"
 fi
 
 #create input_folder
@@ -67,21 +65,16 @@ then
         cp examples/HE2* 00-Fastq/
         echo -e "00-Fastq created and files moved successfully\n"
     fi
-else
-    echo -e "00-Fastq and files already exist\n"
 fi
 #moving files from examples folder to 00-Fastq Folder
 
 
 
 #Creating samples.txt
-if [ ! -f samples.txt ];
-then
-    ./createSamples.sh
-    echo -e "\n"
-else
-    echo -e "samples.txt already exists\n"
-fi
+echo -e "\n"
+rm -f samples.txt
+./createSamples.sh
+echo -e "\n"
 #
 run.trimmomatic () {
     echo -e "\n"
