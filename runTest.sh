@@ -6,11 +6,19 @@
 usage="usage: ./$(basename "$0") [options] -- runTest version 0.3.0
 where:
      Use this script to test the functionality of the pipelines
-     This script runs by default baqcomTrimmomatic.R. You have to specify which mapping pipeline you want to test
+     This script runs by default baqcomTrimmomatic.R (Quality Control). You have to specify which mapping pipeline you want to test
 
-     Example: runTest.sh baqcomSTARmapping.R
-     Example: runTest.sh baqcomHisat2Mapping.R
-     Example: Example: run_test.sh all"
+     Example: runTest.sh baqcomSTARmapping.R --- This option will run:
+        - baqcomTrimmomatic.R (Quality Control)
+        - baqcomSTARmapping.R (Index, Mapping and Counting)
+
+     Example: runTest.sh baqcomHisat2Mapping.R --- This option will run:
+        - baqcomTrimmomatic.R (Quality Control)
+        - baqcomHisat2Mapping.R (Index, Mapping)
+        - baqcomHtseqCounting.R (Counting)
+        - baqcomFeaturesCount.R (Counting)
+
+     Example: Example: run_test.sh all --- This option will run all available pipelines"
 
 unset OPTARG
 unset OPTIND
@@ -99,7 +107,6 @@ run.STAR () {
 
 
 run.HISAT2 () {
-
     echo -e "\nRunning baqcomHisat2Mapping test\n"
     ./baqcomHisat2Mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
     echo -e "\nbaqcomHisat2Mapping test is done\n"
@@ -135,7 +142,8 @@ then
     run.HISAT2
     run.HTSEQ
     run.FeatCount
-elif [[ "$pipeline" == "all" ]]; then
+elif [[ "$pipeline" == "all" ]];
+then
     run.trimmomatic
     run.STAR
     run.HISAT2
