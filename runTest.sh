@@ -137,7 +137,7 @@ elif [[ "$pipeline" == "baqcomSTARmapping.R" ]];
 then
     run.trimmomatic
     run.STAR
-elif [[ "$pipeline" == "baqcomHisat2Mapping" ]];
+elif [[ "$pipeline" == "baqcomHisat2Mapping.R" ]];
 then
     run.trimmomatic
     run.HISAT2
