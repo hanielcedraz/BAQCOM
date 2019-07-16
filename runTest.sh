@@ -151,7 +151,9 @@ then
 elif [[ "$pipeline" == "all" ]];
 then
     run.trimmomatic
+    cp -r 02-Reports/ 02-Reports_2/
     run.STAR
+    mv 02-Reports_2 02-Reports
     run.HISAT2
     run.HTSEQ
     run.FeatCount
