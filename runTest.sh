@@ -57,10 +57,15 @@ fi
 
 genome=examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz
 annotation=examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf.gz
-if [ -x "$genome" ] && [ -x "$annotation" ];
+if [ -f "$genome" ];
 then
-    gunzip examples/genome/Sus.Scrofa*
-    echo -e "genome and annotation files extracted successfully\n"
+    gunzip $genome
+    echo -e "\nGenome files extracted successfully"
+fi
+if [ -f "$annotation" ];
+then
+    gunzip $annotation
+    echo -e "Annotation files extracted successfully\n"
 fi
 
 #create input_folder
