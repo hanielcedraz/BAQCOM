@@ -249,8 +249,8 @@ if (!all(sapply(trimmomatic.analysis, "==", 0L))) {
 
 
 if (pigz == 0) {
-    write(paste("Compressing files with pigz using", opt$procs, 'processors'),stderr())
-    system(paste0('pigz ', '-f ', '-p ', opt$procs,' ', opt$output,'/*.fastq'))
+    write(paste("Compressing files with pigz using", procs, 'processors'),stderr())
+    system(paste0('pigz ', '-f ', '-p ', procs,' ', opt$output,'/*.fastq'))
 }
 
 
