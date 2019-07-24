@@ -19,7 +19,9 @@ Examples:
         - baqcomHtseqCounting.R (Counting)
         - baqcomFeaturesCount.R (Counting)
 
-    ./run_test.sh all --- This option will run all available pipelines"
+    ./run_test.sh all --- This option will run all available pipelines
+    
+    "
 
 unset OPTARG
 unset OPTIND
