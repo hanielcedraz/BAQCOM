@@ -89,7 +89,7 @@ if [ "$(uname)" == "Linux" ];
             cd bin/
             tar xzf subread-1.6.4-source.tar.gz
             cd subread-1.6.4-source/src
-            make -f make -f Makefile.MacOS
+            make -f Makefile.MacOS
             cd ../../../
             ln -s bin/subread-1.6.4-source/bin/featureCounts featureCounts
         else
