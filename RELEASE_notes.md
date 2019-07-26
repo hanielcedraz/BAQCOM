@@ -69,9 +69,34 @@
   <br>
   
   
-Our team are working on future updates: <br>
-  Count reads using featuresCount in Star results; <br>
-  single-end analysis; <br>
+  
+#
+# BAQCOM 0.3.1 - 07/26/2019
+
+### baqcomSTARmapping
+  single-end analysis implemented  <br>
+    Minor bugs fixed
+  
+### baqcomTrimmomatic 
+  single-end analysis implemented  <br>
+  Minor bugs fixed
+  
+### baqcomHisat2Mapping 
+  single-end analysis implemented 
+  
+### baqcomFeaturesCount 
+  single-end analysis implemented 
+  Count reads using Star results
+  
+### baqcomHtseqCounting 
+  single-end analysis implemented 
+  
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>  
+
   
  
   
