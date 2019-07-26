@@ -53,6 +53,9 @@ option_list <- list(
     make_option(c("-s", "--samtools"), action = "store_true", default = FALSE,
                 help = "Use this option if you want to convert the SAM files to sorted BAM. samtools is required [%default]",
                 dest = "samtools"),
+    make_option(c("-z", "--single"), action = "store_true", default = FALSE,
+                help = "Use this option if you have single-end files[doesn't need an argument]. [%default]",
+                dest = "singleEnd"),
     make_option(c("-d", "--delete"), action = "store_true", default = FALSE,
                 help = "Use this option if you want to delete the SAM files after convert to sorted BAM. [%default]",
                 dest = "deleteSAMfiles")
@@ -61,7 +64,7 @@ option_list <- list(
 
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -96,9 +99,12 @@ loadSamplesFile <- function(file, reads_folder, column){
     ### column SAMPLE_ID should be the sample name
     ### rows can be commented out with #
     targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
-    if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-        write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-        stop()
+    if (!opt$singleEnd) {
+        if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+            cat('\n')
+            write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+            stop()
+        }
     }
     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
         if (targets[i,column]) {
@@ -272,32 +278,57 @@ index_names <- substr(basename(paste0(dir(index_Folder, full.names = TRUE))), 1,
 
 novel_names <- substr(basename(paste0(samples[1,1])), 1, nchar(basename(paste0(samples[1,1]))) - 02)
 
-hisat2.mapping <- mclapply(mapping, function(index){
-    write(paste('Starting Mapping sample', index$sampleName), stderr())
-    try({
-        system(paste('hisat2',
-                     '-p', ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
-                     '-x',
-                        paste0(index_Folder,index_names),
-                     '-1',
-                        paste0(index$PE1, collapse = ","),
-                     '-2',
-                        paste0(index$PE2, collapse = ","),
-                     paste0(mapping_Folder, '/', index$sampleName, '_unsorted_sample.sam'),
-                     if (opt$PassMode) {
-                     paste('--novel-splicesite-outfile', paste(novel_names,'splicesites','novel.txt', sep = '_'))
-                     paste('--novel-splicesite-infile', paste(novel_names,'splicesites','novel.txt', sep = '_'))},
-                     '2>', paste0(mapping_Folder,'/',index$sampleName,'_summary.log'),
-                     if (file.exists(external_parameters)) line))})
-}, mc.cores = opt$mprocs
-)
+if (!opt$singleEnd) {
+    hisat2.pair.mapping <- mclapply(mapping, function(index){
+        write(paste('Starting Mapping sample', index$sampleName), stderr())
+        try({
+            system(paste('hisat2',
+                         '-p', ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
+                         '-x',
+                            paste0(index_Folder,index_names),
+                         '-1',
+                            paste0(index$PE1, collapse = ","),
+                         '-2',
+                            paste0(index$PE2, collapse = ","),
+                         paste0(mapping_Folder, '/', index$sampleName, '_unsorted_sample.sam'),
+                         if (opt$PassMode) {
+                         paste('--novel-splicesite-outfile', paste(novel_names,'splicesites','novel.txt', sep = '_'))
+                         paste('--novel-splicesite-infile', paste(novel_names,'splicesites','novel.txt', sep = '_'))},
+                         '2>', paste0(mapping_Folder,'/',index$sampleName,'_summary.log'),
+                         if (file.exists(external_parameters)) line))})
+    }, mc.cores = opt$mprocs
+    )
 
 
-if (!all(sapply(hisat2.mapping, "==", 0L))) {
-    write(paste("Something went wrong with HISAT2 mapping. Some jobs failed"),stderr())
-    stop()
+    if (!all(sapply(hisat2.pair.mapping, "==", 0L))) {
+        write(paste("Something went wrong with HISAT2 mapping. Some jobs failed"),stderr())
+        stop()
+    }
+} else if (opt$singleEnd) {
+    hisat2.single.mapping <- mclapply(mapping, function(index){
+        write(paste('Starting Mapping sample', index$sampleName), stderr())
+        try({
+            system(paste('hisat2',
+                         '-p', ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
+                         '-x',
+                         paste0(index_Folder,index_names),
+                         '-U',
+                         paste0(index$PE1, collapse = ","),
+                         paste0(mapping_Folder, '/', index$sampleName, '_unsorted_sample.sam'),
+                         if (opt$PassMode) {
+                             paste('--novel-splicesite-outfile', paste(novel_names,'splicesites','novel.txt', sep = '_'))
+                             paste('--novel-splicesite-infile', paste(novel_names,'splicesites','novel.txt', sep = '_'))},
+                         '2>', paste0(mapping_Folder,'/',index$sampleName,'_summary.log'),
+                         if (file.exists(external_parameters)) line))})
+    }, mc.cores = opt$mprocs
+    )
+
+
+    if (!all(sapply(hisat2.single.mapping, "==", 0L))) {
+        write(paste("Something went wrong with HISAT2 mapping. Some jobs failed"),stderr())
+        stop()
+    }
 }
-
 
 samtoolsList <- function(samples, reads_folder, column){
     samtoolsfiles <- list()
