@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 
-
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
@@ -53,16 +52,22 @@ reads from the same pair must have. This argument is only applicable for paired-
     make_option(c("-C", "--countChimericFragments"), action = 'store_true', type = "character", default = FALSE,
                 help  =  "If specified, the chimeric fragments (those fragments that have their two ends aligned to different chromosomes) will NOT be counted. [default %default]",
                 dest  =  "countChimericFragments"),
+    make_option(c("-z", "--single"), action = "store_true", default = FALSE,
+                help = "Use this option if you have single-end files[doesn't need an argument]. [%default]",
+                dest = "singleEnd"),
     make_option(c("-x", "--external"), action  =  'store', type  =  "character", default = 'FALSE',
                 help = "A space delimeted file with a single line contain several external parameters from HISAT2 [default %default]",
-                dest = "externalParameters")
+                dest = "externalParameters"),
+    make_option(c("-S", "--fromSTAR"), type = "character", default = FALSE,
+                help = "This option will performes counting from STAR mapped files. [%default]",
+                dest = "samplesFromSTAR")
 )
 
 
 
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -99,9 +104,12 @@ loadSamplesFile <- function(file, reads_folder, column){
     ### column SAMPLE_ID should be the sample name
     ### rows can be commented out with #
     targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
-    if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-        write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-        stop()
+    if (!opt$singleEnd) {
+        if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+            cat('\n')
+            write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+            stop()
+        }
     }
     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
         if (targets[i,column]) {
@@ -156,38 +164,63 @@ prepareCore <- function(opt_procs) {
 
 
 ######################
-countingList <- function(samples, reads_folder, column){
-    counting_list <- list()
-    if (casefold(opt$format, upper = FALSE) == 'bam') {
-        for (i in 1:nrow(samples)) {
-            files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.bam$'), full.names = TRUE)
+if (opt$samplesFromSTAR == FALSE) {
+        countingList <- function(samples, reads_folder, column){
+        counting_list <- list()
+        if (casefold(opt$format, upper = FALSE) == 'bam') {
+            for (i in 1:nrow(samples)) {
+                files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.bam$'), full.names = TRUE)
 
-            count <- lapply(c("_sam_sorted_pos.bam"), grep, x = files, value = TRUE)
-            names(count) <- c("bam_sorted_pos")
-            count$sampleName <-  samples[i,column]
-            count$bam_sorted_pos <- count$bam_sorted_pos[i]
+                count <- lapply(c("_sam_sorted_pos.bam"), grep, x = files, value = TRUE)
+                names(count) <- c("bam_sorted_pos")
+                count$sampleName <-  samples[i,column]
+                count$bam_sorted_pos <- count$bam_sorted_pos[i]
 
-            counting_list[[paste(count$sampleName)]] <- count
-            counting_list[[paste(count$sampleName, sep = "_")]]
+                counting_list[[paste(count$sampleName)]] <- count
+                counting_list[[paste(count$sampleName, sep = "_")]]
 
+            }
+        }else if (casefold(opt$format, upper = FALSE) == 'sam') {
+            for (i in 1:nrow(samples)) {
+                files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.sam$'), full.names = TRUE)
+
+                count <- lapply(c("_unsorted_sample.sam"), grep, x = files, value = TRUE)
+                names(count) <- c("unsorted_sample")
+                count$sampleName <-  samples[i,column]
+                count$unsorted_sample <- count$unsorted_sample[i]
+
+                counting_list[[paste(count$sampleName)]] <- count
+                counting_list[[paste(count$sampleName, sep = "_")]]
+
+            }
         }
-    }else if (casefold(opt$format, upper = FALSE) == 'sam') {
-        for (i in 1:nrow(samples)) {
-            files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.sam$'), full.names = TRUE)
-
-            count <- lapply(c("_unsorted_sample.sam"), grep, x = files, value = TRUE)
-            names(count) <- c("unsorted_sample")
-            count$sampleName <-  samples[i,column]
-            count$unsorted_sample <- count$unsorted_sample[i]
-
-            counting_list[[paste(count$sampleName)]] <- count
-            counting_list[[paste(count$sampleName, sep = "_")]]
-
-        }
-    }
         write(paste("Setting up", length(counting_list), "jobs"),stdout())
         return(counting_list)
+    }
 }
+
+if (opt$samplesFromSTAR != FALSE) {
+        reads_folder <- opt$inputFolder
+        countingList <- function(samples, reads_folder, column){
+            counting_list <- list()
+            for (i in 1:nrow(samples)) {
+                files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.bam$'), full.names = TRUE)
+
+                count <- lapply(c("_Aligned.sortedByCoord.out.bam"), grep, x = files, value = TRUE)
+                names(count) <- c("Aligned.sortedByCoord.out")
+                count$sampleName <-  samples[i,column]
+                count$Aligned.sortedByCoord.out <- count$Aligned.sortedByCoord.out[i]
+
+                counting_list[[paste(count$sampleName)]] <- count
+                counting_list[[paste(count$sampleName, sep = "_")]]
+            }
+            write(paste("Setting up", length(counting_list), "jobs"),stdout())
+            return(counting_list)
+    }
+}
+
+
+
 
 
 
@@ -199,8 +232,13 @@ if (file.exists(external_parameters)) {
 
 samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
 procs <- prepareCore(opt$procs)
-couting <- countingList(samples, opt$inputFolder, opt$samplesColumn)
 
+if (opt$samplesFromSTAR == FALSE) {
+    couting <- countingList(samples, opt$inputFolder, opt$samplesColumn)
+}
+if (opt$samplesFromSTAR != FALSE) {
+    couting <- countingList(samples, opt$samplesFromSTAR, opt$samplesColumn)
+}
 cat('\n')
 
 counting_Folder <- opt$countsFolder
@@ -223,7 +261,6 @@ if (casefold(opt$stranded, upper = FALSE) == 'no') {
 }
 
 
-
 count.run <- mclapply(couting, function(index){
     try({
         system(paste('featureCounts',
@@ -237,10 +274,20 @@ count.run <- mclapply(couting, function(index){
                      '-a',
                      opt$gtfTarget,
                      if (file.exists(external_parameters)) line,
-                     if (casefold(opt$format, upper = FALSE) == 'sam')
-                         index$unsorted_sample,
-                     if (casefold(opt$format, upper = FALSE) == 'bam')
-                         index$bam_sorted_pos,
+                     if (opt$samplesFromSTAR == FALSE) {
+                          if (casefold(opt$format, upper = FALSE) == 'sam')
+                              {index$unsorted_sample}
+                          else if (casefold(opt$format, upper = FALSE) == 'bam')
+                              {index$bam_sorted_pos}
+                     },
+                     if (opt$samplesFromSTAR != FALSE) {
+                         if (file.exists(opt$samplesFromSTAR)) {
+                         paste0(index$Aligned.sortedByCoord.out)
+                         } else {
+                                 write(paste('folder doesn`t exist. please verify if it is correct'), stderr())
+                             stop()
+                         }
+                     },
                      '-o', paste0(counting_Folder,'/', index$sampleName, '_featCount.counts')
                      #paste0('2>', counting_Folder, '/', index$sampleName, '_HTSeq.out')
         ))
@@ -251,7 +298,7 @@ count.run <- mclapply(couting, function(index){
                      '|',
                      "sed '1d'",
                      '>',
-                      paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
+                     paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
                      '|',
                      'mv',
                      paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
