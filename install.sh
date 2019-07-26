@@ -16,11 +16,11 @@ if [ $? -ne 0 ];
     then
       if [ "$(uname)" == "Linux" ]; then
         echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD:\n" >> ~/.bashrc;
-        bash;
+        #bash;
         echo "Path" $PWD "added in ~/.bashrc successfully"
       else
         echo -e "\n#Added by BAQCOM\nPATH=\$PATH:$PWD:\n" >> ~/.bash_profile;
-        source ~/.bash_profile;
+        #source ~/.bash_profile;
         echo "Path" $PWD "added in ~/.bash_profile successfully"
     fi
       else
@@ -38,7 +38,7 @@ if [ "$(uname)" == "Linux" ];
       rm -f STAR
       ln -s bin/STAR_linux_2.7.1a STAR
       echo "STAR symbolic link created successfully"
-       if ! [ -x  "$(command -v hisat2)" ];
+       if ! [ -d bin/hisat2-2.1.0 ];
         then
               wget http://ccb.jhu.edu/software/hisat2/dl/hisat2-2.1.0-Linux_x86_64.zip -O bin/hisat2-2.1.0-Linux_x86_64.zip
               cd bin/
@@ -52,7 +52,7 @@ if [ "$(uname)" == "Linux" ];
         else
              echo "hisat2 exists and doesn't need to download"
         fi
-        if ! [ -x  "$(command -v featureCounts)" ];
+        if ! [ -d bin/subread-1.6.4-source ];
         then
             wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
             cd bin/
@@ -69,7 +69,7 @@ if [ "$(uname)" == "Linux" ];
       rm -f STAR
       ln -s bin/STAR_mac_2.7.1a STAR
       echo "STAR symbolic link created successfully"
-        if ! [ -x  "$(command -v hisat2)" ];
+        if ! [ -d bin/hisat2-2.1.0 ];
         then
               wget http://ccb.jhu.edu/software/hisat2/dl/hisat2-2.1.0-OSX_x86_64.zip -O bin/hisat2-2.1.0-OSX_x86_64.zip
               cd bin/
@@ -83,7 +83,7 @@ if [ "$(uname)" == "Linux" ];
         else
              echo "hisat2 exists and doesn't need to download"
         fi
-        if ! [ -x  "$(command -v featureCounts)" ];
+        if ! [ -d bin/subread-1.6.4-source ];
         then
             wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
             cd bin/
@@ -136,4 +136,10 @@ if [ -e installPackages.R ];
 fi
 
 
+if [ "$(uname)" == "Linux" ];
+    then
+        bash
+    else
+        source ~/.bash_profile;
+fi
 #echo "successfully installed"
