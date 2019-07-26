@@ -58,6 +58,9 @@ option_list <- list(
     make_option(c('-w', '--window'), type = 'integer', default = 10,
                 help = 'Quality window to use during trimming quality [default %default]',
                 dest = 'window'),
+    make_option(c("-z", "--single"), action = "store_true", default = FALSE,
+                help = "Use this option if you have single-end files[doesn't need an argument]. [%default]",
+                dest = "singleEnd"),
     make_option(c("-m", "--miniumumLength"), type = "integer", default = 50,
                 help = "Discard reads less then minimum length [default %default]",
                 dest = "minL")
@@ -66,7 +69,7 @@ option_list <- list(
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.',
-                                                                               'Version: 0.3.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+                                                                               'Version: 0.3.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -107,11 +110,13 @@ loadSamplesFile <- function(file, reads_folder, column){
     }
     ### column SAMPLE_ID should be the sample name
     ### rows can be commented out with #
-    targets <- read.table(file, sep="", header = TRUE, as.is = TRUE)
-    if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-        write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-        stop()
-    }
+    targets <- read.table(file, sep ="", header = TRUE, as.is = TRUE)
+    if (!opt$singleEnd) {
+        if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+            write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+            stop()
+        }
+        }
     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
         if (targets[i, column]) {
             ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
@@ -142,23 +147,41 @@ prepareCore <- function(opt_procs){
     return(opt_procs)
 }
 
-qcList <- function(samples, reads_folder, column){
-    mapping_list <- list()
-    for (i in 1:nrow(samples)) {
-        reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-        #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-        map <- lapply(c("_R1","_R2"), grep, x = reads, value = TRUE)
-        names(map) <- c("R1","R2")
-        map$sampleName <-  samples[i,column]
-        map$R1 <- samples[i,2]
-        map$R2 <- samples[i,3]
+if (!opt$singleEnd) {
+    qcList <- function(samples, reads_folder, column){
+        mapping_list <- list()
+        for (i in 1:nrow(samples)) {
+            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+            #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+            map <- lapply(c("_R1","_R2"), grep, x = reads, value = TRUE)
+            names(map) <- c("R1","R2")
+            map$sampleName <-  samples[i,column]
+            map$R1 <- samples[i,2]
+            map$R2 <- samples[i,3]
+                mapping_list[[paste(map$sampleName)]] <- map
+                #mapping_list[[paste(map$sampleName)]]
+        }
+        write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+        return(mapping_list)
+    }
+} else if (opt$singleEnd) {
+    qcList <- function(samples, reads_folder, column){
+        mapping_list <- list()
+        for (i in 1:nrow(samples)) {
+            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+            #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+            map <- lapply(c("_R1"), grep, x = reads, value = TRUE)
+            names(map) <- c("R1")
+            map$sampleName <-  samples[i,column]
+            map$R1 <- samples[i,2]
+            #map$R2 <- samples[i,3]
             mapping_list[[paste(map$sampleName)]] <- map
             #mapping_list[[paste(map$sampleName)]]
+        }
+        write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+        return(mapping_list)
     }
-    write(paste("Setting up",length(mapping_list),"jobs"), stdout())
-    return(mapping_list)
 }
-
 
 samples <- loadSamplesFile(opt$samplesFile, opt$Raw_Folder, opt$samplesColumn)
 procs <- prepareCore(opt$procs)
@@ -211,42 +234,74 @@ if (!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder),
 
 # Trimmomatic analysis function
 pigz <- system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
-write(paste("START Trimmomatic"), stderr())
-trimmomatic.analysis <- mclapply(qcquery, function(index){
-    try({
-        system(
-            paste('java', '-jar', trimmomatic, 'PE',
-                  paste0('-threads ',
-                  ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
-                  paste0(opt$Raw_Folder, '/', index$R1),
-                  paste0(opt$Raw_Folder, '/', index$R2),
-                  if (pigz == 0) {
-                      paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq'),
-                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq'),
-                      paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq'),
-                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq'))}
-                  else{
-                      paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
-                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
-                      paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
-                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'))},
-                  paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
-                  paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
-                         opt$adapters, ':2:30:10'),
-                  paste0('LEADING:', opt$leading),
-                  paste0('TRAILING:', opt$trailing),
-                  paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
-                  paste0('MINLEN:', opt$minL),
-                  paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
-        )
-    })
-}, mc.cores = opt$sampleToprocs)
+if (!opt$singleEnd) {
+    write(paste("START Trimmomatic PE"), stderr())
+    trimmomatic.pair <- mclapply(qcquery, function(index){
+        try({
+            system(
+                paste('java', '-jar', trimmomatic, 'PE',
+                      paste0('-threads ',
+                      ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
+                      paste0(opt$Raw_Folder, '/', index$R1),
+                      paste0(opt$Raw_Folder, '/', index$R2),
+                      if (pigz == 0) {
+                          paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq'),
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq'),
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq'),
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq'))}
+                      else{
+                          paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'))},
+                      paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+                      paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
+                             opt$adapters, ':2:30:10'),
+                      paste0('LEADING:', opt$leading),
+                      paste0('TRAILING:', opt$trailing),
+                      paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
+                      paste0('MINLEN:', opt$minL),
+                      paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
+            )
+        })
+    }, mc.cores = opt$sampleToprocs)
 
-if (!all(sapply(trimmomatic.analysis, "==", 0L))) {
-    write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
-    stop()
+    if (!all(sapply(trimmomatic.pair , "==", 0L))) {
+        write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+        stop()
+    }
+} else if (opt$singleEnd) {
+    write(paste("START Trimmomatic SE"), stderr())
+    trimmomatic.single <- mclapply(qcquery, function(index){
+        try({
+            system(
+                paste('java', '-jar', trimmomatic, 'SE',
+                      paste0('-threads ',
+                             ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
+                      paste0(opt$Raw_Folder, '/', index$R1),
+                      if (pigz == 0) {
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq')
+                        }
+                      else{
+                          paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz')
+                        },
+                      paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+                      paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
+                             opt$adapters, ':2:30:10'),
+                      paste0('LEADING:', opt$leading),
+                      paste0('TRAILING:', opt$trailing),
+                      paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
+                      paste0('MINLEN:', opt$minL),
+                      paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
+            )
+        })
+    }, mc.cores = opt$sampleToprocs)
+
+    # if (!all(sapply(trimmomatic.single , "==", 0L))) {
+    #     write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+    #     stop()
+    # }
 }
-
 
 if (pigz == 0) {
     write(paste("Compressing files with pigz using", procs, 'processors'),stderr())
