@@ -59,7 +59,7 @@ option_list <- list(
                 help = 'Quality window to use during trimming quality [default %default]',
                 dest = 'window'),
     make_option(c("-z", "--single"), action = "store_true", default = FALSE,
-                help = "Use this option if you have single-end files[doesn't need an argument]. [%default]",
+                help = "Use this option if you have single-end files [doesn't need an argument]. [%default]",
                 dest = "singleEnd"),
     make_option(c("-m", "--miniumumLength"), type = "integer", default = 50,
                 help = "Discard reads less then minimum length [default %default]",
@@ -69,7 +69,7 @@ option_list <- list(
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.',
-                                                                               'Version: 0.3.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
+                                                                               'Version: 0.3.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n')))
 
 
 
@@ -110,7 +110,7 @@ loadSamplesFile <- function(file, reads_folder, column){
     }
     ### column SAMPLE_ID should be the sample name
     ### rows can be commented out with #
-    targets <- read.table(file, sep ="", header = TRUE, as.is = TRUE)
+    targets <- read.table(file, sep = "", header = TRUE, as.is = TRUE)
     if (!opt$singleEnd) {
         if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
             write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
@@ -373,27 +373,52 @@ if (opt$multiqc) {
 cat('\n')
 
 # Creating samples report
-TidyTable <- function(x) {
-    final <- data.frame('Input_Read_Pairs' = x[1,2],
-                        'Pairs_Reads' = x[2,2],
-                        'Pairs_Read_Percent' = x[3,2],
-                        'Forward_Only_Surviving_Reads' = x[4,2],
-                        'Forward_Only_Surviving_Read_Percent' = x[5,2],
-                        'Reverse_Only_Surviving_Reads' = x[6,2],
-                        'Reverse_Only_Surviving_Read_Percent' = x[7,2],
-                        'Dropped_Reads' = x[8,2],
-                        'Dropped_Read_Percent' = x[9,2])
-    return(final)
-}
+if (!opt$singleEnd) {
+    TidyTable <- function(x) {
+        final <- data.frame('Input_Read_Pairs' = x[1,2],
+                            'Pairs_Reads' = x[2,2],
+                            'Pairs_Read_Percent' = x[3,2],
+                            'Forward_Only_Surviving_Reads' = x[4,2],
+                            'Forward_Only_Surviving_Read_Percent' = x[5,2],
+                            'Reverse_Only_Surviving_Reads' = x[6,2],
+                            'Reverse_Only_Surviving_Read_Percent' = x[7,2],
+                            'Dropped_Reads' = x[8,2],
+                            'Dropped_Read_Percent' = x[9,2])
+        return(final)
+    }
 
-report_sample <- list()
-for (i in samples[,1]) { # change this to your "samples"
-    report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
-                                     header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
-}
+    report_sample <- list()
+    for (i in samples[,1]) { # change this to your "samples"
+        report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
+                                         header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
+    }
 
-df <- lapply(report_sample, FUN = function(x) TidyTable(x))
-final_df <- do.call("rbind", df)
+    df <- lapply(report_sample, FUN = function(x) TidyTable(x))
+    final_df <- do.call("rbind", df)
+}else if (opt$singleEnd) {
+    TidyTable <- function(x) {
+        final <- data.frame('Input_Read_Pairs' = x[1,2],
+                            # 'Pairs_Reads' = x[2,2],
+                            # 'Pairs_Read_Percent' = x[3,2],
+                            'Surviving_Reads' = x[2,2],
+                            'Surviving_Read_Percent' = x[3,2],
+                            # 'Reverse_Only_Surviving_Reads' = x[6,2],
+                            # 'Reverse_Only_Surviving_Read_Percent' = x[7,2],
+                            'Dropped_Reads' = x[4,2],
+                            'Dropped_Read_Percent' = x[5,2]
+                            )
+        return(final)
+    }
+
+    report_sample <- list()
+    for (i in samples[,1]) { # change this to your "samples"
+        report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
+                                         header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
+    }
+
+    df <- lapply(report_sample, FUN = function(x) TidyTable(x))
+    final_df <- do.call("rbind", df)
+}
 
 write.table(final_df, file = paste0(reports, '/', 'QualityControlReportSummary.txt'), sep = "\t", row.names = TRUE, col.names = TRUE, quote = F)
 
