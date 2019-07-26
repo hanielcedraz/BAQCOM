@@ -51,7 +51,7 @@ option_list <- list(
               help = "This option directs STAR to re-run genome indices generation job. [%default]",
               dest = "indexBuild"),
   make_option(c("-z", "--single"), action = "store_true", default = FALSE,
-              help = "Use this option if you have single-end files. [%default]",
+              help = "Use this option if you have single-end files[doesn't need an argument]. [%default]",
               dest = "singleEnd"),
   make_option(c("-o", "--outSAMtype"), type = "character", default = "SortedByCoordinate",
               help = "Output sorted by coordinate Aligned.sortedByCoord.out.bam file (default: %default); Output unsorted Aligned.out.bam file (Unsorted); Output both unsorted and sorted files (UnsortedSortedByCoordinate).",
@@ -66,7 +66,7 @@ option_list <- list(
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.0', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.1', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
 
 
 
@@ -101,9 +101,11 @@ loadSamplesFile <- function(file, reads_folder, column) {
   ### column SAMPLE_ID should be the sample name
   ### rows can be commented out with #
   targets <- read.table(file, header = TRUE, as.is = TRUE)
-  if ( !all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-    write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-    stop()
+  if (!opt$singleEnd) {
+    if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+      write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+      stop()
+    }
   }
   for (i in seq.int(nrow(targets$SAMPLE_ID))) {
     if (targets[i, column]) {
@@ -326,7 +328,7 @@ if (!opt$singleEnd) {
                    '--readFilesCommand',
                    paste(uncompress, '-c'),
                    '--readFilesIn',
-                   index$SE1,
+                   index$PE1,
                    '--outFileNamePrefix',
                    paste0(opt$mappingFolder, '/', index$sampleName, '_STAR_'),
                    '--outReadsUnmapped Fastx',
