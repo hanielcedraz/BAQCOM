@@ -6,14 +6,25 @@ usage() {
 Usage: $0 [options] -- createSample version 0.3.0
 
     Use this script to create a sample ID file.
+    This script will work perfectly if the file names in the 00-Fastq directory follow the structure:
+
+    Pair-End:
+        File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
+        File R2: SAMPLENAME_any_necessary_information_R2_001.fastq.gz
+    Single-End:
+        File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
 
 Arguments:
   -d <val>
     Specify the folder which is storage the fastq files. [default: 00-Fastq].
 
   -f <val>
-    Specify if files are pair ou single-end, and create a samples file using these files. [default: pair-end].
+    Specify if files are pair ou single, and create a samples file using these files. [default: pair].
 
+
+    Examples:
+        createSample.sh -d directory -f pair
+        createSample.sh -d directory -f single
 EOF
 }
 
