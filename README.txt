@@ -1,9 +1,10 @@
 
-##############################################################################
-### BAQCOM - BAQCOM - Bioinformatics Analysis for Quality Control and Mapping
-### Quality Control (Trimmomatic) and Mapping (STAR)
-##############################################################################
+############################################################################################################
+### BAQCOM - BAQCOM - Bioinformatics Analysis for Quality Control and Mapping                          #####
+### Quality Control (Trimmomatic), Mapping (STAR | HISAT2) and Counting Reads (HTSeq | featuresCount)  #####
+############################################################################################################
  
+
 The BAQCOM is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
 
 
@@ -17,15 +18,15 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	# Install 'optparse' and 'parallel' packages
 
 
-#################
+##################
 ### CONFIGURATION
-#################
+##################
 
 
 #STEP.2 - Download this repository to a preference path:
 	 $ git clone https://github.com/hanielcedraz/BAQCOM.git
 
-#STEP.3 - Run install.sh. This file will replace the trimmomatic path into the .baqcom_qc and update ~/bash_profile directory path, so you can call the files from any directory.
+#STEP.3 - Run install.sh. This file will replace the trimmomatic path into the baqcomTrimmomatic and update ~/.bashrc or ~/.bash_profile directory path, so you can call the files from any directory.
 	
 	$ chmod +x ./install.sh
 	$ ./install.sh
@@ -56,9 +57,12 @@ Installation:
 	$ ./createSamples.sh
 
 #This script will work perfectly if the file names in the 00-Fastq directory follow the structure:
-
 #	File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
 #	File R2: SAMPLENAME_any_necessary_information_R2_001.fastq.gz
+
+	or to single-end files
+#	File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
+
 
 # If the files are splited in more than one R1 or R2 will be necessary to combine the equal R1 and R2 files. 
 	#you may follow this command: 
