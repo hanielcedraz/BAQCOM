@@ -46,4 +46,4 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 <br>
 <br>
 
-## <a href="https://github.com/hanielcedraz/BAQCOM/blob/47ef1813f68f6c79f51e59a126024ab5d6ce1b3f/RELEASE_notes.md">RELEASEnotes</a>
+## <a href="https://github.com/hanielcedraz/BAQCOM/blob/master/RELEASE_notes.md">RELEASEnotes</a>
