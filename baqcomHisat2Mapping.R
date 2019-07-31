@@ -276,7 +276,7 @@ cat('\n')
 
 index_names <- substr(basename(paste0(dir(index_Folder, full.names = TRUE))), 1, nchar(basename(paste0(dir(index_Folder, full.names = TRUE)))) - 6)
 
-novel_names <- substr(basename(paste0(samples[1,1])), 1, nchar(basename(paste0(samples[1,1]))) - 02)
+#novel_names <- substr(basename(paste0(samples[1,1])), 1, nchar(basename(paste0(samples[1,1]))) - 02)
 
 if (!opt$singleEnd) {
     hisat2.pair.mapping <- mclapply(mapping, function(index){
@@ -292,8 +292,10 @@ if (!opt$singleEnd) {
                             paste0(index$PE2, collapse = ","),
                          paste0(mapping_Folder, '/', index$sampleName, '_unsorted_sample.sam'),
                          if (opt$PassMode) {
-                         paste('--novel-splicesite-outfile', paste(novel_names,'splicesites','novel.txt', sep = '_'))
-                         paste('--novel-splicesite-infile', paste(novel_names,'splicesites','novel.txt', sep = '_'))},
+                             paste(
+                                 paste0('--novel-splicesite-outfile ', mapping_Folder,'/',index$sampleName,'_splicesites','_novel.txt'),
+                                 paste0('--novel-splicesite-infile ', mapping_Folder,'/',index$sampleName,'_splicesites','_novel.txt')
+                         )},
                          '2>', paste0(mapping_Folder,'/',index$sampleName,'_summary.log'),
                          if (file.exists(external_parameters)) line))})
     }, mc.cores = opt$mprocs
@@ -316,8 +318,10 @@ if (!opt$singleEnd) {
                          paste0(index$PE1, collapse = ","),
                          paste0(mapping_Folder, '/', index$sampleName, '_unsorted_sample.sam'),
                          if (opt$PassMode) {
-                             paste('--novel-splicesite-outfile', paste(novel_names,'splicesites','novel.txt', sep = '_'))
-                             paste('--novel-splicesite-infile', paste(novel_names,'splicesites','novel.txt', sep = '_'))},
+                             paste(
+                                 paste0('--novel-splicesite-outfile ', mapping_Folder,'/',index$sampleName,'_splicesites','_novel.txt'),
+                                 paste0('--novel-splicesite-infile ', mapping_Folder,'/',index$sampleName,'_splicesites','_novel.txt')
+                             )},
                          '2>', paste0(mapping_Folder,'/',index$sampleName,'_summary.log'),
                          if (file.exists(external_parameters)) line))})
     }, mc.cores = opt$mprocs
