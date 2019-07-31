@@ -1,6 +1,6 @@
 
 ## BAQCOM - Bioinformatics Analysis for Quality Control and Mapping <br>
-### Quality Control (Trimmomatic) and Mapping (STAR)
+### Quality Control (Trimmomatic), Mapping (STAR | HISAT2) and Counting Reads (HTSeq | featuresCount)
 <br>
 <br>
 
