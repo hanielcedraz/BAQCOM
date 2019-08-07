@@ -101,7 +101,7 @@ run.trimmomatic () {
     echo -e "\n"
     echo "Running baqcomTrimmomatic test"
     echo -e "\n"
-    ./baqcomTrimmomatic.R -p 36 -s 2 -l -r
+    ./baqcomTrimmomatic.R -p 36 -s 2 -l
     echo -e "\n"
     echo "baqcomTrimmomatic test is done"
 }
@@ -109,21 +109,21 @@ run.trimmomatic () {
 
 run.STAR () {
     echo -e "\nRunning baqcomSTARmapping\n"
-        ./baqcomSTARmapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
+        ./baqcomSTARmapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
     echo -e "\nbaqcomSTARmapping test is done\n"
 }
 
 
 run.HISAT2 () {
     echo -e "\nRunning baqcomHisat2Mapping test\n"
-    ./baqcomHisat2Mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
+    ./baqcomHisat2Mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
     echo -e "\nbaqcomHisat2Mapping test is done\n"
 }
 
 
 run.HTSEQ () {
     echo -e "\nRunning baqcomHtseqCounting test\n"
-    ./baqcomHtseqCounting.R -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
+    ./baqcomHtseqCounting.R -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
     echo -e "\nbaqcomHtseqCounting test is done\n"
 }
 
@@ -131,7 +131,7 @@ run.HTSEQ () {
 run.FeatCount () {
     echo "Running baqcomFeaturesCount test"
     echo -e "\n"
-    ./baqcomFeaturesCount.R -a examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf -m
+    ./baqcomFeaturesCount.R -a examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
     echo "baqcomFeaturesCount test is done"
     echo -e "\n"
 }
