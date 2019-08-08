@@ -85,7 +85,7 @@
   single-end analysis implemented 
   
 ### baqcomFeaturesCount 
-  single-end analysis implemented 
+  single-end analysis implemented <br>
   Count reads using Star results
   
 ### baqcomHtseqCounting 
@@ -98,5 +98,38 @@
   <br>  
 
   
+  
+  
+#
+# BAQCOM 0.3.2 - 08/08/2019
+
+### baqcomSTAR
+   Change the pipeline's name pattern <br>
+    from baqcomSTARmapping.R to baqcomSTAR.R <br>
+   Minor bugs fixed
+  
+### baqcomTrimmomatic 
+   Minor bugs fixed
+  
+### baqcomHisat2Mapping 
+  Change the pipeline's name pattern <br>
+   from baqcomHisat2Mapping.R to baqcomHisat2.R <br>
+  Minor bugs fixed
+  
+### baqcomFeaturesCount 
+  Change the pipeline's name pattern <br>
+   from baqcomFeaturesCount.R to baqcomFeatureCounts.R <br>
+  Minor bugs fixed
+  
+### baqcomHtseqCounting 
+  Change the pipeline's name pattern <br>
+   from baqcomHtseqCounting.R to baqcomHtseq.R <br>
+  Minor bugs fixed 
+  
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>  
  
   
