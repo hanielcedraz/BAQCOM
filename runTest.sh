@@ -11,13 +11,13 @@ usage="usage: ./$(basename "$0") [options] -- runTest version 0.3.0
 Examples:
     ./runTest.sh baqcomSTARmapping.R --- This option will run:
         - baqcomTrimmomatic.R (Quality Control)
-        - baqcomSTARmapping.R (Index, Mapping and Counting)
+        - baqcomSTAR.R (Index, Mapping and Counting)
 
-    ./runTest.sh baqcomHisat2Mapping.R --- This option will run:
+    ./runTest.sh baqcomHisat2.R --- This option will run:
         - baqcomTrimmomatic.R (Quality Control)
-        - baqcomHisat2Mapping.R (Index, Mapping)
-        - baqcomHtseqCounting.R (Counting)
-        - baqcomFeaturesCount.R (Counting)
+        - baqcomHisat2.R (Index, Mapping)
+        - baqcomHtseq.R (Counting)
+        - baqcomFeatureCounts.R (Counting)
 
     ./run_test.sh all --- This option will run all available pipelines
     
@@ -48,7 +48,7 @@ pipeline=$1
 
 #check if command line argument is empty or not present
 #
-if [ "$1" != ""  ] && [ "$1" != "baqcomSTARmapping.R"  ] && [ "$1" != "baqcomHisat2Mapping.R" ] && [ "$1" != "all" ];
+if [ "$1" != ""  ] && [ "$1" != "baqcomSTAR.R"  ] && [ "$1" != "baqcomHisat2.R" ] && [ "$1" != "all" ];
 then
     echo "Please enter a valid argument"
     echo "Example: run_test.sh baqcomSTARmapping.R"
@@ -108,31 +108,31 @@ run.trimmomatic () {
 
 
 run.STAR () {
-    echo -e "\nRunning baqcomSTARmapping\n"
-        ./baqcomSTARmapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
-    echo -e "\nbaqcomSTARmapping test is done\n"
+    echo -e "\nRunning baqcomSTAR\n"
+        ./baqcomSTAR.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
+    echo -e "\nbaqcomSTAR test is done\n"
 }
 
 
 run.HISAT2 () {
-    echo -e "\nRunning baqcomHisat2Mapping test\n"
-    ./baqcomHisat2Mapping.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
-    echo -e "\nbaqcomHisat2Mapping test is done\n"
+    echo -e "\nRunning baqcomHisat2 test\n"
+    ./baqcomHisat2.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
+    echo -e "\nbaqcomHisat2 test is done\n"
 }
 
 
 run.HTSEQ () {
-    echo -e "\nRunning baqcomHtseqCounting test\n"
-    ./baqcomHtseqCounting.R -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
-    echo -e "\nbaqcomHtseqCounting test is done\n"
+    echo -e "\nRunning baqcomHtseq test\n"
+    ./baqcomHtseq.R -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
+    echo -e "\nbaqcomHtseq test is done\n"
 }
 
 
 run.FeatCount () {
-    echo "Running baqcomFeaturesCount test"
+    echo "Running baqcomFeatureCounts test"
     echo -e "\n"
-    ./baqcomFeaturesCount.R -a examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
-    echo "baqcomFeaturesCount test is done"
+    ./baqcomFeatureCounts.R -a examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
+    echo "baqcomFeatureCounts test is done"
     echo -e "\n"
 }
 
@@ -140,11 +140,11 @@ run.FeatCount () {
 if [ "$pipeline" == "" ];
 then
     run.trimmomatic
-elif [[ "$pipeline" == "baqcomSTARmapping.R" ]];
+elif [[ "$pipeline" == "baqcomSTAR.R" ]];
 then
     run.trimmomatic
     run.STAR
-elif [[ "$pipeline" == "baqcomHisat2Mapping.R" ]];
+elif [[ "$pipeline" == "baqcomHisat2.R" ]];
 then
     run.trimmomatic
     run.HISAT2
