@@ -57,41 +57,41 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 		
 	## Run Index and Mapping
 	# Running STAR pipeline
-		$ baqcomSTARmapping.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 3 (paired-end)
-		$ baqcomSTARmapping.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 3 -z (single-end)
+		$ baqcomSTAR.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 3 (paired-end)
+		$ baqcomSTAR.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 3 -z (single-end)
 		# -t option is the directory where the reference genome is stored (required); 
 		# -g option is the directory where the reference annotation is stored (optional but recomended); 
 		# -p option is the number of processors to use; 
 		# -q option is the number of samples to use at time;
 		# -z option will run single end analysis;
-		# More options can be accessed with -h option (baqcomSTARmapping.R -h)
+		# More options can be accessed with -h option (baqcomSTAR.R -h)
 			
 	# Running HISAT2 pipeline
-		$ baqcomHisat2Mapping.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 2 (paired-end)
-		$ baqcomHisat2Mapping.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 2 -z (single-end)
+		$ baqcomHisat2.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 2 (paired-end)
+		$ baqcomHisat2.R -t /path/to/reference_genome.fa -g /path/to/reference_annotation.gtf -p 20 -q 2 -z (single-end)
 		# -t option is the directory where the reference genome is stored (required); 
 		# -g option is the directory where the reference annotation is stored (optional but recomended); 
 		# -p option is the number of processors to use;
 		# -q option is the number of samples to use at time;
 		# -z option will run single end analysis;
-		# More options can be accessed with -h option (baqcomHisat2Mapping.R -h)
+		# More options can be accessed with -h option (baqcomHisat2.R -h)
 	
 	## Run counting reads
 	# Running HTseq
-		$ baqcomHtseqCounting.R -g /path/to/reference_annotation.gtf -q 2 (paired-end)
-		$ baqcomHtseqCounting.R -g /path/to/reference_annotation.gtf -q 2 -z (single-end)
+		$ baqcomHtseq.R -g /path/to/reference_annotation.gtf -q 2 (paired-end)
+		$ baqcomHtseq.R -g /path/to/reference_annotation.gtf -q 2 -z (single-end)
 		# -g option is the directory where the reference annotation is stored (required);
 		# -q option is the number of samples to use at time;
 		# -z option will run single end analysis;
-		# More options can be accessed with -h option (baqcomHtseqCounting.R -h)
+		# More options can be accessed with -h option (baqcomHtseq.R -h)
 		
 	# Running FeatureCounts
-		$ baqcomFeaturesCount.R -a /path/to/reference_annotation.gtf -p 20 -q 2 (paired-end)
-		$ baqcomFeaturesCount.R -a /path/to/reference_annotation.gtf -p 20 -q 2 -z (single-end)
+		$ baqcomFeatureCounts.R -a /path/to/reference_annotation.gtf -p 20 -q 2 (paired-end)
+		$ baqcomFeatureCounts.R -a /path/to/reference_annotation.gtf -p 20 -q 2 -z (single-end)
 		# -a option is the directory where the reference annotation is stored (required);
 		# -p option is the number of processors to use;
 		# -q option is the number of samples to use at time;
 		# -z option will run single end analysis;
-		# More options can be accessed with -h option (baqcomFeaturesCount.R -h)
+		# More options can be accessed with -h option (baqcomFeatureCounts.R -h)
 
 ## <a href="https://github.com/hanielcedraz/BAQCOM/blob/master/RELEASE_notes.md">RELEASEnotes</a>
