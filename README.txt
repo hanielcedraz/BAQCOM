@@ -84,17 +84,17 @@ Installation:
 
 	$ baqcomTrimmomatic.R -p 36 -s 2
 
-STEP.7.1 - Mapping with STAR (baqcomSTARmapping pipeline):
+STEP.7.1 - Mapping with STAR (baqcomSTAR pipeline):
 
 #Download the last release of the genome(.fa) and annotation(.gtf) of specie that you will work with
 #https://www.ensembl.org/info/data/ftp/index.html
 #Generate the genome indexes files. This step needs to be performed just once for each genome/annotation version.  After the index generation step, the mapping and reads count will be started automatically.
 
 #To index and mapping:
-	$ baqcomSTARmapping.R -t /path/to/genome.fa -g /path/to/annotation_version/annotation_version.gtf -p 20 -q 2 
+	$ baqcomSTAR.R -t /path/to/genome.fa -g /path/to/annotation_version/annotation_version.gtf -p 20 -q 2 
 
 #To mapping:
-	$ baqcomSTARmapping.R -t /path/to/index_STAR_folder -p 20 -q 3 
+	$ baqcomSTAR.R -t /path/to/index_STAR_folder -p 20 -q 3 
 
 
 #obs. If needs to run the script with more than 20 thread, it must change ulimit in the system used (see "increasing_Limit_CentOS_7" file ==> https://naveensnayak.com/2015/09/17/increasing-file-descriptors-and-open-files-limit-centos-7/).
@@ -102,11 +102,11 @@ STEP.7.1 - Mapping with STAR (baqcomSTARmapping pipeline):
 
 If you prefer, you can use HISAT2 to perform the mapping step and use HtseqCount or FeaturesCount to count reads
 STEP.7.2 - Mapping with HISAT2 (baqcomHisat2Mapping pipeline):
-	$ baqcomHisat2Mapping.R -t /path/to/genome.fa -g /path/to/annotation_version/annotation_version.gtf -p 20 -q 2
+	$ baqcomHisat2.R -t /path/to/genome.fa -g /path/to/annotation_version/annotation_version.gtf -p 20 -q 2
 	
 	
 	STEP.7.2.1 - Counting reads with HTseqCounts or FeaturesCount (baqcomHtseqCounting or baqcomFeaturesCount pipeline)
-		$ baqcomHtseqCounting.R -g /path/to/annotation_version/annotation_version.gtf
+		$ baqcomHtseq.R -g /path/to/annotation_version/annotation_version.gtf
 		
-		$ baqcomFeaturesCount.R -a /path/to/annotation_version/annotation_version.gtf
+		$ baqcomFeatureCounts.R -a /path/to/annotation_version/annotation_version.gtf
 		
