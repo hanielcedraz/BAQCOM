@@ -50,7 +50,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 	## Run Quality Control
 		$ baqcomTrimmomatic.R -p 36 -s 2
 		# -p option is the number of processors to use; 
-		-s option is the number of samples to use at time
+		# -s option is the number of samples to use at time
 		# More options can be accessed with -h option (baqcomTrimmomatic.R)
 		
 	## Run Index and Mapping
