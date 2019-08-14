@@ -40,9 +40,9 @@ fi
 #Configuring STAR, downloading Hisat2 and FeaturesCount in unix systems
 if [ "$(uname)" == "Linux" ];
     then
-      chmod +x bin/STAR_linux_2.7.1a
+      chmod +x bin/STAR_linux_2.7.2a
       rm -f STAR
-      ln -s bin/STAR_linux_2.7.1a STAR
+      ln -s bin/STAR_linux_2.7.2a STAR
       echo -e "\nSTAR symbolic link created successfully"
        if ! [ -d bin/hisat2-2.1.0 ];
         then
@@ -66,7 +66,7 @@ if [ "$(uname)" == "Linux" ];
                     break;;
                 *) echo "Insvalid option, specify y or n "
               esac
-            done    
+            done
         else
              echo -e "\nhisat2 exists and doesn't need to download"
         fi
@@ -95,9 +95,9 @@ if [ "$(uname)" == "Linux" ];
             echo -e "\nfeatureCounts exists and doesn't need to download"
         fi
     else
-      chmod +x bin/STAR_mac_2.7.1a
+      chmod +x bin/STAR_mac_2.7.2a
       rm -f STAR
-      ln -s bin/STAR_mac_2.7.1a STAR
+      ln -s bin/STAR_mac_2.7.2a STAR
       echo -e "\nSTAR symbolic link created successfully"
         if ! [ -d bin/hisat2-2.1.0 ];
         then
