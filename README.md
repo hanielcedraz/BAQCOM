@@ -9,7 +9,7 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 <br>
 <br>
 ## STEP.1 - Download this repository to a preference path:<br>
-	# Git is required
+	Git is required
 	 $ git clone https://github.com/hanielcedraz/BAQCOM.git
 	 $ cd BAQCOM
 	 $ chmod +x install.sh
@@ -18,29 +18,29 @@ The BAQCOM is a friendly-user pipeline which implements two automated pipelines 
 <br>
 
 ## STEP.2 - Install R<br>
-	# Access https://cran.r-project.org
+	Access https://cran.r-project.org
 <br>
 <br>
 
 ## STEP.3 - Install pip and MultiQC:
-	# If you would like to use multiqc analysis, please install it.
-	# Installation:
-	# If pip is not installed, please install as follow:
+	If you would like to use multiqc analysis, please install it.
+	Installation:
+	If pip is not installed, please install as follow:
 		$ wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
 		$ python get-pip.py
 	    
-        # You can install MultiQC from PyPI using pip as follow:
+        You can install MultiQC from PyPI using pip as follow:
 		$ pip install multiqc
-	# More information, please access https://github.com/ewels/MultiQC
+	More information, please access https://github.com/ewels/MultiQC
 	
 <br>
 <br>
 
 ## STEP.4 - Install PigZ:
-	# To speed up your analysis results, install the pigz.
-	     # Centos
+	To speed up your analysis results, install the pigz.
+	     Centos
 		$ sudo yum install pigz
-	     # Ubuntu
+	     Ubuntu
 	     	$ sudo apt install pigz
 <br>
 <br>
