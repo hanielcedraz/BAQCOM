@@ -109,14 +109,14 @@ run.trimmomatic () {
 
 run.STAR () {
     echo -e "\nRunning baqcomSTAR\n"
-        ./baqcomSTAR.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
+        ./baqcomSTAR.R -p 19 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
     echo -e "\nbaqcomSTAR test is done\n"
 }
 
 
 run.HISAT2 () {
     echo -e "\nRunning baqcomHisat2 test\n"
-    ./baqcomHisat2.R -p 20 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
+    ./baqcomHisat2.R -p 19 -t examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa -g examples/genome/Sus.Scrofa.chr1.gene.annotation.gtf 
     echo -e "\nbaqcomHisat2 test is done\n"
 }
 
