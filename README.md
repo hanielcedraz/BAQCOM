@@ -4,7 +4,7 @@
 <br>
 <br>
 
-The BAQCOM is a friendly-user pipeline which implements two automated pipelines for RNA-Seq analysis using Trimmomatic for QC and  STAR for mapping the transcriptomes.
+The BAQCOM is an user-friendly pipeline which implements five automated pipelines for RNA-Seq analysis using Trimmomatic for QC, STAR and HISAT2 for mapping and, HTSeq and featuresCount for counting reads the transcriptomes.
 <br>
 <br>
 <br>
