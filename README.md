@@ -46,6 +46,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 <br>
 
+
 ## Examples:
 	Run Quality Control
 		$ baqcomTrimmomatic.R -p 36 -s 2 (paired-end)
@@ -93,5 +94,10 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 		# -q option is the number of samples to use at time;
 		# -z option will run single end analysis;
 		# More options can be accessed with -h option (baqcomFeatureCounts.R -h)
+
+
+## Differential Expression Gene
+You will find some script to analyze differential expression genes <a href="https://github.com/hanielcedraz/DiffExpressGenes.git">here</a>
+
 
 ## <a href="https://github.com/hanielcedraz/BAQCOM/blob/master/RELEASE_notes.md">RELEASEnotes</a>
