@@ -18,7 +18,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 
 ## STEP.2 - Install R<br>
-	Access https://cran.r-project.org
+	<a href="https://cran.r-project.org">Access CRAN website https://cran.r-project.org</a>
 <br>
 <br>
 
@@ -32,7 +32,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 	    
         You can install MultiQC from PyPI using pip as follow:
 		$ pip install multiqc
-	More information, please access https://github.com/ewels/MultiQC
+	More information, please access <a href="https://github.com/ewels/MultiQC"> MultiQC website</a>
 	
 	
 	HTSeq-count:
@@ -45,8 +45,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 	To make plots you will need matplotlib, a plotting library.
 	
         You can install HTSeq-count using pip:
-		$ pip install HTSeq
-		
+		$ pip install HTSeq		
 <a href="https://htseq.readthedocs.io/en/release_0.11.1/install.html">or following the source documentation</a>
 	
 	
