@@ -163,7 +163,7 @@ if [[  -f baqcomTrimmomatic ]];
 fi
 
 #giving executable permission to the pipelines and scripts
-      chmod +x baqcomFeatureCounts.R baqcomHisat2.R baqcomHtseq.R baqcomSTAR.R createSamples.sh runTest.sh countReads.R
+      chmod +x baqcomFeatureCounts.R baqcomHisat2.R baqcomHtseq.R baqcomSTAR.R createSamples.sh runTest.sh countSTARreads.R 
 
 #install and configure fastQC
 if [[ -e bin/fastqc_v0.11.8.zip ]];
