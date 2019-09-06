@@ -46,8 +46,8 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 	You can install HTSeq-count using pip:
 		$ pip install HTSeq
 		
-	or following the source documentation
-	<a href="https://htseq.readthedocs.io/en/release_0.11.1/install.html">https://htseq.readthedocs.io/en/release_0.11.1/install.html</a>
+	
+	<a href="https://htseq.readthedocs.io/en/release_0.11.1/install.html">or following the source documentation</a>
 	
 	
 <br>
