@@ -18,7 +18,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 
 ## STEP.2 - Install R<br>
-<a href="https://cran.r-project.org">Access CRAN website https://cran.r-project.org</a>
+   To install R Access <a href="https://cran.r-project.org">CRAN website </a>
 <br>
 <br>
 
@@ -32,7 +32,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 	    
         You can install MultiQC from PyPI using pip as follow:
 		$ pip install multiqc
-	More information, please access <a href="https://github.com/ewels/MultiQC"> MultiQC website</a>
+More information, please access <a href="https://github.com/ewels/MultiQC"> MultiQC website</a>
 	
 	
 	HTSeq-count:
