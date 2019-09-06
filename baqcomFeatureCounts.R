@@ -59,7 +59,7 @@ reads from the same pair must have. This argument is only applicable for paired-
                 help = "A space delimeted file with a single line contain several external parameters from HISAT2 [default %default]",
                 dest = "externalParameters"),
     make_option(c("-S", "--fromSTAR"), type = "character", default = FALSE,
-                help = "This option will performes counting from STAR mapped files. [%default]",
+                help = "This option will performes counting from STAR mapped files. Specify the Folder that contains BAM files from STAR [%default]",
                 dest = "samplesFromSTAR")
 )
 
@@ -197,9 +197,7 @@ if (opt$samplesFromSTAR == FALSE) {
         write(paste("Setting up", length(counting_list), "jobs"),stdout())
         return(counting_list)
     }
-}
-
-if (opt$samplesFromSTAR != FALSE) {
+} else if (opt$samplesFromSTAR != FALSE) {
         reads_folder <- opt$inputFolder
         countingList <- function(samples, reads_folder, column){
             counting_list <- list()
