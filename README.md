@@ -18,7 +18,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 
 ## STEP.2 - Install R<br>
-	<a href="https://cran.r-project.org">Access CRAN website https://cran.r-project.org</a>
+<a href="https://cran.r-project.org">Access CRAN website https://cran.r-project.org</a>
 <br>
 <br>
 
