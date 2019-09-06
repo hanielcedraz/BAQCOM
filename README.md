@@ -22,7 +22,8 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 <br>
 
-## STEP.3 - Install pip, MultiQC and HTSeq-count:
+## STEP.3 - Install MultiQC and HTSeq-count:
+	MultiQC:
 	If you would like to use multiqc analysis, please install it.
 	Installation:
 	If pip is not installed, please install as follow:
@@ -34,9 +35,20 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 	More information, please access https://github.com/ewels/MultiQC
 	
 	
+	HTSeq-count:
+	HTSeq is available from the Python Package Index (PyPI):
+
+	To use HTSeq, you need Python 2.7 or 3.4 or above (3.0-3.3 are not supported), together with:
+
+	NumPy, a commonly used Python package for numerical calculations
+	Pysam, a Python interface to samtools.
+	To make plots you will need matplotlib, a plotting library.
+	You can install HTSeq-count using pip:
+		$ pip install HTSeq
+		
+	or following the source documentation
+	<a href="https://htseq.readthedocs.io/en/release_0.11.1/install.html">https://htseq.readthedocs.io/en/release_0.11.1/install.html</a>
 	
-	Install HTSeq-count following the source documentation
-	https://htseq.readthedocs.io/en/release_0.11.1/install.html#installation-on-linux
 	
 <br>
 <br>
