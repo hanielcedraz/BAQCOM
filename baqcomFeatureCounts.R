@@ -321,8 +321,7 @@ if (!file.exists(file.path(reportsall))) dir.create(file.path(reportsall), recur
 
 
 TidyTable <- function(x) {
-    final <- data.frame('Input_Read_Pairs' = x[1,1], # add you "samples" before that
-                        'Assigned' = x[1,2],
+    final <- data.frame('Assigned' = x[1,2],
                         'Unassigned_Unmapped' = x[2,2],
                         'Unassigned_MappingQuality' = x[3,2],
                         'Unassigned_Duplicate' = x[6,2],
@@ -332,7 +331,7 @@ TidyTable <- function(x) {
 }
 
 report_sample <- list()
-for (i in samples[,1]) { # change this to your "samples"
+for (i in samples[,1]) {
     report_sample[[i]] <- read.table(paste0(opt$countsFolder, '/', i,"_featCount.counts.summary"), header = F, as.is = T, fill = TRUE, skip = 1, blank.lines.skip = TRUE, text = TRUE)
 }
 
