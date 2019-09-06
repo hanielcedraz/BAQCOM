@@ -22,7 +22,7 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 <br>
 
-## STEP.3 - Install pip and MultiQC:
+## STEP.3 - Install pip, MultiQC and HTSeq-count:
 	If you would like to use multiqc analysis, please install it.
 	Installation:
 	If pip is not installed, please install as follow:
@@ -32,6 +32,11 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
         You can install MultiQC from PyPI using pip as follow:
 		$ pip install multiqc
 	More information, please access https://github.com/ewels/MultiQC
+	
+	
+	
+	Install HTSeq-count following the source documentation
+	https://htseq.readthedocs.io/en/release_0.11.1/install.html#installation-on-linux
 	
 <br>
 <br>
