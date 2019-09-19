@@ -64,6 +64,10 @@ More information, please access <a href="https://github.com/ewels/MultiQC"> Mult
 <br>
 
 
+
+
+<a href="https://ibb.co/sR3GvxV"><img src="https://i.ibb.co/T2hSBjg/baqcom-steps.png" alt="baqcom-steps" border="30"></a>
+
 ## Examples:
 	Run Quality Control
 		$ baqcomTrimmomatic.R -p 36 -s 2 (paired-end)
