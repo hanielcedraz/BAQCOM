@@ -8,6 +8,10 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 <br>
 <br>
+
+<a href="https://ibb.co/sR3GvxV"><img src="https://i.ibb.co/T2hSBjg/baqcom-steps.png" alt="baqcom-steps" border="0"></a>
+
+
 ## STEP.1 - Download this repository to a preference path:<br>
 	Git is required
 	 $ git clone https://github.com/hanielcedraz/BAQCOM.git
@@ -66,7 +70,7 @@ More information, please access <a href="https://github.com/ewels/MultiQC"> Mult
 
 
 
-<a href="https://ibb.co/sR3GvxV"><img src="https://i.ibb.co/T2hSBjg/baqcom-steps.png" alt="baqcom-steps" border="30"></a>
+
 
 ## Examples:
 	Run Quality Control
