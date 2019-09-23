@@ -9,8 +9,10 @@ The BAQCOM is an user-friendly pipeline which implements five automated pipeline
 <br>
 <br>
 
+<a href="https://ibb.co/tsTGtSf"><img src="https://i.ibb.co/gTL2pG1/baqcom-steps-white.png" alt="baqcom-steps-white" border="0" width="900"></a>
 
-<a href="https://ibb.co/kMJg3Yx"><img src="https://i.ibb.co/R7NphL9/baqcom-steps.png" alt="baqcom-steps" border="0" width="900"></a>
+
+
 
 ## STEP.1 - Download this repository to a preference path:<br>
 	Git is required
