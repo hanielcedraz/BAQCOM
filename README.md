@@ -69,6 +69,9 @@ More information, please access <a href="https://github.com/ewels/MultiQC"> Mult
 <br>
 <br>
 
+## Examples
+You can find some command line examples <a href="https://github.com/hanielcedraz/BAQCOM/blob/master/examples/examples.md">here</a>
+
 ## Differential Expression Gene
 You will find some script to analyze differential expression genes <a href="https://github.com/hanielcedraz/DiffExpressGenes.git">here</a>
 
