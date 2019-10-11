@@ -286,21 +286,21 @@ count.run <- mclapply(couting, function(index){
                              stop()
                          }
                      },
-                     '-o', paste0(counting_Folder,'/', index$sampleName, '_featCount.counts')
+                     '-o', paste0(counting_Folder,'/', index$sampleName, '_original_output_featCount.counts')
                      #paste0('2>', counting_Folder, '/', index$sampleName, '_HTSeq.out')
         ))
         system(paste('cat',
-                     paste0(counting_Folder,'/', index$sampleName, '_featCount.counts'),
+                     paste0(counting_Folder,'/', index$sampleName, '_original_output_featCount.counts'),
                      '|',
                      "awk '{print $1, $7}'",
                      '|',
                      "sed '1d'",
                      '>',
-                     paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
-                     '|',
-                     'mv',
-                     paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
-                     paste0(counting_Folder,'/', index$sampleName, '_featCount.counts')
+                     paste0(counting_Folder,'/', index$sampleName, '_processed_output_featCountReady.counts'),
+                     #'|',
+                     #'mv',
+                     #paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
+                     #paste0(counting_Folder,'/', index$sampleName, '_featCount.counts')
 
         ))})
 }, mc.cores = opt$mprocs
@@ -332,7 +332,7 @@ TidyTable <- function(x) {
 
 report_sample <- list()
 for (i in samples[,1]) {
-    report_sample[[i]] <- read.table(paste0(opt$countsFolder, '/', i,"_featCount.counts.summary"), header = F, as.is = T, fill = TRUE, skip = 1, blank.lines.skip = TRUE, text = TRUE)
+    report_sample[[i]] <- read.table(paste0(opt$countsFolder, '/', i,"_original_output_featCount.counts.summary"), header = F, as.is = T, fill = TRUE, skip = 1, blank.lines.skip = TRUE, text = TRUE)
 }
 
 df <- lapply(report_sample, FUN = function(x) TidyTable(x))
