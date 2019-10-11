@@ -292,7 +292,7 @@ count.run <- mclapply(couting, function(index){
         system(paste('cat',
                      paste0(counting_Folder,'/', index$sampleName, '_featCount.counts'),
                      '|',
-                     "awk '{print $1, $6}'",
+                     "awk '{print $1, $7}'",
                      '|',
                      "sed '1d'",
                      '>',
