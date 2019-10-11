@@ -9,7 +9,7 @@ usage="usage: ./$(basename "$0") [options] -- runTest version 0.3.1
      This script runs by default baqcomTrimmomatic.R (Quality Control). You have to specify which mapping pipeline you want to test
 
 Examples:
-    ./runTest.sh baqcomSTARmapping.R --- This option will run:
+    ./runTest.sh baqcomSTAR.R --- This option will run:
         - baqcomTrimmomatic.R (Quality Control)
         - baqcomSTAR.R (Index, Mapping and Counting)
 
@@ -51,8 +51,8 @@ pipeline=$1
 if [ "$1" != ""  ] && [ "$1" != "baqcomSTAR.R"  ] && [ "$1" != "baqcomHisat2.R" ] && [ "$1" != "all" ];
 then
     echo "Please enter a valid argument"
-    echo "Example: run_test.sh baqcomSTARmapping.R"
-    echo "Example: run_test.sh baqcomHisat2Mapping.R"
+    echo "Example: run_test.sh baqcomSTAR.R"
+    echo "Example: run_test.sh baqcomHisat2.R"
     echo "Example: run_test.sh all"
     exit 0
 fi
