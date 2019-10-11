@@ -296,7 +296,7 @@ count.run <- mclapply(couting, function(index){
                      '|',
                      "sed '1d'",
                      '>',
-                     paste0(counting_Folder,'/', index$sampleName, '_processed_output_featCountReady.counts'),
+                     paste0(counting_Folder,'/', index$sampleName, '_processed_output_featCountReady.counts')
                      #'|',
                      #'mv',
                      #paste0(counting_Folder,'/', index$sampleName, '_featCountReady.counts'),
