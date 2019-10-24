@@ -61,7 +61,7 @@ Installation:
 #	File R2: SAMPLENAME_any_necessary_information_R2_001.fastq.gz
 
 	or to single-end files
-#	File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
+#	File R1: SAMPLENAME_any_necessary_information_SE_001.fastq.gz
 
 
 # If the files are splited in more than one R1 or R2 will be necessary to combine the equal R1 and R2 files. 
