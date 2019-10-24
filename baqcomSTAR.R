@@ -209,6 +209,7 @@ filetype <- function(path){
 
 
 if (filetype(opt$mappingTarget) == "gzfile") {
+  write("Uncompressing fasta file", stderr())
   system(paste(uncompress, opt$mappingTarget))
   mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
 } else {
@@ -491,11 +492,11 @@ system2('cat', paste0(reportsall, '/', 'STARMappingReportSummary.txt'))
 
 if (opt$indexBuild) {
     if (inp == "yes") {
-      write("Compacting fasta_gtg files", stderr())
+      write("Compacting fasta file", stderr())
       mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
       system(paste(compress, mappingTarget))
     } else {
-      write("fasta_gtg files already compacted", stderr())
+      write("fasta file already compacted", stderr())
     }
 }
 
