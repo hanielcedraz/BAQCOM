@@ -133,15 +133,17 @@
   <br>  
  
  # BAQCOM 0.3.3 - 10/24/2019
-  ### baqcomSTARmapping
+  ### baqcomSTAR
   Changing single-end files pattern as input  <br>
+  baqcomSTAR now uses compressed dasta and gtf files (saving space on your disk) <br>
     Minor bugs fixed
   
   ### baqcomTrimmomatic 
   Changing single-end files pattern as input ans output  <br>
   Minor bugs fixed
   
-  ### baqcomHisat2Mapping 
-  Changing single-end files pattern as input 
+  ### baqcomHisat2 
+  Changing single-end files pattern as input <br>
+  baqcomHisat2 now uses compressed dasta and gtf files (saving space on your disk) <br>
   Minor bugs fixed
   
