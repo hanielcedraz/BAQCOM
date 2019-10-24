@@ -39,8 +39,6 @@ while [ "$#" -gt 0 ]; do
     arg=$1
     case $1 in
         # convert "--opt=the value" to --opt "the value".
-        # the quotes around the equals sign is to work around a
-        # bug in emacs' syntax parsing
         --*'='*) shift; set -- "${arg%%=*}" "${arg#*=}" "$@"; continue;;
         -d) shift; dir=$1;;
         -f) shift; filetype=$1;;
@@ -91,7 +89,7 @@ then
     then
             cd $dir
             echo -e 'SAMPLE_ID\tRead_1' > ../samples.txt
-            paste <(ls *_R1_001.fastq.gz | cut -d "_" -f1) <(ls *_R1_001.fastq.gz) >> ../samples.txt
+            paste <(ls *_SE_001.fastq.gz | cut -d "_" -f1) <(ls *_SE_001.fastq.gz) >> ../samples.txt
             cd ..
             echo -e "\033[1;31m Samples_File ($file) successfully created"
             echo -e "\033[0m"
