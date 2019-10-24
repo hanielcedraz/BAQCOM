@@ -132,4 +132,16 @@
   <br>
   <br>  
  
+ # BAQCOM 0.3.3 - 10/24/2019
+  ### baqcomSTARmapping
+  Changing single-end files pattern as input  <br>
+    Minor bugs fixed
+  
+  ### baqcomTrimmomatic 
+  Changing single-end files pattern as input ans output  <br>
+  Minor bugs fixed
+  
+  ### baqcomHisat2Mapping 
+  Changing single-end files pattern as input 
+  Minor bugs fixed
   
