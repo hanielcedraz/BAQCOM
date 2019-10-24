@@ -66,7 +66,7 @@ option_list <- list(
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.2', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.3', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
 
 
 
@@ -156,24 +156,44 @@ prepareCore <- function(opt_procs){
 
 
 ######################
-mappingList <- function(samples, reads_folder, column){
-  mapping_list <- list()
-  for (i in 1:nrow(samples)) {
-    reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-    # for (i in seq.int(to=nrow(samples))){
-    #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
-    map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
-    names(map) <- c("PE1", "PE2", "SE1", "SE2")
-    map$sampleName <-  samples[i,column]
-    map$PE1 <- map$PE1[i]
-    map$PE2 <- map$PE2[i]
-    map$SE1 <- map$SE1[i]
-    map$SE2 <- map$SE2[i]
+if (!opt$singleEnd) {
+  mappingList <- function(samples, reads_folder, column){
+    mapping_list <- list()
+    for (i in 1:nrow(samples)) {
+      reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+      # for (i in seq.int(to=nrow(samples))){
+      #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
+      map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
+      names(map) <- c("PE1", "PE2", "SE1", "SE2")
+      map$sampleName <-  samples[i,column]
+      map$PE1 <- map$PE1[i]
+      map$PE2 <- map$PE2[i]
+      map$SE1 <- map$SE1[i]
+      map$SE2 <- map$SE2[i]
       mapping_list[[paste(map$sampleName)]] <- map
       mapping_list[[paste(map$sampleName, sep = "_")]]
+    }
+    write(paste("Setting up", length(mapping_list), "jobs"),stdout())
+    return(mapping_list)
   }
-  write(paste("Setting up", length(mapping_list), "jobs"),stdout())
-  return(mapping_list)
+
+} else if (opt$singleEnd) {
+  mappingList <- function(samples, reads_folder, column){
+    mapping_list <- list()
+    for (i in 1:nrow(samples)) {
+      reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+      #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+      map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
+      names(map) <- c("SE")
+      map$sampleName <-  samples[i,column]
+      map$R1 <- samples[i,2]
+      #map$R2 <- samples[i,3]
+      mapping_list[[paste(map$sampleName)]] <- map
+      #mapping_list[[paste(map$sampleName)]]
+    }
+    write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+    return(mapping_list)
+  }
 }
 
 
@@ -282,7 +302,7 @@ cat('\n')
 
 if (!opt$singleEnd) {
   star.pair.mapping <- mclapply(mapping, function(index){
-    write(paste('Starting Mapping sample', index$sampleName), stderr())
+    write(paste('Starting Paired-End Mapping sample', index$sampleName), stderr())
     try({
       system(paste('STAR',
                    '--genomeDir',
@@ -318,7 +338,7 @@ if (!opt$singleEnd) {
   }
 }else if (opt$singleEnd) {
   star.single.mapping <- mclapply(mapping, function(index){
-    write(paste('Starting Mapping'), stderr())
+    write(paste('Starting Single-End Mapping sample', index$sampleName), stderr())
     try({
       system(paste('STAR',
                    '--genomeDir',
@@ -328,7 +348,7 @@ if (!opt$singleEnd) {
                    '--readFilesCommand',
                    paste(uncompress, '-c'),
                    '--readFilesIn',
-                   index$PE1,
+                   index$SE,
                    '--outFileNamePrefix',
                    paste0(opt$mappingFolder, '/', index$sampleName, '_STAR_'),
                    '--outReadsUnmapped Fastx',
