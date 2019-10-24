@@ -197,6 +197,23 @@ if (!opt$singleEnd) {
 }
 
 
+filetype <- function(path){
+  f = file(path)
+  ext = summary(f)$class
+  close.connection(f)
+  ext
+}
+
+#opt$mappingTarget <- '/Users/haniel/OneDrive/BAQCOM/examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz'
+
+if (filetype(opt$mappingTarget) == "gzfile") {
+  system(paste('unpigz -p', opt$procs, opt$mappingTarget))
+  mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
+} else {
+  mappingTarget <- opt$mappingTarget
+}
+
+
 star_parameters <- opt$externalParameters
 if (file.exists(star_parameters)) {
   con = file(star_parameters, open = "r")
@@ -227,7 +244,7 @@ star.index.function <- function(){
                  '--genomeDir',
                  index_Folder,
                  '--genomeFastaFiles',
-                 opt$mappingTarget,
+                 mappingTarget,
                  if (!file.exists(opt$gtfTarget)) {
                    write(paste('Running genomeGenerate without gtf file'), stderr())}
                  else{
@@ -469,6 +486,17 @@ if (file.exists(report_02)) {
 
 
 system2('cat', paste0(reportsall, '/', 'STARMappingReportSummary.txt'))
+
+if (opt$indexBuild) {
+    if (inp == "yes") {
+      write("Compacting fasta_gtg files", stderr())
+      mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
+      system(paste('pigz -p', opt$procs, mappingTarget))
+    } else {
+      write("fasta_gtg files already compacted", stderr())
+    }
+}
+
 
 cat('\n')
 write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file 'how_to_cite.txt'"), stderr())
