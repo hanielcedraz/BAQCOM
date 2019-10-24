@@ -133,8 +133,10 @@ loadSamplesFile <- function(file, reads_folder, column){
 #pigz <- system('which pigz 2> /dev/null')
 if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE) == 0) {
     uncompress <- paste('unpigz', '-p', opt$procs)
-}else {
+    compress <- paste('pigz', '-p', opt$procs)
+}else{
     uncompress <- 'gunzip'
+    compress <- 'gzip'
 }
 
 ######################################################################
@@ -197,6 +199,23 @@ if (!opt$singleEnd) {
     }
 }
 
+filetype <- function(path){
+    f = file(path)
+    ext = summary(f)$class
+    close.connection(f)
+    ext
+}
+
+#opt$mappingTarget <- '/Users/haniel/OneDrive/BAQCOM/examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz'
+
+if (filetype(opt$mappingTarget) == "gzfile") {
+    write("Uncompressing fasta file", stderr())
+    system(paste(uncompress, opt$mappingTarget))
+    mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
+} else {
+    mappingTarget <- opt$mappingTarget
+}
+
 
 external_parameters <- opt$externalParameters
 if (file.exists(external_parameters)) {
@@ -222,7 +241,7 @@ if (file.exists(opt$gtfTarget)) {
 
 
 
-index_Folder <- paste(dirname(opt$mappingTarget), '/', 'index_HISAT2', '/', sep = '')
+index_Folder <- paste(dirname(mappingTarget), '/', 'index_HISAT2', '/', sep = '')
 if (!file.exists(file.path(index_Folder))) dir.create(file.path(index_Folder), recursive = TRUE, showWarnings = FALSE)
 
 
@@ -236,7 +255,7 @@ genome.index.function <- function(){
                  if (file.exists(opt$gtfTarget)) paste('--ss', 'splicesites_hisat2.txt',
                                                                                                    '--exon', 'exons_hisat2.txt'),
 
-                 opt$mappingTarget, paste0(index_Folder,opt$indexFiles),
+                 mappingTarget, paste0(index_Folder,opt$indexFiles),
                  if (file.exists(external_parameters)) line)
     )
     })
@@ -519,6 +538,16 @@ if (file.exists(report_02)) {
     unlink(report_02, recursive = TRUE)
 }
 #
+
+if (opt$indexBuild) {
+    if (inp == "yes") {
+        write("Compressing fasta file", stderr())
+        mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
+        system(paste(compress, mappingTarget))
+    } else {
+        write("fasta file is already compressed", stderr())
+    }
+}
 
 system2('cat', paste0(reportsall, '/', 'HISAT2MappingReportSummary.txt'))
 cat('\n')
