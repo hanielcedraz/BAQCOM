@@ -10,7 +10,7 @@ Usage: $0 [options] -- createSample version 0.3.1
         File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
         File R2: SAMPLENAME_any_necessary_information_R2_001.fastq.gz
     Single-End:
-        File R1: SAMPLENAME_any_necessary_information_R1_001.fastq.gz
+        File R1: SAMPLENAME_any_necessary_information_SE_001.fastq.gz
 Arguments:
   -d <val>
     Specify the folder which is storage the fastq files. [default: 00-Fastq].
