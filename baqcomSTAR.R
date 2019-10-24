@@ -132,8 +132,10 @@ loadSamplesFile <- function(file, reads_folder, column) {
 #pigz <- system('which pigz 2> /dev/null')
 if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE) == 0) {
   uncompress <- paste('unpigz', '-p', opt$procs)
+  compress <- paste('pigz', '-p', opt$procs)
 }else{
   uncompress <- 'gunzip'
+  compress <- 'gzip'
 }
 
 ######################################################################
@@ -207,7 +209,7 @@ filetype <- function(path){
 #opt$mappingTarget <- '/Users/haniel/OneDrive/BAQCOM/examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz'
 
 if (filetype(opt$mappingTarget) == "gzfile") {
-  system(paste('unpigz -p', opt$procs, opt$mappingTarget))
+  system(paste(uncompress, opt$mappingTarget))
   mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
 } else {
   mappingTarget <- opt$mappingTarget
@@ -491,7 +493,7 @@ if (opt$indexBuild) {
     if (inp == "yes") {
       write("Compacting fasta_gtg files", stderr())
       mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
-      system(paste('pigz -p', opt$procs, mappingTarget))
+      system(paste(compress, mappingTarget))
     } else {
       write("fasta_gtg files already compacted", stderr())
     }
