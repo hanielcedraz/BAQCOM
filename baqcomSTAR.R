@@ -206,7 +206,7 @@ filetype <- function(path){
   ext
 }
 
-#opt$mappingTarget <- '/Users/haniel/OneDrive/BAQCOM/examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz'
+
 
 if (filetype(opt$mappingTarget) == "gzfile") {
   system(paste(uncompress, opt$mappingTarget))
