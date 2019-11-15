@@ -77,13 +77,14 @@ if [ "$(uname)" == "Linux" ];
                 read -p "featureCounts doesn't exist in BAQCOM folder. Would you like to download it? [y,n] " doft
                 case $doft in
                   y|Y|yes|YES)
-                    wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
+                    wget https://downloads.sourceforge.net/project/subread/subread-2.0.0/subread-2.0.0-Linux-x86_64.tar.gz -O bin/subread-2.0.0-Linux-x86_64.tar.gz
                     cd bin/
-                    tar xzf subread-1.6.4-source.tar.gz
-                    cd subread-1.6.4-source/src
-                    make -f Makefile.Linux
-                    cd ../../../
-                    ln -s bin/subread-1.6.4-source/bin/featureCounts featureCounts
+                    tar xzf subread-2.0.0-Linux-x86_64.tar.gz
+                    #cd subread-2.0.0-Linux-x86_64/src
+                    #make -f Makefile.Linux
+                    #cd ../../../
+                    cd ../
+                    ln -s bin/subread-2.0.0-Linux-x86_64/bin/featureCounts featureCounts
                     break;;
                   n|N|no|NO)
                       echo -e "\nOk, I wont do that\n"
@@ -132,13 +133,14 @@ if [ "$(uname)" == "Linux" ];
                 read -p "featureCounts doesn't exist in BAQCOM folder. Would you like to download it? [y,n] " doft
                 case $doft in
                   y|Y|yes|YES)
-                    wget https://sourceforge.net/projects/subread/files/subread-1.6.4/subread-1.6.4-source.tar.gz -O bin/subread-1.6.4-source.tar.gz
+                    wget https://downloads.sourceforge.net/project/subread/subread-2.0.0/subread-2.0.0-MacOS-x86_64.tar.gz -O bin/subread-2.0.0-MacOS-x86_64.tar.gz
                     cd bin/
-                    tar xzf subread-1.6.4-source.tar.gz
-                    cd subread-1.6.4-source/src
-                    make -f Makefile.MacOS
-                    cd ../../../
-                    ln -s bin/subread-1.6.4-source/bin/featureCounts featureCounts
+                    tar xzf subread-2.0.0-MacOS-x86_64.tar.gz
+                    #cd subread-2.0.0-MacOS-x86_64/src
+                    #make -f Makefile.MacOS
+                    #cd ../../../
+                    cd ../
+                    ln -s bin/subread-2.0.0-MacOS-x86_64/bin/featureCounts featureCounts
                     break;;
                   n|N|no|NO)
                     echo -e "\nOk, I wont do that\n"
