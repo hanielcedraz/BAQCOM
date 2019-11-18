@@ -70,7 +70,7 @@ if [ "$(uname)" == "Linux" ];
         else
              echo -e "\nhisat2 exists and doesn't need to download"
         fi
-        if ! [ -d bin/subread-1.6.4-source ];
+        if ! [ -d bin/subread-2.0.0-Linux-x86_64 ];
         then
             while true;
             do
@@ -126,7 +126,7 @@ if [ "$(uname)" == "Linux" ];
         else
              echo -e "\nhisat2 exists and doesn't need to download"
         fi
-        if ! [ -d bin/subread-1.6.4-source ];
+        if ! [ -d bin/subread-2.0.0-MacOS-x86_64 ];
         then
             while true;
             do
