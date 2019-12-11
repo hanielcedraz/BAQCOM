@@ -21,7 +21,7 @@ option_list <- list(
               help = "Save Unmapped reads to this folder [default %default]",
               dest = "extractedFolder"),
   make_option(c('-E', '--countFolder'), type  =  'character', default  =  '04-GeneCountsSTAR',
-              help = 'Folder that contains fasta file genome [default %default]',
+              help = 'Directory where to store the count reads results [default %default]',
               dest = 'countsFolder'),
   make_option(c("-m", "--multiqc"), action = 'store_true', type = "logical", default = FALSE,
               help = "Use this option if you would like to run multiqc analysis..  [default %default]",
