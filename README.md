@@ -31,31 +31,31 @@ Git is required
 <br>
 
 ## STEP.3 - Install MultiQC and HTSeq-count:
-	MultiQC:
-	If you would like to use multiqc analysis, please install it.
-	Installation:
-        If pip is not installed, please install as follow:
+MultiQC:
+If you would like to use multiqc analysis, please install it.
+Installation:
+If pip is not installed, please install as follow:
 ```bash
 	$ wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
 	$ python get-pip.py
 ```    
-        You can install MultiQC from PyPI using pip as follow:
+You can install MultiQC from PyPI using pip as follow:
 ```bash
 	$ pip install multiqc
 ```
 More information, please access <a href="https://github.com/ewels/MultiQC"> MultiQC website</a>
 	
 	
-	HTSeq-count:
-	HTSeq is available from the Python Package Index (PyPI):
+HTSeq-count:
+HTSeq is available from the Python Package Index (PyPI):
 
-	To use HTSeq, you need Python 2.7 or 3.4 or above (3.0-3.3 are not supported), together with:
+To use HTSeq, you need Python 2.7 or 3.4 or above (3.0-3.3 are not supported), together with:
 
-	NumPy, a commonly used Python package for numerical calculations
-	Pysam, a Python interface to samtools.
-	To make plots you will need matplotlib, a plotting library.
-	
-        You can install HTSeq-count using pip:
+NumPy, a commonly used Python package for numerical calculations
+Pysam, a Python interface to samtools.
+To make plots you will need matplotlib, a plotting library.
+
+You can install HTSeq-count using pip:
 ```bash
 	$ pip install HTSeq
 ```
@@ -67,12 +67,12 @@ More information, please access <a href="https://github.com/ewels/MultiQC"> Mult
 <br>
 
 ## STEP.4 - Install PigZ:
-	To speed up your analysis results, install the pigz.
-	     Centos
+To speed up your analysis results, install the pigz.
+Centos
 ```bash
 $ sudo yum install pigz
 ```
-	     Ubuntu
+Ubuntu
 ```bash
 $ sudo apt install pigz
 ```
