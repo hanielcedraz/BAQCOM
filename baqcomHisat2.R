@@ -207,6 +207,11 @@ filetype <- function(path){
 }
 
 
+samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
+procs <- prepareCore(opt$procs)
+mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
+
+
 if (filetype(opt$mappingTarget) == "gzfile") {
     write("Uncompressing fasta file", stderr())
     system(paste(uncompress, opt$mappingTarget))
@@ -221,10 +226,6 @@ if (file.exists(external_parameters)) {
     con = file(external_parameters, open = "r")
     line = readLines(con, warn = FALSE, ok = TRUE)
 }
-
-samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
-procs <- prepareCore(opt$procs)
-mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
 
 cat('\n')
 
