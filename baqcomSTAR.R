@@ -207,6 +207,12 @@ filetype <- function(path){
 }
 
 
+samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
+procs <- prepareCore(opt$procs)
+mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
+
+cat('\n')
+
 
 if (filetype(opt$mappingTarget) == "gzfile") {
   write("Uncompressing fasta file", stderr())
@@ -223,11 +229,7 @@ if (file.exists(star_parameters)) {
   line = readLines(con, warn = FALSE, ok = TRUE)
 }
 
-samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
-procs <- prepareCore(opt$procs)
-mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
 
-cat('\n')
 
 ####################
 ### GENOME GENERATE
