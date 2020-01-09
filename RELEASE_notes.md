@@ -147,3 +147,8 @@
   baqcomHisat2 now uses compressed fasta files (saving space on your disk) <br>
   Minor bugs fixed
   
+  
+  BAQCOM 0.3.4 - 01/09/2020
+  ### baqcomSTAR
+  baqcomSTAR now uses compressed annotation files (saving space on your disk) <br>
+  Minor bugs fixed
