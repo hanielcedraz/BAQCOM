@@ -66,7 +66,7 @@ option_list <- list(
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
-opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.3', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
+opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.4', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
 
 
 
@@ -215,12 +215,21 @@ cat('\n')
 
 
 if (filetype(opt$mappingTarget) == "gzfile") {
-  write("Uncompressing fasta file", stderr())
-  system(paste(uncompress, opt$mappingTarget))
-  mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
+    write("Uncompressing fasta file", stderr())
+    system(paste(uncompress, opt$mappingTarget))
+    mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
 } else {
-  mappingTarget <- opt$mappingTarget
-}
+    mappingTarget <- opt$mappingTarget
+    write(paste("Using", opt$mappingTarget, "as Reference Genome"), stderr())
+} 
+if (filetype(opt$gtfTarget) == "gzfile") {
+    write("Uncompressing gtf file", stderr())
+    system(paste(uncompress, opt$gtfTarget))
+    gtfTarget <- substr(opt$gtfTarget, 1, nchar(opt$gtfTarget) - 3)
+} else {
+    gtfTarget <- opt$gtfTarget
+    write(paste("Using", opt$gtfTarget, "as Genome Annotation"), stderr())
+} 
 
 
 star_parameters <- opt$externalParameters
@@ -250,10 +259,10 @@ star.index.function <- function(){
                  index_Folder,
                  '--genomeFastaFiles',
                  mappingTarget,
-                 if (!file.exists(opt$gtfTarget)) {
+                 if (!file.exists(gtfTarget)) {
                    write(paste('Running genomeGenerate without gtf file'), stderr())}
                  else{
-                   paste(paste('--sjdbGTFfile', opt$gtfTarget, paste(' --sjdbOverhang', opt$annoJunction - 1)))},
+                   paste(paste('--sjdbGTFfile', gtfTarget, paste(' --sjdbOverhang', opt$annoJunction - 1)))},
                  if (file.exists(star_parameters)) line
     ))})
 }
@@ -343,8 +352,8 @@ if (!opt$singleEnd) {
                      paste('--outSAMtype BAM', opt$outSAMtype, '--quantMode', opt$quantMode, '--sjdbOverhang', opt$annoJunction - 1)
                    }
                    else{
-                     if (file.exists(opt$gtfTarget)) {
-                       paste('--outSAMtype BAM', opt$outSAMtype, '--quantMode', opt$quantMode, '--sjdbGTFfile', opt$gtfTarget, '--sjdbOverhang', opt$annoJunction - 1)
+                     if (file.exists(gtfTarget)) {
+                       paste('--outSAMtype BAM', opt$outSAMtype, '--quantMode', opt$quantMode, '--sjdbGTFfile', gtfTarget, '--sjdbOverhang', opt$annoJunction - 1)
                      }else{
                        write(paste('The index was built without the gtf file. Please specify the gtf file if you would like to count reads'), stderr())
                      }
@@ -492,15 +501,33 @@ if (file.exists(report_02)) {
 
 system2('cat', paste0(reportsall, '/', 'STARMappingReportSummary.txt'))
 
-if (opt$indexBuild) {
-    if (inp == "yes") {
-      write("Compacting fasta file", stderr())
-      mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
-      system(paste(compress, mappingTarget))
-    } else {
-      write("fasta file already compacted", stderr())
-    }
-}
+
+
+# if (opt$indexBuild) {
+#     if (inp == "yes") {
+#       write("Compacting fasta file", stderr())
+#       mappingTarget <- substr(opt$mappingTarget, 1, nchar(opt$mappingTarget) - 3)
+#       system(paste(compress, mappingTarget))
+#     } else {
+#       write("fasta file already compacted", stderr())
+#     }
+# }
+
+
+#mappingTarget <- "/home/haniel/Documents/BAQCOM/examples/genome/Sus.Scrofa.chr1.genome.dna.toplevel.fa.gz"
+
+if (filetype(mappingTarget) != "gzfile") {
+  write("Compressing fasta file", stderr())
+  system(paste(compress, mappingTarget))
+  write("fasta file Compressed", stderr())
+} 
+cat("\n")
+if (filetype(gtfTarget) != "gzfile") {
+  write("Compressing gtf file", stderr())
+  system(paste(compress, gtfTarget))
+  write("gtf file Compressed", stderr())
+} 
+
 
 
 cat('\n')
