@@ -172,7 +172,7 @@ if (!opt$singleEnd) {
             map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
             names(map) <- c("SE")
             map$sampleName <-  samples[i,column]
-            map$R1 <- samples[i,2]
+            map$SE <- map$SE[i]
             #map$R2 <- samples[i,3]
             mapping_list[[paste(map$sampleName)]] <- map
             #mapping_list[[paste(map$sampleName)]]
@@ -277,7 +277,7 @@ if (!opt$singleEnd) {
                 paste('java', '-jar', trimmomatic, 'SE',
                       paste0('-threads ',
                              ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
-                      paste0(opt$Raw_Folder, '/', index$R1),
+                      paste0(opt$Raw_Folder, '/', index$SE),
                       if (pigz == 0) {
                           paste0(opt$output, '/', index$sampleName, '_', 'trim_SE.fastq')
                         }
@@ -341,7 +341,7 @@ if (!opt$singleEnd) {
             map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
             names(map) <- c("SE")
             map$sampleName <-  samples[i,column]
-            map$R1 <- samples[i,2]
+            map$SE <- map$SE[i]
             #map$R2 <- samples[i,3]
             mapping_list[[paste(map$sampleName)]] <- map
             #mapping_list[[paste(map$sampleName)]]
