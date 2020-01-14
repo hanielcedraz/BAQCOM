@@ -189,7 +189,7 @@ if (!opt$singleEnd) {
             map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
             names(map) <- c("SE")
             map$sampleName <-  samples[i,column]
-            map$R1 <- samples[i,2]
+            map$SE <- map$SE[i]
             #map$R2 <- samples[i,3]
             mapping_list[[paste(map$sampleName)]] <- map
             #mapping_list[[paste(map$sampleName)]]
