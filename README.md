@@ -32,8 +32,7 @@ Git is required
 
 ## STEP.3 - Install MultiQC and HTSeq-count:
 MultiQC:
-If you would like to use multiqc analysis, please install it.
-
+If you would like to use multiqc analysis, please install it.<br>
 Installation:
 If pip is not installed, please install as follow:
 ```bash
