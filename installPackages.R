@@ -4,7 +4,7 @@
 Install_Multiples_Packages <- function(packages) {
   pack <- packages[!(packages %in% installed.packages()[,'Package'])];
   if (length(pack)) {
-    install.packages(pack, repos = 'https://cran.rstudio.com/')
+    install.packages(pack, repos = 'https://cran.rstudio.com/', Ncpus = 8)
   }
 
   for (package_i in packages) {
