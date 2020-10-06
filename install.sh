@@ -51,7 +51,7 @@ if [ "$(uname)" == "Linux" ];
               read -p "hisat2 doesn't exist in BAQCOM folder. Would you like to download it? [y,n] " dohisat
               case $dohisat in
                 y|Y|yes|YES)
-                  wget http://ccb.jhu.edu/software/hisat2/dl/hisat2-2.1.0-Linux_x86_64.zip -O bin/hisat2-2.1.0-Linux_x86_64.zip
+                  wget https://cloud.biohpc.swmed.edu/index.php/s/hisat2-210-Linux_x86_64/download -O bin/hisat2-2.1.0-Linux_x86_64.zip
                   cd bin/
                   unzip -q hisat2-2.1.0-Linux_x86_64.zip
                   cd ..
@@ -107,7 +107,7 @@ if [ "$(uname)" == "Linux" ];
               read -p "hisat2 doesn't exist in BAQCOM folder. Would you like to download it? [y,n] " dohisat
               case $dohisat in
                 y|Y|yes|YES)
-                  wget http://ccb.jhu.edu/software/hisat2/dl/hisat2-2.1.0-OSX_x86_64.zip -O bin/hisat2-2.1.0-OSX_x86_64.zip
+                  wget https://cloud.biohpc.swmed.edu/index.php/s/hisat2-210-OSX_x86_64/download -O bin/hisat2-2.1.0-OSX_x86_64.zip
                   cd bin/
                   unzip -q hisat2-2.1.0-OSX_x86_64.zip
                   cd ..
