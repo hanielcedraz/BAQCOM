@@ -3,6 +3,9 @@
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
+suppressPackageStartupMessages(library("dplyr"))
+suppressPackageStartupMessages(library("data.table"))
+
 
 option_list <- list(
   make_option(c("-f", "--file"), type = "character", default = "samples.txt",
@@ -481,17 +484,47 @@ if (casefold(opt$stranded, upper = FALSE) == 'no') {
 
 
 
-if (!file.exists(paste0(mapping_Folder, '/', samples[1,1],'_STAR_ReadsPerGene.out.tab'))) {
-  write(paste('Counts file was not generated because mapping step is running without gtf files'), stderr())
-} else{
-  counts_Folder <- opt$countsFolder
-  if (!file.exists(file.path(counts_Folder))) { dir.create(file.path(counts_Folder), recursive = TRUE, showWarnings = FALSE)}
-  system(paste('for i in $(ls ', opt$mappingFolder, '/); ', 'do a=`basename $i`;  b=`echo $a | cut -d "_" -f1`; cat ', opt$mappingFolder, '/', '$b"_STAR_ReadsPerGene.out.tab" ', '| ', 'awk ','\'','{', 'print $1"\t"', '$', opt$stranded, '}','\'', ' >', ' ', counts_Folder, '/', '"$b"_ReadsPerGene.counts; done', sep = ''), intern = FALSE)
+
+column <- opt$samplesColumn
+folder <- opt$mappingFolder
+
+countList <- function(samples, folder, column){
+  counting_list <- list()
+  for (i in 1:nrow(samples)) {
+    reads <- dir(path = file.path(folder), pattern = ".out.tab$", full.names = TRUE)
+    count <- lapply("_ReadsPerGene", grep, x = reads, value = TRUE)
+    names(count) <- "ReadsPerGene"
+    count$sampleName <-  samples[i,column]
+    count$ReadsPerGene <- count$ReadsPerGene[i]
+    counting_list[[paste(count$sampleName)]] <- count
+    counting_list[[paste(count$sampleName, sep = "_")]]
+  }
+  write(paste("Setting up", length(counting_list), "jobs"),stdout())
+  return(counting_list)
 }
 
-# if (file.exists(report_02) || file.exists(paste0(report_02,'/',fastqcbefore)) || file.exists(paste0(report_02,'/',fastqcafter)) || file.exists(paste0(report_02, '/', baqcomqcreport))) {
-#   system(paste('mv', paste0(report_02, '/', baqcomqcreport), paste0(report_02, '/', 'QualityControlReportSummary.txt'), paste0(report_02, '/', 'Fast*'), reportsall))
-# }
+
+
+listcount <- countList(samples, folder, column)
+
+#samples[1,1],'_STAR_ReadsPerGene.out.tab'
+starCountingReads <- mclapply(listcount, function(index){
+  if (!file.exists(paste0(opt$mappingFolder, '/', samples[1,1],'_STAR_ReadsPerGene.out.tab'))) {
+    write(paste('Counts file was not generated because mapping step is running without gtf files'), stderr())
+  } else{
+    counts_Folder <- opt$countsFolder
+    if (!file.exists(file.path(counts_Folder))) { 
+      dir.create(file.path(counts_Folder), 
+                 recursive = TRUE, showWarnings = FALSE)
+    }
+  try({
+    fread(index$ReadsPerGene) %>%
+      select(V1, opt$stranded) %>%
+      fwrite(file = paste0(opt$countsFolder, "/", index$sampleName, "_ReadsPerGene.counts"), sep = "\t", col.names = FALSE)
+  })
+  }
+})
+
 
 if (file.exists(report_02)) {
   system(paste('cp -r', paste0(report_02, '/*'), paste0(reportsall,'/')))
@@ -522,13 +555,15 @@ if (filetype(mappingTarget) != "gzfile") {
   write("fasta file Compressed", stderr())
 } 
 cat("\n")
-if (filetype(gtfTarget) != "gzfile") {
-  write("Compressing gtf file", stderr())
-  system(paste(compress, gtfTarget))
-  write("gtf file Compressed", stderr())
-} 
 
 
+if (gtfTarget == TRUE) {
+  if (filetype(gtfTarget) != "gzfile") {
+    write("Compressing gtf file", stderr())
+    system(paste(compress, gtfTarget))
+    write("gtf file Compressed", stderr())
+  }
+}
 
 cat('\n')
 write(paste('How to cite:', sep = '\n', collapse = '\n', "Please, visit https://github.com/hanielcedraz/BAQCOM/blob/master/how_to_cite.txt", "or see the file 'how_to_cite.txt'"), stderr())
