@@ -148,7 +148,12 @@
   Minor bugs fixed
   
   
-  BAQCOM 0.3.4 - 01/09/2020
+ # BAQCOM 0.3.4 - 01/09/2020
   ### baqcomSTAR
   baqcomSTAR now uses compressed annotation files (saving space on your disk) <br>
   Minor bugs fixed
+
+
+ # BAQCOM 0.3.5 - 10/06/2020
+  Coding refactoring for baqcomSTAR
+  Update of Hisat2 vwersion on baqcomHisat2
