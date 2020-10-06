@@ -13,6 +13,6 @@ Install_Multiples_Packages <- function(packages) {
 
 }
 
-Install_Multiples_Packages(c('optparse', 'parallel', "tools"))
+Install_Multiples_Packages(c('optparse', 'parallel', "tools", "tidyverse", "data.table"))
 
 
