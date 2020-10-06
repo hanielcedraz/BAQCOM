@@ -67,6 +67,7 @@ You can install HTSeq-count using pip:
 
 ## STEP.4 - Install PigZ:
 To speed up your analysis results, install the pigz.
+
 Centos
 ```bash
 $ sudo yum install pigz
