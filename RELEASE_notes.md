@@ -158,3 +158,5 @@
   Coding refactoring for baqcomSTAR
   Update of Hisat2 version on baqcomHisat2
   Update htseq-count version on baqcomHtseq for multithreads
+  Update STAR version on baqcomSTAR
+  Minor bugs fixed
