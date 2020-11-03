@@ -154,7 +154,7 @@
   Minor bugs fixed
 
 
- # BAQCOM 0.3.5 - 10/06/2020
+ # BAQCOM 0.3.5 - 11/03/2020
   Coding refactoring for baqcomSTAR
   Update of Hisat2 version on baqcomHisat2
   Update htseq-count version on baqcomHtseq for multithreads
