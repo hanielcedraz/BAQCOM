@@ -156,4 +156,5 @@
 
  # BAQCOM 0.3.5 - 10/06/2020
   Coding refactoring for baqcomSTAR
-  Update of Hisat2 vwersion on baqcomHisat2
+  Update of Hisat2 version on baqcomHisat2
+  Update htseq-count version on baqcomHtseq for multithreads
