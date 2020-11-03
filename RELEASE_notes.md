@@ -159,3 +159,4 @@
   Update of Hisat2 version on baqcomHisat2 <br>
   Update htseq-count version on baqcomHtseq for multithreads <br>
   Minor bugs fixed <br>
+  Coding refactoring for baqcomTrimmomatic
