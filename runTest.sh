@@ -101,7 +101,7 @@ run.trimmomatic () {
     echo -e "\n"
     echo "Running baqcomTrimmomatic test"
     echo -e "\n"
-    ./baqcomTrimmomatic.R -p 36 -s 2 -l
+    ./baqcomTrimmomatic.R -p 36 -l
     echo -e "\n"
     echo "baqcomTrimmomatic test is done"
 }
