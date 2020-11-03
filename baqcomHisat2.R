@@ -548,6 +548,7 @@ if (opt$indexBuild) {
         write("fasta file is already compressed", stderr())
     }
 }
+             
 
 system2('cat', paste0(reportsall, '/', 'HISAT2MappingReportSummary.txt'))
 cat('\n')
