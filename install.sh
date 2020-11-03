@@ -40,9 +40,9 @@ fi
 #Configuring STAR, downloading Hisat2 and FeaturesCount in unix systems
 if [ "$(uname)" == "Linux" ];
     then
-      chmod +x bin/STAR_linux_2.7.2b
+      chmod +x bin/STAR_linux_2.7.6a
       rm -f STAR
-      ln -s bin/STAR_linux_2.7.2b STAR
+      ln -s bin/STAR_linux_2.7.6a STAR
       echo -e "\nSTAR symbolic link created successfully"
        if ! [ -d bin/hisat2-2.1.0 ];
         then
@@ -96,9 +96,9 @@ if [ "$(uname)" == "Linux" ];
             echo -e "\nfeatureCounts exists and doesn't need to download"
         fi
     else
-      chmod +x bin/STAR_mac_2.7.2b
+      chmod +x bin/STAR_mac_2.7.6a
       rm -f STAR
-      ln -s bin/STAR_mac_2.7.2b STAR
+      ln -s bin/STAR_mac_2.7.6a STAR
       echo -e "\nSTAR symbolic link created successfully"
         if ! [ -d bin/hisat2-2.1.0 ];
         then
@@ -165,7 +165,7 @@ if [[  -f baqcomTrimmomatic ]];
 fi
 
 #giving executable permission to the pipelines and scripts
-      chmod +x baqcomFeatureCounts.R baqcomHisat2.R baqcomHtseq.R baqcomSTAR.R createSamples.sh runTest.sh countSTARreads.R 
+      chmod +x baqcomFeatureCounts.R baqcomHisat2.R baqcomHtseq.R baqcomSTAR.R createSamples.sh runTest.sh countSTARreads.R
 
 #install and configure fastQC
 if [[ -e bin/fastqc_v0.11.8.zip ]];
