@@ -57,6 +57,12 @@ HTSeq is available from the Python Package Index (PyPI):
 You can install HTSeq-count using pip:
 ```bash
 	$ pip install HTSeq
+	
+If HTSeq is already installed you need to upgrade it
+	$ pip install HTSeq --upgrade
+
+In addition you need to upgrade numpy
+	$ pip install numpy --upgrade
 ```
 <a href="https://htseq.readthedocs.io/en/release_0.11.1/install.html">or following the source documentation</a>
 	
