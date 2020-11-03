@@ -71,7 +71,7 @@ option_list <- list(
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list = option_list, description =  paste('Authors: OLIVEIRA, H.C. & CANTAO, M.E.', 'Version: 0.3.5', 'E-mail: hanielcedraz@gmail.com', sep = "\n", collapse = '\n'), usage = paste('baqcomSTARmapping.R', '-t', 'reference genome', '[options]')))
 
-
+ 
 
 multiqc <- system('which multiqc > /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
 if (casefold(opt$multiqc, upper = FALSE) == 'yes') {
