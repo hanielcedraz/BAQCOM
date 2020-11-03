@@ -206,6 +206,8 @@ count.run <- mclapply(couting, function(index){
         system(paste('htseq-count',
                      '-f',
                         casefold(opt$format, upper = FALSE),
+                     '-n', 
+                        ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
                      '-r',
                         casefold(opt$order, upper = FALSE),
                      '-s',
@@ -253,7 +255,7 @@ htseqTables <- sapply(samples$SAMPLE_ID, function(x){
     #    htseq_data
 })
 
-opt$inputFolder
+
 # #
 #MultiQC analysis
 report_02 <- '02-Reports'
