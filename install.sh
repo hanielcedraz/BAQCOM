@@ -4,7 +4,7 @@
 #Help menu
 if [[ $1 == "-h" ]];
     then
-        echo -e "\nUse this script to configurate the pipelines, install required softwares, configure files, and put theses files into the bash. More information read LEIAME.txt"
+        echo -e "\nUse this script to configurate the pipelines, install required softwares, configure files, and put theses files into the bash. More information read README.txt"
         exit 0
 elif [[ $# > 0 ]];
     then
