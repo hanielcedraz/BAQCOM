@@ -6,7 +6,7 @@ chmod +x bin/STAR_linux_2.7.6a
 rm -f STAR
 ln -s bin/STAR_linux_2.7.6a STAR
 echo -e "\nSTAR symbolic link created successfully"
-wget https://cloud.biohpc.swmed.edu/index.php/s/hisat2-210-Linux_x86_64/download -O bin/hisat2-2.1.0-Linux_x86_64.zip
+wget https://cloud.biohpc.swmed.edu/index.php/s/hisat2-210-Linux_x86_64/download -q -O bin/hisat2-2.1.0-Linux_x86_64.zip
 cd bin/
 unzip -q hisat2-2.1.0-Linux_x86_64.zip
 cd ..
@@ -15,7 +15,7 @@ ln -s bin/hisat2-2.1.0/hisat2-build hisat2-build
 ln -s bin/hisat2-2.1.0/hisat2_extract_exons.py
 ln -s bin/hisat2-2.1.0/hisat2_extract_splice_sites.py
 
-wget https://downloads.sourceforge.net/project/subread/subread-2.0.0/subread-2.0.0-Linux-x86_64.tar.gz -O bin/subread-2.0.0-Linux-x86_64.tar.gz
+wget https://downloads.sourceforge.net/project/subread/subread-2.0.0/subread-2.0.0-Linux-x86_64.tar.gz -q -O bin/subread-2.0.0-Linux-x86_64.tar.gz
 cd bin/
 tar xzf subread-2.0.0-Linux-x86_64.tar.gz
                   
