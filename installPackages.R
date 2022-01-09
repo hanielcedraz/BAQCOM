@@ -13,6 +13,9 @@ Install_Multiples_Packages <- function(packages) {
 
 }
 
-Install_Multiples_Packages(c('optparse', 'parallel', 'tools', 'dplyr', 'data.table'))
+Install_Multiples_Packages(c('optparse', 'parallel', 'tools', 'dplyr', 'data.table', 'glue'))
+
+
+
 
 
