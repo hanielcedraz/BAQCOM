@@ -4,6 +4,7 @@
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
+suppressPackageStartupMessages(library("baqcomPackage"))
 
 option_list <- list(
     make_option(c("-f", "--file"), type = "character", default = "samples.txt",
@@ -42,9 +43,10 @@ option_list <- list(
     make_option(c("-m", "--multiqc"), action = "store_true", default = FALSE,
                 help  =  "Use this option if you want to run multiqc analysis. [default %default]",
                 dest  =  "multiqc"),
-    make_option(c("-z", "--single"), action = "store_true", default = FALSE,
-                help = "Use this option if you have single-end files [doesn't need an argument]. [%default]",
-                dest = "singleEnd"),
+    make_option(c("-z", "--libraryType"),
+                type  = 'character', default = "pairEnd",
+                help = "The library type to use. Available: 'pairEnd' or 'singleEnd'. [ default %default]",
+                dest = "libraryType"),
     make_option(c("-x", "--external"), action  =  'store', type  =  "character", default = 'FALSE',
                 help = "A space delimeted file with a single line containing external parameters from HISAT2 [default %default]",
                 dest = "externalParameters")
@@ -76,45 +78,45 @@ if (!(casefold(opt$stranded, upper = FALSE) %in% c("reverse", "yes", "no"))) {
 #cat('\n')
 ######################################################################
 ## loadSampleFile
-loadSamplesFile <- function(file, reads_folder, column){
-    ## debug
-    file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
-    ##
-    if (!file.exists(file) ) {
-        write(paste("Sample file",file,"does not exist\n"), stderr())
-        stop()
-    }
-    ### column SAMPLE_ID should be the sample name
-    ### rows can be commented out with #
-    targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
-    if (!opt$singleEnd) {
-        if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-            cat('\n')
-            write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-            stop()
-        }
-    }
-    for (i in seq.int(nrow(targets$SAMPLE_ID))) {
-        if (targets[i,column]) {
-            ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
-            if (length(ext) == 0) {
-                write(paste("Cannot locate fastq or sff file in folder",targets[i,column], "\n"), stderr())
-                stop()
-            }
-            # targets$type[i] <- paste(ext,sep="/")
-        }
-        else {
-            ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
-            if (length(ext) == 0) {
-                write(paste(targets[i,column], "is not a gz file\n"), stderr())
-                stop()
-            }
-
-        }
-    }
-    write(paste("samples sheet contains", nrow(targets), "samples to process", sep = " "),stdout())
-    return(targets)
-}
+# loadSamplesFile <- function(file, reads_folder, column){
+#     ## debug
+#     file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
+#     ##
+#     if (!file.exists(file) ) {
+#         write(paste("Sample file",file,"does not exist\n"), stderr())
+#         stop()
+#     }
+#     ### column SAMPLE_ID should be the sample name
+#     ### rows can be commented out with #
+#     targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
+#     if (!opt$singleEnd) {
+#         if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+#             cat('\n')
+#             write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+#             stop()
+#         }
+#     }
+#     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
+#         if (targets[i,column]) {
+#             ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
+#             if (length(ext) == 0) {
+#                 write(paste("Cannot locate fastq or sff file in folder",targets[i,column], "\n"), stderr())
+#                 stop()
+#             }
+#             # targets$type[i] <- paste(ext,sep="/")
+#         }
+#         else {
+#             ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
+#             if (length(ext) == 0) {
+#                 write(paste(targets[i,column], "is not a gz file\n"), stderr())
+#                 stop()
+#             }
+#
+#         }
+#     }
+#     write(paste("samples sheet contains", nrow(targets), "samples to process", sep = " "),stdout())
+#     return(targets)
+# }
 
 
 
@@ -133,50 +135,50 @@ if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE
 ##    opt_procs: processors given on the option line
 ##    samples: number of samples
 ##    targets: number of targets
-prepareCore <- function(opt_procs) {
-    # if opt_procs set to 0 then expand to samples by targets
-    if (detectCores() < opt$procs) {
-        write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep = " "),stdout())
-        paste('Using ', detectCores(), 'threads')
-    }
-}
+# prepareCore <- function(opt_procs) {
+#     # if opt_procs set to 0 then expand to samples by targets
+#     if (detectCores() < opt$procs) {
+#         write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep = " "),stdout())
+#         paste('Using ', detectCores(), 'threads')
+#     }
+# }
 
 
 
 
 ######################
-countingList <- function(samples, reads_folder, column){
-    counting_list <- list()
-    if (casefold(opt$format, upper = FALSE) == 'bam') {
-        for (i in 1:nrow(samples)) {
-            files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.bam$'), full.names = TRUE)
-
-            count <- lapply(c("_sam_sorted_pos.bam"), grep, x = files, value = TRUE)
-            names(count) <- c("bam_sorted_pos")
-            count$sampleName <-  samples[i,column]
-            count$bam_sorted_pos <- count$bam_sorted_pos[i]
-
-            counting_list[[paste(count$sampleName)]] <- count
-            counting_list[[paste(count$sampleName, sep = "_")]]
-
-        }
-    }else if (casefold(opt$format, upper = FALSE) == 'sam') {
-        for (i in 1:nrow(samples)) {
-            files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.sam$'), full.names = TRUE)
-
-            count <- lapply(c("_unsorted_sample.sam"), grep, x = files, value = TRUE)
-            names(count) <- c("unsorted_sample")
-            count$sampleName <-  samples[i,column]
-            count$unsorted_sample <- count$unsorted_sample[i]
-
-            counting_list[[paste(count$sampleName)]] <- count
-            counting_list[[paste(count$sampleName, sep = "_")]]
-
-        }
-    }
-    write(paste("Setting up", length(counting_list), "jobs"),stdout())
-    return(counting_list)
-}
+# countingList <- function(samples, reads_folder, column){
+#     counting_list <- list()
+#     if (casefold(opt$format, upper = FALSE) == 'bam') {
+#         for (i in 1:nrow(samples)) {
+#             files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.bam$'), full.names = TRUE)
+#
+#             count <- lapply(c("_sam_sorted_pos.bam"), grep, x = files, value = TRUE)
+#             names(count) <- c("bam_sorted_pos")
+#             count$sampleName <-  samples[i,column]
+#             count$bam_sorted_pos <- count$bam_sorted_pos[i]
+#
+#             counting_list[[paste(count$sampleName)]] <- count
+#             counting_list[[paste(count$sampleName, sep = "_")]]
+#
+#         }
+#     }else if (casefold(opt$format, upper = FALSE) == 'sam') {
+#         for (i in 1:nrow(samples)) {
+#             files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.sam$'), full.names = TRUE)
+#
+#             count <- lapply(c("_unsorted_sample.sam"), grep, x = files, value = TRUE)
+#             names(count) <- c("unsorted_sample")
+#             count$sampleName <-  samples[i,column]
+#             count$unsorted_sample <- count$unsorted_sample[i]
+#
+#             counting_list[[paste(count$sampleName)]] <- count
+#             counting_list[[paste(count$sampleName, sep = "_")]]
+#
+#         }
+#     }
+#     write(paste("Setting up", length(counting_list), "jobs"),stdout())
+#     return(counting_list)
+# }
 
 
 
@@ -186,9 +188,20 @@ if (file.exists(external_parameters)) {
     line = readLines(con, warn = FALSE, ok = TRUE)
 }
 
-samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
-procs <- prepareCore(opt$procs)
-couting <- countingList(samples, opt$inputFolder, opt$samplesColumn)
+# samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
+# procs <- prepareCore(opt$procs)
+# couting <- countingList(samples, opt$inputFolder, opt$samplesColumn)
+
+
+samples <- loadSamplesFile(file = opt$samplesFile, reads_folder = opt$inputFolder, column = opt$samplesColumn, libraryType = opt$libraryType)
+cat("samples\n")
+print(samples)
+procs <- prepareCore(nThreads = opt$procs)
+cat("Number of procs to use\n")
+print(procs)
+couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = opt$format, libraryType = opt$libraryType)
+cat("couting\n")
+print(couting)
 
 cat('\n')
 
@@ -206,7 +219,7 @@ count.run <- mclapply(couting, function(index){
         system(paste('htseq-count',
                      '-f',
                         casefold(opt$format, upper = FALSE),
-                     '-n', 
+                     '-n',
                         ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs)),
                      '-r',
                         casefold(opt$order, upper = FALSE),
