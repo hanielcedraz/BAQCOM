@@ -3,6 +3,7 @@
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("parallel"))
 suppressPackageStartupMessages(library("optparse"))
+suppressPackageStartupMessages(library("baqcomPackage"))
 
 option_list <- list(
     make_option(c("-f", "--file"), type = "character", default = "samples.txt",
@@ -53,9 +54,10 @@ option_list <- list(
     make_option(c("-s", "--samtools"), action = "store_true", default = FALSE,
                 help = "Use this option if you want to convert the SAM files to sorted BAM. samtools is required [%default]",
                 dest = "samtools"),
-    make_option(c("-z", "--single"), action = "store_true", default = FALSE,
-                help = "Use this option if you have single-end files [doesn't need an argument]. [%default]",
-                dest = "singleEnd"),
+    make_option(c("-z", "--libraryType"),
+                type  = 'character', default = "pairEnd",
+                help = "The library type to use. Available: 'pairEnd' or 'singleEnd'. [ default %default]",
+                dest = "libraryType"),
     make_option(c("-d", "--delete"), action = "store_true", default = FALSE,
                 help = "Use this option if you want to delete the SAM files after convert to sorted BAM. [%default]",
                 dest = "deleteSAMfiles")
@@ -88,45 +90,45 @@ if (opt$multiqc) {
 #cat('\n')
 ######################################################################
 ## loadSampleFile
-loadSamplesFile <- function(file, reads_folder, column){
-    ## debug
-    file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
-    ##
-    if (!file.exists(file) ) {
-        write(paste("Sample file",file,"does not exist\n"), stderr())
-        stop()
-    }
-    ### column SAMPLE_ID should be the sample name
-    ### rows can be commented out with #
-    targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
-    if (!opt$singleEnd) {
-        if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-            cat('\n')
-            write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-            stop()
-        }
-    }
-    for (i in seq.int(nrow(targets$SAMPLE_ID))) {
-        if (targets[i,column]) {
-            ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
-            if (length(ext) == 0) {
-                write(paste("Cannot locate fastq or sff file in folder",targets[i,column], "\n"), stderr())
-                stop()
-            }
-            # targets$type[i] <- paste(ext,sep="/")
-        }
-        else {
-            ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
-            if (length(ext) == 0) {
-                write(paste(targets[i,column], "is not a gz file\n"), stderr())
-                stop()
-            }
-
-        }
-    }
-    write(paste("samples sheet contains", nrow(targets), "samples to process", sep = " "),stdout())
-    return(targets)
-}
+# loadSamplesFile <- function(file, reads_folder, column){
+#     ## debug
+#     file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
+#     ##
+#     if (!file.exists(file) ) {
+#         write(paste("Sample file",file,"does not exist\n"), stderr())
+#         stop()
+#     }
+#     ### column SAMPLE_ID should be the sample name
+#     ### rows can be commented out with #
+#     targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
+#     if (!opt$singleEnd) {
+#         if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+#             cat('\n')
+#             write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+#             stop()
+#         }
+#     }
+#     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
+#         if (targets[i,column]) {
+#             ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
+#             if (length(ext) == 0) {
+#                 write(paste("Cannot locate fastq or sff file in folder",targets[i,column], "\n"), stderr())
+#                 stop()
+#             }
+#             # targets$type[i] <- paste(ext,sep="/")
+#         }
+#         else {
+#             ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
+#             if (length(ext) == 0) {
+#                 write(paste(targets[i,column], "is not a gz file\n"), stderr())
+#                 stop()
+#             }
+#
+#         }
+#     }
+#     write(paste("samples sheet contains", nrow(targets), "samples to process", sep = " "),stdout())
+#     return(targets)
+# }
 
 
 
@@ -147,57 +149,57 @@ if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE
 ##    opt_procs: processors given on the option line
 ##    samples: number of samples
 ##    targets: number of targets
-prepareCore <- function(opt_procs) {
-    # if opt_procs set to 0 then expand to samples by targets
-    if (detectCores() < opt$procs) {
-        write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep = " "),stdout())
-        paste('Using ', detectCores(), 'threads')
-    }
-}
+# prepareCore <- function(opt_procs) {
+#     # if opt_procs set to 0 then expand to samples by targets
+#     if (detectCores() < opt$procs) {
+#         write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep = " "),stdout())
+#         paste('Using ', detectCores(), 'threads')
+#     }
+# }
 
 
 
 
 ######################
-if (!opt$singleEnd) {
-    mappingList <- function(samples, reads_folder, column){
-        mapping_list <- list()
-        for (i in 1:nrow(samples)) {
-            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-            # for (i in seq.int(to=nrow(samples))){
-            #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
-            map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
-            names(map) <- c("PE1", "PE2", "SE1", "SE2")
-            map$sampleName <-  samples[i,column]
-            map$PE1 <- map$PE1[i]
-            map$PE2 <- map$PE2[i]
-            map$SE1 <- map$SE1[i]
-            map$SE2 <- map$SE2[i]
-            mapping_list[[paste(map$sampleName)]] <- map
-            mapping_list[[paste(map$sampleName, sep = "_")]]
-        }
-        write(paste("Setting up", length(mapping_list), "jobs"),stdout())
-        return(mapping_list)
-    }
-
-} else if (opt$singleEnd) {
-    mappingList <- function(samples, reads_folder, column){
-        mapping_list <- list()
-        for (i in 1:nrow(samples)) {
-            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-            #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-            map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
-            names(map) <- c("SE")
-            map$sampleName <-  samples[i,column]
-            map$SE <- map$SE[i]
-            #map$R2 <- samples[i,3]
-            mapping_list[[paste(map$sampleName)]] <- map
-            #mapping_list[[paste(map$sampleName)]]
-        }
-        write(paste("Setting up",length(mapping_list),"jobs"), stdout())
-        return(mapping_list)
-    }
-}
+# if (!opt$singleEnd) {
+#     mappingList <- function(samples, reads_folder, column){
+#         mapping_list <- list()
+#         for (i in 1:nrow(samples)) {
+#             reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+#             # for (i in seq.int(to=nrow(samples))){
+#             #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
+#             map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
+#             names(map) <- c("PE1", "PE2", "SE1", "SE2")
+#             map$sampleName <-  samples[i,column]
+#             map$PE1 <- map$PE1[i]
+#             map$PE2 <- map$PE2[i]
+#             map$SE1 <- map$SE1[i]
+#             map$SE2 <- map$SE2[i]
+#             mapping_list[[paste(map$sampleName)]] <- map
+#             mapping_list[[paste(map$sampleName, sep = "_")]]
+#         }
+#         write(paste("Setting up", length(mapping_list), "jobs"),stdout())
+#         return(mapping_list)
+#     }
+#
+# } else if (opt$singleEnd) {
+#     mappingList <- function(samples, reads_folder, column){
+#         mapping_list <- list()
+#         for (i in 1:nrow(samples)) {
+#             reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+#             #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+#             map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
+#             names(map) <- c("SE")
+#             map$sampleName <-  samples[i,column]
+#             map$SE <- map$SE[i]
+#             #map$R2 <- samples[i,3]
+#             mapping_list[[paste(map$sampleName)]] <- map
+#             #mapping_list[[paste(map$sampleName)]]
+#         }
+#         write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+#         return(mapping_list)
+#     }
+# }
 
 filetype <- function(path){
     f = file(path)
@@ -207,9 +209,20 @@ filetype <- function(path){
 }
 
 
-samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
-procs <- prepareCore(opt$procs)
-mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
+# samples <- loadSamplesFile(opt$samplesFile, opt$inputFolder, opt$samplesColumn)
+# procs <- prepareCore(opt$procs)
+# mapping <- mappingList(samples, opt$inputFolder, opt$samplesColumn)
+
+samples <- loadSamplesFile(file = opt$samplesFile, reads_folder = opt$inputFolder, column = opt$samplesColumn, libraryType = opt$libraryType)
+cat("samples\n")
+print(samples)
+procs <- prepareCore(nThreads = opt$procs)
+cat("Number of procs to use\n")
+print(procs)
+mapping <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, step = "Mapping")
+cat("mapping\n")
+print(mapping)
+
 
 
 if (filetype(opt$mappingTarget) == "gzfile") {
@@ -315,7 +328,7 @@ index_names <- substr(basename(paste0(dir(index_Folder, full.names = TRUE))), 1,
 
 #novel_names <- substr(basename(paste0(samples[1,1])), 1, nchar(basename(paste0(samples[1,1]))) - 02)
 
-if (!opt$singleEnd) {
+if (opt$libraryType == "pairEnd") {
     hisat2.pair.mapping <- mclapply(mapping, function(index){
         write(paste('Starting Paired-End Mapping sample', index$sampleName), stderr())
         try({
@@ -343,7 +356,7 @@ if (!opt$singleEnd) {
         write(paste("Something went wrong with HISAT2 mapping. Some jobs failed"),stderr())
         stop()
     }
-} else if (opt$singleEnd) {
+} else if (opt$libraryType == "singleEnd") {
     hisat2.single.mapping <- mclapply(mapping, function(index){
         write(paste('Starting Single-End Mapping sample', index$sampleName), stderr())
         try({
@@ -371,25 +384,27 @@ if (!opt$singleEnd) {
     }
 }
 
-samtoolsList <- function(samples, reads_folder, column){
-    samtoolsfiles <- list()
-    for (i in 1:nrow(samples)) {
-        samfiles <- dir(path = file.path(mapping_Folder), recursive = TRUE, pattern = ".sam$", full.names = TRUE)
-        maps <- lapply(c("_unsorted_sample"), grep, x = samfiles, value = TRUE)
-        names(maps) <- c("unsorted_sample")
-        maps$sampleName <-  samples[i,column]
-        maps$unsorted_sample <- maps$unsorted_sample[i]
-
-        samtoolsfiles[[paste(maps$sampleName)]] <- maps
-        samtoolsfiles[[paste(maps$sampleName, sep = "_")]]
-
-    }
-    write(paste("Setting up", length(samtoolsfiles), "jobs"),stdout())
-    return(samtoolsfiles)
-}
+# samtoolsList <- function(samples, reads_folder, column){
+#     samtoolsfiles <- list()
+#     for (i in 1:nrow(samples)) {
+#         samfiles <- dir(path = file.path(mapping_Folder), recursive = TRUE, pattern = ".sam$", full.names = TRUE)
+#         maps <- lapply(c("_unsorted_sample"), grep, x = samfiles, value = TRUE)
+#         names(maps) <- c("unsorted_sample")
+#         maps$sampleName <-  samples[i,column]
+#         maps$unsorted_sample <- maps$unsorted_sample[i]
+#
+#         samtoolsfiles[[paste(maps$sampleName)]] <- maps
+#         samtoolsfiles[[paste(maps$sampleName, sep = "_")]]
+#
+#     }
+#     write(paste("Setting up", length(samtoolsfiles), "jobs"),stdout())
+#     return(samtoolsfiles)
+# }
 
 if (opt$samtools) {
-santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
+#santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
+santools.map <- createSampleList(samples = samples, reads_folder = mapping_Folder, column = opt$samplesColumn, fileType = "sam", libraryType = opt$libraryType)
+
 
 samtools.run <- mclapply(santools.map, function(index){
     write(paste('Starting convert sam to bam with samtools:', index$sampleName), stderr())
@@ -419,7 +434,7 @@ if (opt$deleteSAMfiles) {
 # creating extracted_Folder
 if (opt$unmapped) {
     if (!opt$samtools) {
-        santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
+        #santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
         extracted_Folder <- opt$extractedFolder
         if (!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
         samtools.ummaped <- mclapply(santools.map, function(index){
@@ -443,7 +458,7 @@ if (opt$unmapped) {
         }, mc.cores = opt$mprocs
         )
     }else if (opt$samtools) {
-        santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
+        #santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
         extracted_Folder <- opt$extractedFolder
         if (!file.exists(file.path(extracted_Folder))) dir.create(file.path(extracted_Folder), recursive = TRUE, showWarnings = FALSE)
         #
@@ -548,7 +563,7 @@ if (opt$indexBuild) {
         write("fasta file is already compressed", stderr())
     }
 }
-             
+
 
 system2('cat', paste0(reportsall, '/', 'HISAT2MappingReportSummary.txt'))
 cat('\n')
