@@ -8,7 +8,7 @@ trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.39.jar', sep = "")
 suppressPackageStartupMessages(library("tools"))
 suppressPackageStartupMessages(library("optparse"))
 suppressPackageStartupMessages(library("parallel"))
-
+suppressPackageStartupMessages(library("baqcomPackage"))
 
 ########################################
 ### SETING PARAMETERS
@@ -51,16 +51,17 @@ option_list <- list(
                 dest = 'qual'),
     make_option(c('-w', '--window'), type = 'integer', default = 10,
                 help = 'Quality window to use during trimming. Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold. [default %default]',
-                dest = 'window'),    
+                dest = 'window'),
     make_option(c('-L', '--leading'), type = 'integer', default = 3,
                 help = 'Remove leading low quality or N bases. Cut bases off the start of a read, if below a threshold quality [default %default]',
                 dest = 'leading'),
     make_option(c('-t', '--trailing'), type = 'integer', default = 3,
                 help = 'Remove trailing low quality or N bases. Cut bases off the end of a read, if below a threshold quality [default %default]',
                 dest = 'trailing'),
-    make_option(c("-z", "--single"), action = "store_true", default = FALSE,
-                help = "Use this option if you have single-end files [doesn't need an argument]. [%default]",
-                dest = "singleEnd"),
+    make_option(c("-z", "--libraryType"),
+                type  = 'character', default = "pairEnd",
+                help = "The library type to use. Available: 'pairEnd' or 'singleEnd'. [ default %default]",
+                dest = "libraryType"),
     make_option(c("-m", "--miniumumLength"), type = "integer", default = 50,
                 help = "Discard reads less then minimum length [default %default]",
                 dest = "minL")
@@ -99,92 +100,98 @@ if ( !file.exists(opt$samplesFile) ) {
 
 
 ## loadSampleFile
-loadSamplesFile <- function(file, reads_folder, column){
-    ## debug
-    file = opt$samplesFile; reads_folder = opt$Raw_Folder; column = opt$samplesColumn
-    ##
-    if ( !file.exists(file) ) {
-        write(paste("Sample file",file,"does not exist\n"), stderr())
-        stop()
-    }
-    ### column SAMPLE_ID should be the sample name
-    ### rows can be commented out with #
-    targets <- read.table(file, sep = "", header = TRUE, as.is = TRUE)
-    if (!opt$singleEnd) {
-        if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-            write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-            stop()
-        }
-        }
-    for (i in seq.int(nrow(targets$SAMPLE_ID))) {
-        if (targets[i, column]) {
-            ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
-            if (length(ext) == 0) {
-                write(paste("Cannot locate fastq or sff file in folder",targets[i,column],"\n"), stderr())
-                stop()
-            }
-            # targets$type[i] <- paste(ext,sep="/")
-        }
-        else {
-            ext <- file_ext(grep("gz", dir(file.path(reads_folder, targets[i, column])), value = TRUE))
-            if (length(ext) == 0) {
-                write(paste(targets[i,column],"is not a gz file\n"), stderr())
-                stop()
-            }
+# loadSamplesFile <- function(file, reads_folder, column){
+#     ## debug
+#     file = opt$samplesFile; reads_folder = opt$Raw_Folder; column = opt$samplesColumn
+#     ##
+#     if ( !file.exists(file) ) {
+#         write(paste("Sample file",file,"does not exist\n"), stderr())
+#         stop()
+#     }
+#     ### column SAMPLE_ID should be the sample name
+#     ### rows can be commented out with #
+#     targets <- read.table(file, sep = "", header = TRUE, as.is = TRUE)
+#     if (!opt$singleEnd) {
+#         if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
+#             write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
+#             stop()
+#         }
+#         }
+#     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
+#         if (targets[i, column]) {
+#             ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
+#             if (length(ext) == 0) {
+#                 write(paste("Cannot locate fastq or sff file in folder",targets[i,column],"\n"), stderr())
+#                 stop()
+#             }
+#             # targets$type[i] <- paste(ext,sep="/")
+#         }
+#         else {
+#             ext <- file_ext(grep("gz", dir(file.path(reads_folder, targets[i, column])), value = TRUE))
+#             if (length(ext) == 0) {
+#                 write(paste(targets[i,column],"is not a gz file\n"), stderr())
+#                 stop()
+#             }
+#
+#         }
+#     }
+#     write(paste("samples.txt contains", nrow(targets), "samples to process"),stdout())
+#     return(targets)
+# }
+#
+#
+# prepareCore <- function(opt_procs){
+#     # if opt_procs set to 0 then expand to samples by targets
+#     if (detectCores() < opt$procs) opt_procs <- detectCores()
+#     write(paste("Using",opt_procs, "processors", sep = " "),stdout())
+#     return(opt_procs)
+# }
+#
+# if (!opt$singleEnd) {
+#     qcList <- function(samples, reads_folder, column){
+#         mapping_list <- list()
+#         for (i in 1:nrow(samples)) {
+#             reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+#             #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+#             map <- lapply(c("_R1","_R2"), grep, x = reads, value = TRUE)
+#             names(map) <- c("R1","R2")
+#             map$sampleName <-  samples[i,column]
+#             map$R1 <- samples[i,2]
+#             map$R2 <- samples[i,3]
+#                 mapping_list[[paste(map$sampleName)]] <- map
+#                 #mapping_list[[paste(map$sampleName)]]
+#         }
+#         write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+#         return(mapping_list)
+#     }
+# } else if (opt$singleEnd) {
+#     qcList <- function(samples, reads_folder, column){
+#         mapping_list <- list()
+#         for (i in 1:nrow(samples)) {
+#             reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+#             #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+#             map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
+#             names(map) <- c("SE")
+#             map$sampleName <-  samples[i,column]
+#             #map$SE <- map$SE[i]
+#             map$SE <- samples[i,2]
+#             mapping_list[[paste(map$sampleName)]] <- map
+#             #mapping_list[[paste(map$sampleName)]]
+#         }
+#         write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+#         return(mapping_list)
+#     }
+# }
 
-        }
-    }
-    write(paste("samples.txt contains", nrow(targets), "samples to process"),stdout())
-    return(targets)
-}
-
-
-prepareCore <- function(opt_procs){
-    # if opt_procs set to 0 then expand to samples by targets
-    if (detectCores() < opt$procs) opt_procs <- detectCores()
-    write(paste("Using",opt_procs, "processors", sep = " "),stdout())
-    return(opt_procs)
-}
-
-if (!opt$singleEnd) {
-    qcList <- function(samples, reads_folder, column){
-        mapping_list <- list()
-        for (i in 1:nrow(samples)) {
-            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-            #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-            map <- lapply(c("_R1","_R2"), grep, x = reads, value = TRUE)
-            names(map) <- c("R1","R2")
-            map$sampleName <-  samples[i,column]
-            map$R1 <- samples[i,2]
-            map$R2 <- samples[i,3]
-                mapping_list[[paste(map$sampleName)]] <- map
-                #mapping_list[[paste(map$sampleName)]]
-        }
-        write(paste("Setting up",length(mapping_list),"jobs"), stdout())
-        return(mapping_list)
-    }
-} else if (opt$singleEnd) {
-    qcList <- function(samples, reads_folder, column){
-        mapping_list <- list()
-        for (i in 1:nrow(samples)) {
-            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-            #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-            map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
-            names(map) <- c("SE")
-            map$sampleName <-  samples[i,column]
-            #map$SE <- map$SE[i]
-            map$SE <- samples[i,2]
-            mapping_list[[paste(map$sampleName)]] <- map
-            #mapping_list[[paste(map$sampleName)]]
-        }
-        write(paste("Setting up",length(mapping_list),"jobs"), stdout())
-        return(mapping_list)
-    }
-}
-
-samples <- loadSamplesFile(opt$samplesFile, opt$Raw_Folder, opt$samplesColumn)
-procs <- prepareCore(opt$procs)
-qcquery <- qcList(samples, opt$Raw_Folder, opt$samplesColumn)
+samples <- loadSamplesFile(file = opt$samplesFile, reads_folder = opt$Raw_Folder, column = opt$samplesColumn, libraryType = opt$libraryType)
+cat("samples\n")
+print(head(samples))
+procs <- prepareCore(nThreads = opt$procs)
+cat("Number of procs to use\n")
+print(procs)
+qcquery <- createSampleList(samples = samples, reads_folder = opt$Raw_Folder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, step = "QualityControl")
+cat("qcquery\n")
+print(qcquery)
 
 
 # create report folders
@@ -233,7 +240,7 @@ if (!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder),
 
 # Trimmomatic analysis function
 pigz <- system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
-if (!opt$singleEnd) {
+if (opt$libraryType == "pairEnd") {
     write(paste("START Trimmomatic PE"), stderr())
     trimmomatic.pair <- mclapply(qcquery, function(index){
         try({
@@ -269,7 +276,7 @@ if (!opt$singleEnd) {
         write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
         stop()
     }
-} else if (opt$singleEnd) {
+} else if (opt$libraryType == "singleEnd") {
     write(paste("START Trimmomatic SE"), stderr())
     trimmomatic.single <- mclapply(qcquery, function(index){
         try({
@@ -311,7 +318,7 @@ if (pigz == 0) {
 cat('\n')
 
 output_folder <- opt$output
-if (!opt$singleEnd) {
+if (opt$libraryType == "pairEnd") {
     afterqcList <- function(samples, output_folder, column){
         mapping_list <- list()
         for (i in 1:nrow(samples)) {
@@ -332,7 +339,7 @@ if (!opt$singleEnd) {
         return(mapping_list)
     }
 
-} else if (opt$singleEnd) {
+} else if (opt$libraryType == "singleEnd") {
     afterqcList <- function(samples, reads_folder, column){
         mapping_list <- list()
         for (i in 1:nrow(samples)) {
@@ -392,7 +399,7 @@ if (opt$multiqc) {
 cat('\n')
 
 # Creating samples report
-if (!opt$singleEnd) {
+if (opt$libraryType == "pairEnd") {
     TidyTable <- function(x) {
         final <- data.frame('Input_Read_Pairs' = x[1,2],
                             'Pairs_Reads' = x[2,2],
@@ -414,7 +421,7 @@ if (!opt$singleEnd) {
 
     df <- lapply(report_sample, FUN = function(x) TidyTable(x))
     final_df <- do.call("rbind", df)
-}else if (opt$singleEnd) {
+}else if (opt$libraryType == "singleEnd") {
     TidyTable <- function(x) {
         final <- data.frame('Input_Read_Pairs' = x[1,2],
                             # 'Pairs_Reads' = x[2,2],
