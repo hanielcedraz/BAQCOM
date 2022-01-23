@@ -75,49 +75,6 @@ if (!(casefold(opt$stranded, upper = FALSE) %in% c("reverse", "yes", "no"))) {
 }
 
 
-#cat('\n')
-######################################################################
-## loadSampleFile
-# loadSamplesFile <- function(file, reads_folder, column){
-#     ## debug
-#     file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
-#     ##
-#     if (!file.exists(file) ) {
-#         write(paste("Sample file",file,"does not exist\n"), stderr())
-#         stop()
-#     }
-#     ### column SAMPLE_ID should be the sample name
-#     ### rows can be commented out with #
-#     targets <- read.table(file,sep = "",header = TRUE,as.is = TRUE)
-#     if (!opt$singleEnd) {
-#         if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-#             cat('\n')
-#             write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-#             stop()
-#         }
-#     }
-#     for (i in seq.int(nrow(targets$SAMPLE_ID))) {
-#         if (targets[i,column]) {
-#             ext <- unique(file_ext(dir(file.path(reads_folder, targets[i,column]), pattern = "gz")))
-#             if (length(ext) == 0) {
-#                 write(paste("Cannot locate fastq or sff file in folder",targets[i,column], "\n"), stderr())
-#                 stop()
-#             }
-#             # targets$type[i] <- paste(ext,sep="/")
-#         }
-#         else {
-#             ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
-#             if (length(ext) == 0) {
-#                 write(paste(targets[i,column], "is not a gz file\n"), stderr())
-#                 stop()
-#             }
-#
-#         }
-#     }
-#     write(paste("samples sheet contains", nrow(targets), "samples to process", sep = " "),stdout())
-#     return(targets)
-# }
-
 
 
 #pigz <- system('which pigz 2> /dev/null')
@@ -127,58 +84,6 @@ if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE
     uncompress <- 'gunzip'
 }
 
-######################################################################
-## prepareCore
-##    Set up the numer of processors to use
-##
-## Parameters
-##    opt_procs: processors given on the option line
-##    samples: number of samples
-##    targets: number of targets
-# prepareCore <- function(opt_procs) {
-#     # if opt_procs set to 0 then expand to samples by targets
-#     if (detectCores() < opt$procs) {
-#         write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")",sep = " "),stdout())
-#         paste('Using ', detectCores(), 'threads')
-#     }
-# }
-
-
-
-
-######################
-# countingList <- function(samples, reads_folder, column){
-#     counting_list <- list()
-#     if (casefold(opt$format, upper = FALSE) == 'bam') {
-#         for (i in 1:nrow(samples)) {
-#             files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.bam$'), full.names = TRUE)
-#
-#             count <- lapply(c("_sam_sorted_pos.bam"), grep, x = files, value = TRUE)
-#             names(count) <- c("bam_sorted_pos")
-#             count$sampleName <-  samples[i,column]
-#             count$bam_sorted_pos <- count$bam_sorted_pos[i]
-#
-#             counting_list[[paste(count$sampleName)]] <- count
-#             counting_list[[paste(count$sampleName, sep = "_")]]
-#
-#         }
-#     }else if (casefold(opt$format, upper = FALSE) == 'sam') {
-#         for (i in 1:nrow(samples)) {
-#             files <- dir(path = file.path(reads_folder), recursive = TRUE, pattern = paste0('.sam$'), full.names = TRUE)
-#
-#             count <- lapply(c("_unsorted_sample.sam"), grep, x = files, value = TRUE)
-#             names(count) <- c("unsorted_sample")
-#             count$sampleName <-  samples[i,column]
-#             count$unsorted_sample <- count$unsorted_sample[i]
-#
-#             counting_list[[paste(count$sampleName)]] <- count
-#             counting_list[[paste(count$sampleName, sep = "_")]]
-#
-#         }
-#     }
-#     write(paste("Setting up", length(counting_list), "jobs"),stdout())
-#     return(counting_list)
-# }
 
 
 
