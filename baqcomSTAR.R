@@ -92,47 +92,7 @@ if (!(opt$stranded %in% c("reverse", "yes", "no"))) {
 }
 
 
-#cat('\n')
-######################################################################
-## loadSampleFile
-# loadSamplesFile <- function(file, reads_folder, column) {
-#   ## debug
-#   file = opt$samplesFile; reads_folder = opt$inputFolder; column = opt$samplesColumn
-#   ##
-#   if (!file.exists(file) ) {
-#     write(paste("Sample file",file,"does not exist\n"), stderr())
-#     stop()
-#   }
-#   ### column SAMPLE_ID should be the sample name
-#   ### rows can be commented out with #
-#   targets <- read.table(file, header = TRUE, as.is = TRUE)
-#   if (!opt$singleEnd) {
-#     if (!all(c("SAMPLE_ID", "Read_1", "Read_2") %in% colnames(targets))) {
-#       write(paste("Expecting the three columns SAMPLE_ID, Read_1 and Read_2 in samples file (tab-delimited)\n"), stderr())
-#       stop()
-#     }
-#   }
-#   for (i in seq.int(nrow(targets$SAMPLE_ID))) {
-#     if (targets[i, column]) {
-#       ext <- unique(file_ext(dir(file.path(reads_folder,targets[i,column]),pattern = "gz")))
-#       if (length(ext) == 0) {
-#         write(paste("Cannot locate fastq or sff file in folder",targets[i,column],"\n"), stderr())
-#         stop()
-#       }
-#       # targets$type[i] <- paste(ext,sep="/")
-#     }
-#     else {
-#       ext <- file_ext(grep("gz", dir(file.path(reads_folder,targets[i, column])), value = TRUE))
-#       if (length(ext) == 0) {
-#         write(paste(targets[i,column],"is not a gz file\n"), stderr())
-#         stop()
-#       }
-#
-#     }
-#   }
-#   write(paste("samples sheet contains", nrow(targets), "samples to process"),stdout())
-#   return(targets)
-# }
+
 
 #pigz <- system('which pigz 2> /dev/null')
 if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE) == 0) {
@@ -143,65 +103,6 @@ if (system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE
   compress <- 'gzip'
 }
 
-######################################################################
-## prepareCore
-##    Set up the numer of processors to use
-##
-## Parameters
-##    opt_procs: processors given on the option line
-##    samples: number of samples
-##    targets: number of targets
-# if opt_procs set to 0 then expand to samples by targets
-# prepareCore <- function(opt_procs){
-#   if (detectCores() < opt$procs) {
-#     write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")"),stdout())
-#     paste('Using ', detectCores(), 'threads')
-#   }
-# }
-
-
-
-
-######################
-# if (!opt$singleEnd) {
-#   mappingList <- function(samples, reads_folder, column){
-#     mapping_list <- list()
-#     for (i in 1:nrow(samples)) {
-#       reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-#       # for (i in seq.int(to=nrow(samples))){
-#       #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
-#       map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
-#       names(map) <- c("PE1", "PE2", "SE1", "SE2")
-#       map$sampleName <-  samples[i,column]
-#       map$PE1 <- map$PE1[i]
-#       map$PE2 <- map$PE2[i]
-#       map$SE1 <- map$SE1[i]
-#       map$SE2 <- map$SE2[i]
-#       mapping_list[[paste(map$sampleName)]] <- map
-#       mapping_list[[paste(map$sampleName, sep = "_")]]
-#     }
-#     write(paste("Setting up", length(mapping_list), "jobs"),stdout())
-#     return(mapping_list)
-#   }
-#
-# } else if (opt$singleEnd) {
-#   mappingList <- function(samples, reads_folder, column){
-#     mapping_list <- list()
-#     for (i in 1:nrow(samples)) {
-#       reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-#       #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-#       map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
-#       names(map) <- c("SE")
-#       map$sampleName <-  samples[i,column]
-#       map$SE <- map$SE[i]
-#       #map$R2 <- samples[i,3]
-#       mapping_list[[paste(map$sampleName)]] <- map
-#       #mapping_list[[paste(map$sampleName)]]
-#     }
-#     write(paste("Setting up",length(mapping_list),"jobs"), stdout())
-#     return(mapping_list)
-#   }
-# }
 
 
 filetype <- function(path){
