@@ -91,7 +91,7 @@ option_list <- list(
         dest = "seedMis"
     ),
     make_option(
-        opt_str = c("-p", "--palindromeClipThreshold"),
+        opt_str = c("-P", "--palindromeClipThreshold"),
         type  = 'integer',
         default = 30,
         help = "PalindromeClipThreshold: specifies how accurate the match between the two 'adapter ligated' reads must be for PE palindrome read alignment. [default %default]",
