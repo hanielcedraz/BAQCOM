@@ -17,10 +17,10 @@ BAQCOM is an user-friendly pipeline which implements five automated pipelines fo
 ## STEP.1 - Download this repository to a preference path:<br>
 Git is required
 ```bash
- $ git clone https://github.com/hanielcedraz/BAQCOM.git
- $ cd BAQCOM
- $ chmod +x install.sh
- $ ./install.sh
+ git clone https://github.com/hanielcedraz/BAQCOM.git
+ cd BAQCOM
+ chmod +x install.sh
+ ./install.sh
  ```
 <br>
 <br>
@@ -36,12 +36,12 @@ If you would like to use multiqc analysis, please install it.<br>
 Installation:
 If pip is not installed, please install as follow:
 ```bash
-	$ wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
-	$ python get-pip.py
+	wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
+	python get-pip.py
 ```    
 You can install MultiQC from PyPI using pip as follow:
 ```bash
-	$ pip install multiqc
+	pip install multiqc
 ```
 More information, please access <a href="https://github.com/ewels/MultiQC"> MultiQC website</a>
 	
@@ -56,13 +56,13 @@ HTSeq is available from the Python Package Index (PyPI):
 ```
 You can install HTSeq-count using pip:
 ```bash
-	$ pip install HTSeq
+	pip install HTSeq
 	
 If HTSeq is already installed you need to upgrade it
-	$ pip install HTSeq --upgrade
+	pip install HTSeq --upgrade
 
 In addition you need to upgrade numpy
-	$ pip install numpy --upgrade
+	pip install numpy --upgrade
 ```
 <a href="https://htseq.readthedocs.io/en/release_0.11.1/install.html">or following the source documentation</a>
 	
@@ -76,11 +76,11 @@ To speed up your analysis results, install the pigz.
 
 Centos
 ```bash
-$ sudo yum install pigz
+sudo yum install pigz
 ```
 Ubuntu
 ```bash
-$ sudo apt install pigz
+sudo apt install pigz
 ```
 <br>
 <br>
