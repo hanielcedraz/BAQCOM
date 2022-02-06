@@ -283,7 +283,7 @@ if (opt$libraryType == "pairEnd") {
                 paste('java', '-jar', trimmomatic, 'SE',
                       paste0('-threads ',
                              ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
-                      paste0(opt$Raw_Folder, '/', index$SE),
+                      paste0(index$SE),
                       if (pigz == 0) {
                           paste0(opt$output, '/', index$sampleName, '_', 'trim_SE.fastq')
                         }
