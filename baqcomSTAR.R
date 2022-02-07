@@ -124,7 +124,7 @@ print(samples)
 procs <- prepareCore(nThreads = opt$procs)
 cat("Number of procs to use\n")
 print(procs)
-mapping <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, step = "Mapping")
+mapping <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, program = "star")
 cat("mapping\n")
 print(mapping)
 

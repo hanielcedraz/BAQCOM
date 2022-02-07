@@ -117,7 +117,7 @@ print(samples)
 procs <- prepareCore(nThreads = opt$procs)
 cat("Number of procs to use\n")
 print(procs)
-mapping <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, step = "Mapping")
+mapping <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, program = "Hisat2")
 cat("mapping\n")
 print(mapping)
 
@@ -286,7 +286,7 @@ if (opt$libraryType == "pairEnd") {
 
 if (opt$samtools) {
 #santools.map <- samtoolsList(samples, opt$inputFolder, opt$samplesColumn)
-santools.map <- createSampleList(samples = samples, reads_folder = mapping_Folder, column = opt$samplesColumn, fileType = "sam", libraryType = opt$libraryType)
+santools.map <- createSampleList(samples = samples, reads_folder = mapping_Folder, column = opt$samplesColumn, fileType = "sam", libraryType = opt$libraryType, program = "samtools")
 
 
 samtools.run <- mclapply(santools.map, function(index){

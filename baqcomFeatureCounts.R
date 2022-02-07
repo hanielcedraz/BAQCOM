@@ -117,13 +117,13 @@ procs <- prepareCore(opt$procs)
 
 if (opt$samplesFromSTAR) {
     cat("inside FromStar TRUE if\n")
-    couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, libraryType = opt$libraryType, samplesFromSTAR = TRUE)
+    couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, libraryType = opt$libraryType, fromSTAR = TRUE, program = "featurecount")
     cat("qcquery From STAR\n")
     print(couting)
     #couting <- countingList(samples, opt$inputFolder, opt$samplesColumn)
 } else {
     cat("inside FromStar FALSE if\n")
-    couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = opt$format, libraryType = opt$libraryType)
+    couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = opt$format, libraryType = opt$libraryType, program = "featurecount")
     cat("qcquery\n")
     print(couting)
 }

@@ -104,7 +104,7 @@ print(samples)
 procs <- prepareCore(nThreads = opt$procs)
 cat("Number of procs to use\n")
 print(procs)
-couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = opt$format, libraryType = opt$libraryType)
+couting <- createSampleList(samples = samples, reads_folder = opt$inputFolder, column = opt$samplesColumn, fileType = opt$format, libraryType = opt$libraryType, program = "htseq")
 cat("couting\n")
 print(couting)
 
