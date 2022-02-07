@@ -95,7 +95,7 @@ if (!(casefold(opt$stranded, upper = FALSE) %in% c("reverse", "yes", "no"))) {
 
 
 
-setwd("/Users/haniel/Documents/BAQCOM/")
+
 
 external_parameters <- opt$externalParameters
 if (file.exists(external_parameters)) {
