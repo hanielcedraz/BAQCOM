@@ -2,6 +2,7 @@
 
 trimmomatic_dir <- paste('XXX/Trimmomatic-0.39/')
 trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.39.jar', sep = "")
+
 ########################################
 ### LOADING PACKAGES
 ########################################
@@ -18,134 +19,134 @@ suppressPackageStartupMessages(library("baqcomPackage"))
 # make_option(c("-h", "--help"), action="store_true", default=FALSE,
 # help="Show this help message and exit")
 option_list <- list(
-    make_option(
-        opt_str = c("-f", "--file"), 
-        type = "character",
-        default = "samples.txt",
-        help = "The filename of the sample file [default %default]",
-        dest = "samplesFile"
-    ),
-    make_option(
-        opt_str = c("-d", "--directory"), 
-        type = "character",
-        default = "00-Fastq",
-        help = "Directory where the raw sequence data is stored [default %default]",
-        dest = "Raw_Folder"
-    ),
-    make_option(
-        opt_str = c("-c", "--column"), 
-        type = "character", 
-        default = "SAMPLE_ID",
-        help = "Column name from the sample sheet to use as read folder names [default %default]",
-        dest = "samplesColumn"
-    ),
-    make_option(
-        opt_str = c("-l", "--fastqc"), 
-        action = 'store_true',
-        type = "logical",
-        default = FALSE,
-        help = "Use this option if you want to run FastQC software  [default %default]",
-        dest = "fastqc"
-    ),
-    make_option(
-        opt_str = c("-r", "--multiqc"),
-        action = 'store_true',
-        type = "logical",
-        default = FALSE,
-        help = "Use this option if you want to run multiqc software  [default %default]",
-        dest = "multiqc"
-    ),
-    make_option(
-        opt_str = c("-o", "--output"), 
-        type = "character", 
-        default = "01-CleanedReads",
-        help = "Output folder [default %default]",
-        dest = "output"
-    ),
-    make_option(
-        opt_str = c("-p", "--processors"), 
-        type = "integer", 
-        default = 8,
-        help = "Number of processors to use [default %default]",
-        dest = "procs"
-    ),
-    make_option(
-        opt_str = c("-q", "--sampleprocs"),
-        type = "integer",
-        default = 2,
-        help = "Number of samples to process at each time [default %default]",
-        dest = "sampleToprocs"
-    ),
-    make_option(
-        opt_str = c("-a", "--adapters"),
-        type  = 'character',
-        default = 'TruSeq3-PE-2.fa',
-        help = "fastaWithAdaptersEtc: specifies the path to a fasta file containing all the adapters, PCR sequences etc. The naming of the various sequences within this file determines how they are used. Options: TruSeq3-PE-2.fa, TruSeq3-SE.fa, NexteraPE-PE.fa, TruSeq3-PE.fa, TruSeq2-PE.fa, TruSeq2-SE.fa [default %default]",
-        dest = "adapters"
-    ),
-    make_option(
-        opt_str = c("-M", "--seedMismatches"),
-        type  = 'integer',
-        default = 2,
-        help = "SeedMismatches: specifies the maximum mismatch count which will still allow a full match to be performed. [default %default]",
-        dest = "seedMis"
-    ),
-    make_option(
-        opt_str = c("-P", "--palindromeClipThreshold"),
-        type  = 'integer',
-        default = 30,
-        help = "PalindromeClipThreshold: specifies how accurate the match between the two 'adapter ligated' reads must be for PE palindrome read alignment. [default %default]",
-        dest = "palinClipThresh"
-    ),
-    make_option(
-        opt_str = c("-n", "--simpleClipThreshold"),
-        type  = 'character',
-        default = 10,
-        help = "simpleClipThreshold: specifies how accurate the match between any adapter etc. sequence must be against a read. [default %default]",
-        dest = "simClipThresh"
-    ),
-    make_option(
-        opt_str = c('-s', '--sliding'),
-        type = 'integer',
-        default = 20,
-        help = 'Quality sliding to use during trimming. Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold. [default %default]',
-        dest = 'qual'
-    ),
-    make_option(
-        opt_str = c('-w', '--window'), 
-        type = 'integer', 
-        default = 10,
-        help = 'Quality window to use during trimming. Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold. [default %default]',
-        dest = 'window'
-    ),
-    make_option(
-        opt_str = c('-L', '--leading'), 
-        type = 'integer', 
-        default = 3,
-        help = 'Remove leading low quality or N bases. Cut bases off the start of a read, if below a threshold quality [default %default]',
-        dest = 'leading'
-    ),
-    make_option(
-        opt_str = c('-t', '--trailing'), 
-        type = 'integer', 
-        default = 3,
-        help = 'Remove trailing low quality or N bases. Cut bases off the end of a read, if below a threshold quality [default %default]',
-        dest = 'trailing'
-    ),
-    make_option(
-        opt_str = c("-z", "--libraryType"),
-        type  = 'character', 
-        default = "pairEnd",
-        help = "The library type to use. Available: 'pairEnd' or 'singleEnd'. [ default %default]",
-        dest = "libraryType"
-    ),
-    make_option(
-        opt_str = c("-m", "--miniumumLength"),
-        type = "integer",
-        default = 50,
-        help = "Discard reads less then minimum length [default %default]",
-        dest = "minL"
-    )
+  make_option(
+    opt_str = c("-f", "--file"), 
+    type = "character",
+    default = "samples.txt",
+    help = "The filename of the sample file [default %default]",
+    dest = "samplesFile"
+  ),
+  make_option(
+    opt_str = c("-d", "--directory"), 
+    type = "character",
+    default = "00-Fastq",
+    help = "Directory where the raw sequence data is stored [default %default]",
+    dest = "Raw_Folder"
+  ),
+  make_option(
+    opt_str = c("-c", "--column"), 
+    type = "character", 
+    default = "SAMPLE_ID",
+    help = "Column name from the sample sheet to use as read folder names [default %default]",
+    dest = "samplesColumn"
+  ),
+  make_option(
+    opt_str = c("-l", "--fastqc"), 
+    action = 'store_true',
+    type = "logical",
+    default = FALSE,
+    help = "Use this option if you want to run FastQC software  [default %default]",
+    dest = "fastqc"
+  ),
+  make_option(
+    opt_str = c("-r", "--multiqc"),
+    action = 'store_true',
+    type = "logical",
+    default = FALSE,
+    help = "Use this option if you want to run multiqc software  [default %default]",
+    dest = "multiqc"
+  ),
+  make_option(
+    opt_str = c("-o", "--output"), 
+    type = "character", 
+    default = "01-CleanedReads",
+    help = "Output folder [default %default]",
+    dest = "output"
+  ),
+  make_option(
+    opt_str = c("-p", "--processors"), 
+    type = "integer", 
+    default = 8,
+    help = "Number of processors to use [default %default]",
+    dest = "procs"
+  ),
+  make_option(
+    opt_str = c("-q", "--sampleprocs"),
+    type = "integer",
+    default = 2,
+    help = "Number of samples to process at each time [default %default]",
+    dest = "sampleToprocs"
+  ),
+  make_option(
+    opt_str = c("-a", "--adapters"),
+    type  = 'character',
+    default = 'TruSeq3-PE-2.fa',
+    help = "fastaWithAdaptersEtc: specifies the path to a fasta file containing all the adapters, PCR sequences etc. The naming of the various sequences within this file determines how they are used. Options: TruSeq3-PE-2.fa, TruSeq3-SE.fa, NexteraPE-PE.fa, TruSeq3-PE.fa, TruSeq2-PE.fa, TruSeq2-SE.fa [default %default]",
+    dest = "adapters"
+  ),
+  make_option(
+    opt_str = c("-M", "--seedMismatches"),
+    type  = 'integer',
+    default = 2,
+    help = "SeedMismatches: specifies the maximum mismatch count which will still allow a full match to be performed. [default %default]",
+    dest = "seedMis"
+  ),
+  make_option(
+    opt_str = c("-P", "--palindromeClipThreshold"),
+    type  = 'integer',
+    default = 30,
+    help = "PalindromeClipThreshold: specifies how accurate the match between the two 'adapter ligated' reads must be for PE palindrome read alignment. [default %default]",
+    dest = "palinClipThresh"
+  ),
+  make_option(
+    opt_str = c("-n", "--simpleClipThreshold"),
+    type  = 'character',
+    default = 10,
+    help = "simpleClipThreshold: specifies how accurate the match between any adapter etc. sequence must be against a read. [default %default]",
+    dest = "simClipThresh"
+  ),
+  make_option(
+    opt_str = c('-s', '--sliding'),
+    type = 'integer',
+    default = 20,
+    help = 'Quality sliding to use during trimming. Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold. [default %default]',
+    dest = 'qual'
+  ),
+  make_option(
+    opt_str = c('-w', '--window'), 
+    type = 'integer', 
+    default = 10,
+    help = 'Quality window to use during trimming. Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold. [default %default]',
+    dest = 'window'
+  ),
+  make_option(
+    opt_str = c('-L', '--leading'), 
+    type = 'integer', 
+    default = 3,
+    help = 'Remove leading low quality or N bases. Cut bases off the start of a read, if below a threshold quality [default %default]',
+    dest = 'leading'
+  ),
+  make_option(
+    opt_str = c('-t', '--trailing'), 
+    type = 'integer', 
+    default = 3,
+    help = 'Remove trailing low quality or N bases. Cut bases off the end of a read, if below a threshold quality [default %default]',
+    dest = 'trailing'
+  ),
+  make_option(
+    opt_str = c("-z", "--libraryType"),
+    type  = 'character', 
+    default = "pairEnd",
+    help = "The library type to use. Available: 'pairEnd' or 'singleEnd'. [ default %default]",
+    dest = "libraryType"
+  ),
+  make_option(
+    opt_str = c("-m", "--miniumumLength"),
+    type = "integer",
+    default = 50,
+    help = "Discard reads less then minimum length [default %default]",
+    dest = "minL"
+  )
 )
 
 # get command line options, if help option encountered print help and exit,
@@ -161,36 +162,40 @@ opt <- parse_args(OptionParser(option_list = option_list, description =  paste('
 
 multiqc <- system('which multiqc 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
 if (opt$multiqc) {
-    if (multiqc != 0) {
-        write(paste("Multiqc is not installed. If you would like to use multiqc analysis, please install it or remove -r parameter"), stderr())
-        stop()
-    }
+  if (multiqc != 0) {
+    write(paste("Multiqc is not installed. If you would like to use multiqc analysis, please install it or remove -r parameter"), stderr())
+    stop()
+  }
 }
 
 
 if (detectCores() < opt$procs) {
-    write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")"), stdout())
-    paste('Using ', detectCores(), 'threads')
+  write(paste("number of cores specified (", opt$procs,") is greater than the number of cores available (",detectCores(),")"), stdout())
+  paste('Using ', detectCores(), 'threads')
 }
 
 # verify if sample_file exist
 if ( !file.exists(opt$samplesFile) ) {
-    write(paste("Sample file",opt$samplesFile,"does not exist\n"), stderr())
-    stop()
+  write(paste("Sample file",opt$samplesFile,"does not exist\n"), stderr())
+  stop()
 }
 
 
 
+# samples <- baqcomPackage::loadSamplesFile(file = "samplesPair.txt", reads_folder = "00-FastqPair//", column = opt$samplesColumn, libraryType = "pairEnd")
+# 
+# baqcomPackage::createSampleList(samples = samples, reads_folder = "00-FastqPair/", column = opt$samplesColumn, fileType = "fastq.gz", libraryType = "pairEnd", step = "QualityControl")
 
-samples <- loadSamplesFile(file = opt$samplesFile, reads_folder = opt$Raw_Folder, column = opt$samplesColumn, libraryType = opt$libraryType)
+
+samples <- baqcomPackage::loadSamplesFile(file = opt$samplesFile, reads_folder = opt$Raw_Folder, column = opt$samplesColumn, libraryType = opt$libraryType)
 cat("samples\n")
 print(head(samples))
-procs <- prepareCore(nThreads = opt$procs)
+procs <- baqcomPackage::prepareCore(nThreads = opt$procs)
 cat("Number of procs to use\n")
 print(procs)
-qcquery <- createSampleList(samples = samples, reads_folder = opt$Raw_Folder, column = opt$samplesColumn, fileType = "fastq.gz", libraryType = opt$libraryType, step = "QualityControl")
+qcquery <- baqcomPackage::createSampleList(samples = samples, reads_folder = opt$Raw_Folder, column = opt$samplesColumn, libraryType = opt$libraryType, program = "trimmomatic")
 cat("qcquery\n")
-print(qcquery)
+#print(qcquery)
 
 
 # create report folders
@@ -205,25 +210,25 @@ if (!file.exists(file.path(paste0(reports,'/',report_folder)))) dir.create(file.
 #Creating Fastqc plots before Quality Control
 beforeQC <- 'FastQCBefore'
 if (opt$fastqc) {
-    write(paste("Start fastqc - FastQCBefore"), stderr())
-    if (!file.exists(file.path(paste0(reports,'/', beforeQC)))) dir.create(file.path(paste0(reports,'/', beforeQC)), recursive = TRUE, showWarnings = FALSE)
-    fastq.defore <- mclapply(qcquery, function(index){
-        try({
-            system(
-                paste('fastqc',
-                      paste0(opt$Raw_Folder, '/',index$sampleName,'*'),
-                      #paste0(opt$Raw_Folder, '/',index$R2),
-                      ' -o ',
-                      paste0(reports,'/', beforeQC),
-                      '-t', opt$sampleToprocs
-                )
-            )
-        })
-    }, mc.cores = opt$sampleToprocs)
-# for (i in samples[,1]) {
-#         system2('fastqc',
-#                paste0(opt$Raw_Folder, '/', i,'*', ' -o ', paste0(reports,'/', beforeQC), ' -t ', opt$sampleToprocs))
-#     }
+  write(paste("Start fastqc - FastQCBefore"), stderr())
+  if (!file.exists(file.path(paste0(reports,'/', beforeQC)))) dir.create(file.path(paste0(reports,'/', beforeQC)), recursive = TRUE, showWarnings = FALSE)
+  fastq.defore <- mclapply(qcquery, function(index){
+    try({
+      system(
+        paste('fastqc',
+              paste0(opt$Raw_Folder, '/',index$sampleName,'*'),
+              #paste0(opt$Raw_Folder, '/',index$R2),
+              ' -o ',
+              paste0(reports,'/', beforeQC),
+              '-t', opt$sampleToprocs
+        )
+      )
+    })
+  }, mc.cores = opt$sampleToprocs)
+  # for (i in samples[,1]) {
+  #         system2('fastqc',
+  #                paste0(opt$Raw_Folder, '/', i,'*', ' -o ', paste0(reports,'/', beforeQC), ' -t ', opt$sampleToprocs))
+  #     }
 }
 
 
@@ -240,77 +245,79 @@ if (!file.exists(file.path(output_Folder))) dir.create(file.path(output_Folder),
 # Trimmomatic analysis function
 pigz <- system('which pigz 2> /dev/null', ignore.stdout = TRUE, ignore.stderr = TRUE)
 if (opt$libraryType == "pairEnd") {
-    write(paste("START Trimmomatic PE"), stderr())
-    trimmomatic.pair <- mclapply(qcquery, function(index){
-        try({
-            system(
-                paste('java', '-jar', trimmomatic, 'PE',
-                      paste0('-threads ',
-                      ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
-                      paste0(opt$Raw_Folder, '/', index$R1),
-                      paste0(opt$Raw_Folder, '/', index$R2),
-                      if (pigz == 0) {
-                          paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq'),
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq'),
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq'),
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq'))}
-                      else{
-                          paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'))},
-                      paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
-                      paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
-                             opt$adapters, ':2:30:10'),
-                      paste0('LEADING:', opt$leading),
-                      paste0('TRAILING:', opt$trailing),
-                      paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
-                      paste0('MINLEN:', opt$minL),
-                      paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
-            )
-        })
-    }, mc.cores = opt$sampleToprocs)
-
-    if (!all(sapply(trimmomatic.pair , "==", 0L))) {
-        write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
-        stop()
-    }
+  write(paste("START Trimmomatic PE"), stderr())
+  trimmomatic.pair <- mclapply(qcquery, function(index){
+    try({
+      system(
+        paste('java', '-jar', trimmomatic, 'PE',
+              paste0('-threads ',
+                     ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
+              paste0(opt$Raw_Folder, '/', index$R1),
+              paste0(opt$Raw_Folder, '/', index$R2),
+              if (pigz == 0) {
+                paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq'))}
+              else{
+                paste(paste0(opt$output, '/', index$sampleName, '_', 'trim_PE1.fastq.gz'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE1.fastq.gz'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_PE2.fastq.gz'),
+                      paste0(opt$output, '/', index$sampleName, '_', 'trim_SE2.fastq.gz'))},
+              paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+              paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
+                     opt$adapters, ':2:30:10'),
+              paste0('LEADING:', opt$leading),
+              paste0('TRAILING:', opt$trailing),
+              paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
+              paste0('MINLEN:', opt$minL),
+              paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
+      )
+    })
+  }, mc.cores = opt$sampleToprocs)
+  
+  if (!all(sapply(trimmomatic.pair , "==", 0L))) {
+    write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+    stop()
+  }
 } else if (opt$libraryType == "singleEnd") {
-    write(paste("START Trimmomatic SE"), stderr())
-    trimmomatic.single <- mclapply(qcquery, function(index){
-        try({
-            system(
-                paste('java', '-jar', trimmomatic, 'SE',
-                      paste0('-threads ',
-                             ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
-                      paste0(index$SE),
-                      if (pigz == 0) {
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE.fastq')
-                        }
-                      else{
-                          paste0(opt$output, '/', index$sampleName, '_', 'trim_SE.fastq.gz')
-                        },
-                      paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
-                      paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
-                             opt$adapters, ':2:30:10'),
-                      paste0('LEADING:', opt$leading),
-                      paste0('TRAILING:', opt$trailing),
-                      paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
-                      paste0('MINLEN:', opt$minL),
-                      paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
-            )
-        })
-    }, mc.cores = opt$sampleToprocs)
-
-    # if (!all(sapply(trimmomatic.single , "==", 0L))) {
-    #     write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
-    #     stop()
-    # }
+  write(paste("START Trimmomatic SE"), stderr())
+  print(qcquery)
+  trimmomatic.single <- mclapply(qcquery, function(index){
+    try({
+      system(
+        paste('java', '-jar', trimmomatic, 'SE',
+              paste0('-threads ',
+                     ifelse(detectCores() < opt$procs, detectCores(), paste(opt$procs))),
+              paste0(index$SE),
+              
+              if (pigz == 0) {
+                paste0(opt$output, '/', index$sampleName, '_', 'trim_SE.fastq')
+              }
+              else{
+                paste0(opt$output, '/', index$sampleName, '_', 'trim_SE.fastq.gz')
+              },
+              paste0('-summary ', reports,'/', report_folder, '/', index$sampleName, '_', 'statsSummaryFile.txt'),
+              paste0('ILLUMINACLIP:', trimmomatic_dir, 'adapters', '/',
+                     opt$adapters, ':2:30:10'),
+              paste0('LEADING:', opt$leading),
+              paste0('TRAILING:', opt$trailing),
+              paste0('SLIDINGWINDOW:', opt$window, ':', opt$qual),
+              paste0('MINLEN:', opt$minL),
+              paste0('2> ', reports,'/',report_folder, '/', index$sampleName, '_', 'trimmomatic_out.log'), collapse = '\t'), ignore.stdout = TRUE
+      )
+    })
+  }, mc.cores = opt$sampleToprocs)
+  
+  if (!all(sapply(trimmomatic.single , "==", 0L))) {
+    write(paste("Something went wrong with Trimmomatic some jobs failed"),stderr())
+    stop()
+  }
 }
 
 if (pigz == 0) {
-    write(paste("Compressing files with pigz using", procs, 'processors'),stderr())
-    system(paste0('pigz ', '-f ', '-p ', procs,' ', opt$output,'/*.fastq'))
+  write(paste("Compressing files with pigz using", procs, 'processors'),stderr())
+  system(paste0('pigz ', '-f ', '-p ', procs,' ', opt$output,'/*.fastq'))
 }
 
 
@@ -318,43 +325,43 @@ cat('\n')
 
 output_folder <- opt$output
 if (opt$libraryType == "pairEnd") {
-    afterqcList <- function(samples, output_folder, column){
-        mapping_list <- list()
-        for (i in 1:nrow(samples)) {
-            reads <- dir(path = file.path(output_folder), pattern = "fastq.gz$", full.names = TRUE)
-            # for (i in seq.int(to=nrow(samples))){
-            #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
-            map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
-            names(map) <- c("PE1", "PE2", "SE1", "SE2")
-            map$sampleName <-  samples[i,column]
-            map$PE1 <- map$PE1[i]
-            map$PE2 <- map$PE2[i]
-            map$SE1 <- map$SE1[i]
-            map$SE2 <- map$SE2[i]
-            mapping_list[[paste(map$sampleName)]] <- map
-            mapping_list[[paste(map$sampleName, sep = "_")]]
-        }
-        write(paste("Setting up", length(mapping_list), "jobs"),stdout())
-        return(mapping_list)
+  afterqcList <- function(samples, output_folder, column){
+    mapping_list <- list()
+    for (i in 1:nrow(samples)) {
+      reads <- dir(path = file.path(output_folder), pattern = "fastq.gz$", full.names = TRUE)
+      # for (i in seq.int(to=nrow(samples))){
+      #     reads <- dir(path=file.path(reads_folder,samples[i,column]),pattern="gz$",full.names=TRUE)
+      map <- lapply(c("_PE1", "_PE2", "_SE1", "_SE2"), grep, x = reads, value = TRUE)
+      names(map) <- c("PE1", "PE2", "SE1", "SE2")
+      map$sampleName <-  samples[i,column]
+      map$PE1 <- map$PE1[i]
+      map$PE2 <- map$PE2[i]
+      map$SE1 <- map$SE1[i]
+      map$SE2 <- map$SE2[i]
+      mapping_list[[paste(map$sampleName)]] <- map
+      mapping_list[[paste(map$sampleName, sep = "_")]]
     }
-
+    write(paste("Setting up", length(mapping_list), "jobs"),stdout())
+    return(mapping_list)
+  }
+  
 } else if (opt$libraryType == "singleEnd") {
-    afterqcList <- function(samples, reads_folder, column){
-        mapping_list <- list()
-        for (i in 1:nrow(samples)) {
-            reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
-            #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
-            map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
-            names(map) <- c("SE")
-            map$sampleName <-  samples[i,column]
-            map$SE <- map$SE[i]
-            #map$R2 <- samples[i,3]
-            mapping_list[[paste(map$sampleName)]] <- map
-            #mapping_list[[paste(map$sampleName)]]
-        }
-        write(paste("Setting up",length(mapping_list),"jobs"), stdout())
-        return(mapping_list)
+  afterqcList <- function(samples, reads_folder, column){
+    mapping_list <- list()
+    for (i in 1:nrow(samples)) {
+      reads <- dir(path = file.path(reads_folder), pattern = "fastq.gz$", full.names = TRUE)
+      #reads <- dir(path=file.path(reads_folder, samples[i,column]), pattern = "fastq.gz$", full.names = TRUE)
+      map <- lapply(c("_SE"), grep, x = reads, value = TRUE)
+      names(map) <- c("SE")
+      map$sampleName <-  samples[i,column]
+      map$SE <- map$SE[i]
+      #map$R2 <- samples[i,3]
+      mapping_list[[paste(map$sampleName)]] <- map
+      #mapping_list[[paste(map$sampleName)]]
     }
+    write(paste("Setting up",length(mapping_list),"jobs"), stdout())
+    return(mapping_list)
+  }
 }
 
 query.after <- afterqcList(samples, opt$output, opt$samplesColumn)
@@ -362,87 +369,87 @@ query.after <- afterqcList(samples, opt$output, opt$samplesColumn)
 #Creating Fastqc plots after Quality Control
 afterQC <- 'FastQCAfter'
 if (opt$fastqc) {
-write(paste("Start fastqc - FastQCAfter"), stderr())
-if (!file.exists(file.path(paste0(reports,'/', afterQC)))) dir.create(file.path(paste0(reports,'/', afterQC)), recursive = TRUE, showWarnings = FALSE)
-    fastq.after <- mclapply(qcquery, function(index){
-        try({
-            system(
-                paste('fastqc',
-                      paste0(opt$output, '/',index$sampleName,'*'),
-                      #paste0(opt$Raw_Folder, '/',index$R2),
-                      ' -o ',
-                      paste0(reports,'/', afterQC),
-                      '-t', opt$sampleToprocs
-                )
-            )
-        })
-    }, mc.cores = opt$sampleToprocs)
-# for (i in samples[,1]) {
-#     system2('fastqc',
-#             paste0(opt$output, '/', i, '_trim_PE1*', ' -o ', paste0(reports,'/', afterQC), ' -t ', opt$sampleToprocs))
-#     system2('fastqc',
-#             paste0(opt$output, '/', i, '_trim_PE2*', ' -o ', paste0(reports,'/',afterQC), ' -t ', opt$sampleToprocs))
-#     }
+  write(paste("Start fastqc - FastQCAfter"), stderr())
+  if (!file.exists(file.path(paste0(reports,'/', afterQC)))) dir.create(file.path(paste0(reports,'/', afterQC)), recursive = TRUE, showWarnings = FALSE)
+  fastq.after <- mclapply(qcquery, function(index){
+    try({
+      system(
+        paste('fastqc',
+              paste0(opt$output, '/',index$sampleName,'*'),
+              #paste0(opt$Raw_Folder, '/',index$R2),
+              ' -o ',
+              paste0(reports,'/', afterQC),
+              '-t', opt$sampleToprocs
+        )
+      )
+    })
+  }, mc.cores = opt$sampleToprocs)
+  # for (i in samples[,1]) {
+  #     system2('fastqc',
+  #             paste0(opt$output, '/', i, '_trim_PE1*', ' -o ', paste0(reports,'/', afterQC), ' -t ', opt$sampleToprocs))
+  #     system2('fastqc',
+  #             paste0(opt$output, '/', i, '_trim_PE2*', ' -o ', paste0(reports,'/',afterQC), ' -t ', opt$sampleToprocs))
+  #     }
 }
 
 cat('\n')
 
 if (opt$multiqc) {
-    if (file.exists(paste0(reports,'/', beforeQC)) & file.exists(paste0(reports,'/', afterQC))) {
+  if (file.exists(paste0(reports,'/', beforeQC)) & file.exists(paste0(reports,'/', afterQC))) {
     system2('multiqc', paste(paste0(reports,'/', report_folder), paste0(reports,'/',beforeQC), paste0(reports,'/',afterQC), '-o', reports, '-f'))
-    }else{
-        system2('multiqc', paste(paste0(reports,'/', report_folder), '-o', reports, '-f'))
-    }
+  }else{
+    system2('multiqc', paste(paste0(reports,'/', report_folder), '-o', reports, '-f'))
+  }
 }
 
 cat('\n')
 
 # Creating samples report
 if (opt$libraryType == "pairEnd") {
-    TidyTable <- function(x) {
-        final <- data.frame('Input_Read_Pairs' = x[1,2],
-                            'Pairs_Reads' = x[2,2],
-                            'Pairs_Read_Percent' = x[3,2],
-                            'Forward_Only_Surviving_Reads' = x[4,2],
-                            'Forward_Only_Surviving_Read_Percent' = x[5,2],
-                            'Reverse_Only_Surviving_Reads' = x[6,2],
-                            'Reverse_Only_Surviving_Read_Percent' = x[7,2],
-                            'Dropped_Reads' = x[8,2],
-                            'Dropped_Read_Percent' = x[9,2])
-        return(final)
-    }
-
-    report_sample <- list()
-    for (i in samples[,1]) { # change this to your "samples"
-        report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
-                                         header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
-    }
-
-    df <- lapply(report_sample, FUN = function(x) TidyTable(x))
-    final_df <- do.call("rbind", df)
+  TidyTable <- function(x) {
+    final <- data.frame('Input_Read_Pairs' = x[1,2],
+                        'Pairs_Reads' = x[2,2],
+                        'Pairs_Read_Percent' = x[3,2],
+                        'Forward_Only_Surviving_Reads' = x[4,2],
+                        'Forward_Only_Surviving_Read_Percent' = x[5,2],
+                        'Reverse_Only_Surviving_Reads' = x[6,2],
+                        'Reverse_Only_Surviving_Read_Percent' = x[7,2],
+                        'Dropped_Reads' = x[8,2],
+                        'Dropped_Read_Percent' = x[9,2])
+    return(final)
+  }
+  
+  report_sample <- list()
+  for (i in samples[,1]) { # change this to your "samples"
+    report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
+                                     header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
+  }
+  
+  df <- lapply(report_sample, FUN = function(x) TidyTable(x))
+  final_df <- do.call("rbind", df)
 }else if (opt$libraryType == "singleEnd") {
-    TidyTable <- function(x) {
-        final <- data.frame('Input_Read_Pairs' = x[1,2],
-                            # 'Pairs_Reads' = x[2,2],
-                            # 'Pairs_Read_Percent' = x[3,2],
-                            'Surviving_Reads' = x[2,2],
-                            'Surviving_Read_Percent' = x[3,2],
-                            # 'Reverse_Only_Surviving_Reads' = x[6,2],
-                            # 'Reverse_Only_Surviving_Read_Percent' = x[7,2],
-                            'Dropped_Reads' = x[4,2],
-                            'Dropped_Read_Percent' = x[5,2]
-                            )
-        return(final)
-    }
-
-    report_sample <- list()
-    for (i in samples[,1]) { # change this to your "samples"
-        report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
-                                         header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
-    }
-
-    df <- lapply(report_sample, FUN = function(x) TidyTable(x))
-    final_df <- do.call("rbind", df)
+  TidyTable <- function(x) {
+    final <- data.frame('Input_Read_Pairs' = x[1,2],
+                        # 'Pairs_Reads' = x[2,2],
+                        # 'Pairs_Read_Percent' = x[3,2],
+                        'Surviving_Reads' = x[2,2],
+                        'Surviving_Read_Percent' = x[3,2],
+                        # 'Reverse_Only_Surviving_Reads' = x[6,2],
+                        # 'Reverse_Only_Surviving_Read_Percent' = x[7,2],
+                        'Dropped_Reads' = x[4,2],
+                        'Dropped_Read_Percent' = x[5,2]
+    )
+    return(final)
+  }
+  
+  report_sample <- list()
+  for (i in samples[,1]) { # change this to your "samples"
+    report_sample[[i]] <- read.table(paste0(reports,'/', report_folder, '/', i,"_statsSummaryFile.txt"),
+                                     header = F, as.is = T, fill = TRUE, sep = ':', text = TRUE)
+  }
+  
+  df <- lapply(report_sample, FUN = function(x) TidyTable(x))
+  final_df <- do.call("rbind", df)
 }
 
 write.table(final_df, file = paste0(reports, '/', 'QualityControlReportSummary.txt'), sep = "\t", row.names = TRUE, col.names = TRUE, quote = F)
