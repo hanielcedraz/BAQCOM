@@ -6,10 +6,13 @@ trimmomatic <- paste(trimmomatic_dir, 'trimmomatic-0.39.jar', sep = "")
 ########################################
 ### LOADING PACKAGES
 ########################################
-suppressPackageStartupMessages(library("tools"))
-suppressPackageStartupMessages(library("optparse"))
-suppressPackageStartupMessages(library("parallel"))
-suppressPackageStartupMessages(library("baqcomPackage"))
+if (suppressPackageStartupMessages(!require(pacman))) suppressPackageStartupMessages(install.packages("pacman"))
+suppressPackageStartupMessages(p_load(tools, parallel, optparse, baqcomPackage, dplyr, data.table))
+# suppressPackageStartupMessages(library("tools"))
+# suppressPackageStartupMessages(library("parallel"))
+# suppressPackageStartupMessages(library("optparse"))
+# suppressPackageStartupMessages(library("data.table"))
+# suppressPackageStartupMessages(library("baqcomPackage"))
 
 ########################################
 ### SETING PARAMETERS
