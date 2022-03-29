@@ -1,11 +1,14 @@
 #!/usr/bin/env Rscript
 
-suppressPackageStartupMessages(library("tools"))
-suppressPackageStartupMessages(library("parallel"))
-suppressPackageStartupMessages(library("optparse"))
-suppressPackageStartupMessages(library("dplyr"))
-suppressPackageStartupMessages(library("data.table"))
-suppressPackageStartupMessages(library("baqcomPackage"))
+if (suppressPackageStartupMessages(!require(pacman))) suppressPackageStartupMessages(install.packages("pacman"))
+suppressPackageStartupMessages(p_load(tools, parallel, optparse, baqcomPackage, dplyr, data.table))
+# suppressPackageStartupMessages(library("tools"))
+# suppressPackageStartupMessages(library("parallel"))
+# suppressPackageStartupMessages(library("optparse"))
+# suppressPackageStartupMessages(library("data.table"))
+# suppressPackageStartupMessages(library("baqcomPackage"))
+
+
 
 
 option_list <- list(
