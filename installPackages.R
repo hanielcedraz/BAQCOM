@@ -13,7 +13,7 @@ Install_Multiples_Packages <- function(packages) {
   
 }
 
-Install_Multiples_Packages(c("optparse", "parallel", "tools", "dplyr", "data.table", "glue", "devtools"))
+Install_Multiples_Packages(c("optparse", "parallel", "tools", "dplyr", "data.table", "glue", "devtools", "pacman"))
 
 
 if (!"baqcomPackage" %in% installed.packages()[,'Package']) {
@@ -31,4 +31,5 @@ if (length(newInstalledPackages) == 8) {
 } else if (length(newInstalledPackages) < 8) {
   write(paste("Could not install", paste0(newInstalledPackages, collapse = ", "), "-", "Please install it manually."), stdout())
 }
+
 
